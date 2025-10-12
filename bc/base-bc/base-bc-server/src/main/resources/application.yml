@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: base
+  profiles:
+    active: dev  # 控制环境：（dev：本地环境 || prod：生产环境 || test：测试环境）
+  config:
+    import: optional:nacos:base.yaml?namespace=MAIN_DEV&group=DEFAULT_GROUP&serverAddr=localhost:8848
+  jackson:
+    time-zone: Asia/Shanghai  # 序列化配置
+    date-format: yyyy-MM-dd HH:mm:ss
+  main:
+    allow-bean-definition-overriding: true  # Bean 覆盖策略
