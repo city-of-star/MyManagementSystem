@@ -19,6 +19,5 @@ spring:
         group: DEFAULT_GROUP
   jackson:
     time-zone: Asia/Shanghai
-    date-format: yyyy-MM-dd HH:mm:ss
   main:
     allow-bean-definition-overriding: true  # Bean 覆盖策略
