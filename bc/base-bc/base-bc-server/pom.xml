@@ -87,7 +87,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.Application</mainClass>
+                    <mainClass>com.mms.BaseApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
