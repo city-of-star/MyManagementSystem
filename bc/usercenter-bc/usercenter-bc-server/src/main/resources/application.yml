@@ -1,6 +1,6 @@
 spring:
   application:
-    name: base
+    name: usercenter
   profiles:
     active: dev  # 开发的时候写死dev就行，在服务器上运行的时候可以指定环境（dev：本地环境 || prod：生产环境 || test：测试环境）
   config:
