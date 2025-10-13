@@ -1,4 +1,4 @@
-package com.test.entity;
+package com.mms.test.entity;
 
 /**
  * 实现功能【测试实体类】

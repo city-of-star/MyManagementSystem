@@ -1,6 +1,6 @@
-package com.test.service.impl;
+package com.mms.test.service.impl;
 
-import com.test.service.TestService;
+import com.mms.test.service.TestService;
 import org.springframework.stereotype.Service;
 
 /**

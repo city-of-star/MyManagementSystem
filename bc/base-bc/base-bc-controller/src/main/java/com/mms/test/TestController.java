@@ -1,6 +1,6 @@
-package com.test;
+package com.mms.test;
 
-import com.test.service.TestService;
+import com.mms.test.service.TestService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

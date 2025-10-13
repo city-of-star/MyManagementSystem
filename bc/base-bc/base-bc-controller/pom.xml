@@ -11,10 +11,6 @@
 
     <artifactId>base-bc-controller</artifactId>
 
-    <properties>
-
-    </properties>
-
     <dependencies>
         <!-- Spring Boot Starter Web -->
         <dependency>

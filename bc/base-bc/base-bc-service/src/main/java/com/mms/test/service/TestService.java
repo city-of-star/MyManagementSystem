@@ -1,4 +1,4 @@
-package com.test.service;
+package com.mms.test.service;
 
 /**
  * 实现功能【测试服务】

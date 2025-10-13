@@ -11,10 +11,6 @@
 
     <artifactId>base-bc-feign-api</artifactId>
 
-    <properties>
-
-    </properties>
-
     <dependencies>
         <!-- Spring Cloud OpenFeign -->
         <dependency>
