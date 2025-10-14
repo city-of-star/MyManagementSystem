@@ -1,6 +1,8 @@
 package com.mms.test.service.impl;
 
 import com.mms.test.service.TestService;
+import com.mms.test.feign.BaseTestFeign;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,8 +14,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class TestServiceImpl implements TestService {
 
+    @Resource
+    private BaseTestFeign baseTestFeign;
+
     @Override
     public String test() {
-        return "测试成功";
+        String baseResult = baseTestFeign.test1();
+        return "测试成功 -> base返回: " + baseResult;
     }
 }
