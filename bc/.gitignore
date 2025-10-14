@@ -1,0 +1,21 @@
+### 通用规则 ###
+# 忽略所有IDE（IntelliJ IDEA）生成的文件
+**/.idea/
+**/*.iml
+**/*.iws
+**/*.ipr
+
+# 忽略编译输出目录（Maven）
+**/target/
+**/build/
+
+# 忽略日志文件
+**/logs/
+*.log
+
+# 忽略系统文件
+.DS_Store
+Thumbs.db
+
+# 忽略Maven的本地仓库锁定文件
+**/dependency-reduced-pom.xml
