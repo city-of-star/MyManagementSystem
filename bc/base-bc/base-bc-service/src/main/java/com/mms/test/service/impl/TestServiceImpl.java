@@ -1,6 +1,12 @@
 package com.mms.test.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mms.test.dto.TestDTO;
+import com.mms.test.entity.TestEntity;
+import com.mms.test.mapper.TestMapper;
 import com.mms.test.service.TestService;
+import jakarta.annotation.Resource;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,11 +15,29 @@ import org.springframework.stereotype.Service;
  * @author li.hongyu
  * @date 2025-10-12 20:03:34
  */
+@Log4j2
 @Service
 public class TestServiceImpl implements TestService {
 
+    @Resource
+    private TestMapper testMapper;
+
     @Override
     public String test() {
+
         return "测试成功";
+    }
+
+    @Override
+    public Page<TestEntity> getPage(TestDTO dto) {
+        try {
+            log.info("---------------------------分页查询测试列表入参：{} ---------------------------", dto.toString());
+            Page<TestEntity> page = new Page<>(dto.getPageNum(), dto.getPageSize());
+            Page<TestEntity> res = testMapper.getPage(page, dto);
+            return res;
+        } catch (Exception e) {
+            log.error("---------------------------分页查询测试列表失败：{} ---------------------------", e.getMessage());
+            return null;
+        }
     }
 }

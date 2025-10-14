@@ -1,12 +1,13 @@
 package com.mms.test;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mms.test.dto.TestDTO;
+import com.mms.test.entity.TestEntity;
 import com.mms.test.service.TestService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 实现功能【测试基础功能】
@@ -28,4 +29,8 @@ public class TestController {
         return testService.test();
     }
 
+    @PostMapping("/getPage")
+    public Page<TestEntity> getPage(@RequestBody TestDTO dto) {
+        return testService.getPage(dto);
+    }
 }
