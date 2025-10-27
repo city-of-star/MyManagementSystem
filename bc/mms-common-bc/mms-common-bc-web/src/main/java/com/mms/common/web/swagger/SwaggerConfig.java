@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Swagger配置类
+ * Knife4j配置类
  * 
  * @author MMS开发团队
  * @since 1.0.0
