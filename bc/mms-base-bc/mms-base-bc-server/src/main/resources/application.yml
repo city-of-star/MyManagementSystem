@@ -2,23 +2,22 @@ spring:
   application:
     name: base
   profiles:
-    active: dev  # 开发的时候写死dev就行，在服务器上运行的时候可以指定环境（dev：本地环境 || prod：生产环境 || test：测试环境）
+    active: DEV  # 开发的时候写死 DEV 就行，在服务器上运行的时候可以指定环境（DEV：本地环境 || PROD：生产环境 || TEST：测试环境）
   config:
     import:
-      - optional:nacos:${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}?refreshEnabled=true
+      # 公共配置
+      - optional:nacos:public-${spring.profiles.active}.yaml?refreshEnabled=true
+      # 服务专属配置
+      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml?refreshEnabled=true
   cloud:
     nacos:
       server-addr: 127.0.0.1:8848
       username: nacos
       password: nacos
       config:
-        namespace: MAIN
+        namespace: ${spring.profiles.active}
         group: DEFAULT_GROUP
         file-extension: yaml
       discovery:
-        namespace: MAIN
+        namespace: ${spring.profiles.active}
         group: DEFAULT_GROUP
-  jackson:
-    time-zone: Asia/Shanghai
-  main:
-    allow-bean-definition-overriding: true  # Bean 覆盖策略
