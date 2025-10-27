@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-usercenter-bc-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Lombok -->

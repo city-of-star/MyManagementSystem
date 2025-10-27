@@ -16,13 +16,13 @@
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-usercenter-bc-feign-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <!-- 依赖 Common 模块 -->
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-usercenter-bc-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- MyBatis Plus -->
@@ -33,8 +33,8 @@
 
         <!-- MySql 连接 -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
 
