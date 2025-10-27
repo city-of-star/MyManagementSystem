@@ -1,4 +1,4 @@
-package com.mms.test.entity;
+package com.mms.base.common.test.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

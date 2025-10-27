@@ -1,4 +1,4 @@
-package com.mms;
+package com.mms.base.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,8 +1,8 @@
-package com.mms.test.service;
+package com.mms.base.service.test.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.mms.test.dto.TestDTO;
-import com.mms.test.entity.TestEntity;
+import com.mms.base.common.test.dto.TestDTO;
+import com.mms.base.common.test.entity.TestEntity;
 
 /**
  * 实现功能【测试服务】

@@ -1,9 +1,9 @@
-package com.mms.test.mapper;
+package com.mms.base.service.test.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.mms.test.dto.TestDTO;
-import com.mms.test.entity.TestEntity;
+import com.mms.base.common.test.dto.TestDTO;
+import com.mms.base.common.test.entity.TestEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

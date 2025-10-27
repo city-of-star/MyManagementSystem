@@ -1,10 +1,10 @@
-package com.mms.test.service.impl;
+package com.mms.base.service.test.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.mms.test.dto.TestDTO;
-import com.mms.test.entity.TestEntity;
-import com.mms.test.mapper.TestMapper;
-import com.mms.test.service.TestService;
+import com.mms.base.common.test.dto.TestDTO;
+import com.mms.base.common.test.entity.TestEntity;
+import com.mms.base.service.test.mapper.TestMapper;
+import com.mms.base.service.test.service.TestService;
 import jakarta.annotation.Resource;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;

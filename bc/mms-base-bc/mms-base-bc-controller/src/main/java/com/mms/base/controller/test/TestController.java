@@ -1,9 +1,9 @@
-package com.mms.test;
+package com.mms.base.controller.test;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.mms.test.dto.TestDTO;
-import com.mms.test.entity.TestEntity;
-import com.mms.test.service.TestService;
+import com.mms.base.common.test.dto.TestDTO;
+import com.mms.base.common.test.entity.TestEntity;
+import com.mms.base.service.test.service.TestService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 

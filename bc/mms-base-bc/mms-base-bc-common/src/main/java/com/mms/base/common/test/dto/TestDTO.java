@@ -1,4 +1,4 @@
-package com.mms.test.dto;
+package com.mms.base.common.test.dto;
 
 import lombok.Data;
 
