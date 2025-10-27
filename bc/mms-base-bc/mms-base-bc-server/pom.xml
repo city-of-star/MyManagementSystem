@@ -40,6 +40,13 @@
             <artifactId>mms-base-bc-controller</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <!-- 依赖公共模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-common-bc-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Nacos Config -->
         <dependency>
