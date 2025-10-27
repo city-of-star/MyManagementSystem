@@ -1,4 +1,4 @@
-package com.mms.test.feign;
+package com.mms.usercenter.feign.test;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

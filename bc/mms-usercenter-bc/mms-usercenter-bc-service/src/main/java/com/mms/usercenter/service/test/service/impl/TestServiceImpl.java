@@ -1,7 +1,7 @@
-package com.mms.test.service.impl;
+package com.mms.usercenter.service.test.service.impl;
 
-import com.mms.test.service.TestService;
-import com.mms.test.feign.BaseTestFeign;
+import com.mms.usercenter.service.test.service.TestService;
+import com.mms.usercenter.feign.test.BaseTestFeign;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 

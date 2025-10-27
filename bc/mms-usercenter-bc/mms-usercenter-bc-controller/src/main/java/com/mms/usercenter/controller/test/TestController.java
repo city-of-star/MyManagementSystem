@@ -1,6 +1,6 @@
-package com.mms.test;
+package com.mms.usercenter.controller.test;
 
-import com.mms.test.service.TestService;
+import com.mms.usercenter.service.test.service.TestService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
