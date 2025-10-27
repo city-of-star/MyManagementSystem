@@ -18,7 +18,7 @@
     <modules>
         <module>mms-common-bc-core</module>
         <module>mms-common-bc-web</module>
-        <module>mms-common-bc-mybatis</module>
+        <module>mms-common-bc-database</module>
     </modules>
 
 </project>
