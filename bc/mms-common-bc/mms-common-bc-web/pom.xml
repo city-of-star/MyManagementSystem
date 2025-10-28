@@ -12,10 +12,25 @@
     <artifactId>mms-common-bc-web</artifactId>
 
     <dependencies>
+
+        <!-- 依赖 mms-common-bc-core 模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-common-bc-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Knife4j文档 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

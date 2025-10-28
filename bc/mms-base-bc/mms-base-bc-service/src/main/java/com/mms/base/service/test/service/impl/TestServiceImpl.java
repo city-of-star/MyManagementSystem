@@ -6,7 +6,7 @@ import com.mms.base.common.test.entity.TestEntity;
 import com.mms.base.service.test.mapper.TestMapper;
 import com.mms.base.service.test.service.TestService;
 import jakarta.annotation.Resource;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @author li.hongyu
  * @date 2025-10-12 20:03:34
  */
-@Log4j2
+@Slf4j
 @Service
 public class TestServiceImpl implements TestService {
 
