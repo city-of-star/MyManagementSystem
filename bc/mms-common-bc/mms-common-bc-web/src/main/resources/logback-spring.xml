@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <!--
-        可在 application-xx.yml 文件中配置 logback.path 覆盖默认值
-    -->
+
+    <!-- 可在 application.yml/Nacos 中配置 logback.path 覆盖默认值；默认使用 logs 目录 -->
     <springProperty scope="context" name="LOG_PATH" source="logback.path" defaultValue="logs"/>
 
     <!--  设置控制台颜色  -->
@@ -26,7 +25,7 @@
     <!--  定义日志文件的日志格式，用于生产使用  -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 追加日志到原文件结尾 -->
-        <Prudent>true</Prudent>
+        <prudent>true</prudent>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %method 方法名  %L 行数 %msg：日志消息，%n是换行符-->
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %X{traceId:-} %X{requestUri:-} [%thread] %-5level %logger{56}.%method:%L - %msg%n</pattern>
@@ -53,28 +52,7 @@
         <queueSize>1000</queueSize>
     </appender>
 
-    <!--  SpringBoot 默认的  -->
-    <logger name="org.apache.catalina.startup.DigesterFactory" level="ERROR"/>
-    <logger name="org.apache.catalina.util.LifecycleBase" level="ERROR"/>
-    <logger name="org.apache.coyote.http11.Http11NioProtocol" level="WARN"/>
-    <logger name="org.apache.sshd.common.util.SecurityUtils" level="WARN"/>
-    <logger name="org.apache.tomcat.util.net.NioSelectorPool" level="WARN"/>
-    <logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="ERROR"/>
-    <logger name="org.hibernate.validator.internal.util.Version" level="WARN"/>
-
-    <!-- 开发、测试环境 -->
-    <springProfile name="dev,company,test">
-        <logger name="org.springframework.web" level="INFO"></logger>
-        <logger name="org.springboot.sample" level="INFO"></logger>
-        <logger name="com.gccloud" level="INFO"></logger>
-    </springProfile>
-
-    <!-- 生产环境 -->
-    <springProfile name="prod">
-        <logger name="org.springframework.web" level="ERROR"></logger>
-        <logger name="org.springboot.sample" level="ERROR"></logger>
-        <logger name="com.gccloud" level="INFO"></logger>
-    </springProfile>
+    <!-- 日志级别交由外部 logging.level 管控（Nacos 或本地配置） -->
 
     <root level="INFO">
         <appender-ref ref="ASYNC"/>
@@ -82,3 +60,5 @@
     </root>
 
 </configuration>
+
+

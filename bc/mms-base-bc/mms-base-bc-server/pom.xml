@@ -41,7 +41,7 @@
             <version>${project.version}</version>
         </dependency>
         
-        <!-- 依赖公共模块 -->
+        <!-- 依赖mms-common-bc-web模块 -->
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-common-bc-web</artifactId>
