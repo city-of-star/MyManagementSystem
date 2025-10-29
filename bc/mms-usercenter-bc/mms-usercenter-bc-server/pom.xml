@@ -28,24 +28,20 @@
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-common-bc-web</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- 依赖其他模块 -->
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-usercenter-bc-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-usercenter-bc-service</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-usercenter-bc-controller</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- Nacos Config -->

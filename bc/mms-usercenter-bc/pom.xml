@@ -23,4 +23,50 @@
         <module>mms-usercenter-bc-service</module>
     </modules>
 
+    <!-- 依赖版本管理 -->
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- Common模块依赖管理 -->
+            <dependency>
+                <groupId>com.mms</groupId>
+                <artifactId>mms-common-bc-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mms</groupId>
+                <artifactId>mms-common-bc-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mms</groupId>
+                <artifactId>mms-common-bc-database</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- UserCenter模块内部依赖管理 -->
+            <dependency>
+                <groupId>com.mms</groupId>
+                <artifactId>mms-usercenter-bc-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mms</groupId>
+                <artifactId>mms-usercenter-bc-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mms</groupId>
+                <artifactId>mms-usercenter-bc-controller</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mms</groupId>
+                <artifactId>mms-usercenter-bc-feign-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
 </project>

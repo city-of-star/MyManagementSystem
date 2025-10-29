@@ -22,7 +22,6 @@
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-base-bc-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- Lombok -->

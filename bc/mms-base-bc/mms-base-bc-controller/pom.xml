@@ -18,13 +18,11 @@
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-common-bc-web</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!-- 依赖base-service模块 -->
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-base-bc-service</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- ==================== 基础配置 ==================== -->
