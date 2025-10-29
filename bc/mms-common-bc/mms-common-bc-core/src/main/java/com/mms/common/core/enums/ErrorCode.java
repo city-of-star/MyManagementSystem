@@ -65,11 +65,11 @@ public enum ErrorCode {
     UNKNOWN_ERROR(99, "系统繁忙");
 
     private final int code;
-    private final String msg;
+    private final String message;
 
-    ErrorCode(int code, String msg) {
+    ErrorCode(int code, String message) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
     }
 
 }

@@ -24,6 +24,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- 依赖mms-common-bc-web模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-common-bc-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- 依赖其他模块 -->
         <dependency>
             <groupId>com.mms</groupId>
@@ -38,13 +45,6 @@
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-base-bc-controller</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <!-- 依赖mms-common-bc-web模块 -->
-        <dependency>
-            <groupId>com.mms</groupId>
-            <artifactId>mms-common-bc-web</artifactId>
             <version>${project.version}</version>
         </dependency>
 
