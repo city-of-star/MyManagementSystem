@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.mms.usercenter", "com.mms.common"})
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = {"com.mms.usercenter.feign.test"})
 public class UserCenterApplication {

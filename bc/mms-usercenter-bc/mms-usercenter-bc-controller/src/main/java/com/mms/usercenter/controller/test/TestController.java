@@ -1,8 +1,8 @@
 package com.mms.usercenter.controller.test;
 
+import com.mms.common.web.response.Response;
 import com.mms.usercenter.service.test.service.TestService;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @author li.hongyu
  * @date 2025-10-12 19:33:28
  */
-@Slf4j
 @RestController
 @RequestMapping("/test")
 public class TestController {
@@ -22,8 +21,8 @@ public class TestController {
     private TestService testService;
 
     @GetMapping("/1")
-    public String test1() {
-        return testService.test();
+    public Response<String> test1() {
+        return Response.success(testService.test());
     }
 
 }

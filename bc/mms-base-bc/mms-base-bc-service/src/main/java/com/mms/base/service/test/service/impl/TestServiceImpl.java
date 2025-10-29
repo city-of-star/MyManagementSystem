@@ -5,6 +5,7 @@ import com.mms.base.common.test.dto.TestDTO;
 import com.mms.base.common.test.entity.TestEntity;
 import com.mms.base.service.test.mapper.TestMapper;
 import com.mms.base.service.test.service.TestService;
+import com.mms.common.core.exceptions.ServerException;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class TestServiceImpl implements TestService {
             return res;
         } catch (Exception e) {
             log.error("---------------------------分页查询测试列表失败：{} ---------------------------", e.getMessage());
-            return null;
+            throw new ServerException();
         }
     }
 }

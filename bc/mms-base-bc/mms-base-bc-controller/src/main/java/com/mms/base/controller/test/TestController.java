@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mms.base.common.test.dto.TestDTO;
 import com.mms.base.common.test.entity.TestEntity;
 import com.mms.base.service.test.service.TestService;
+import com.mms.common.web.response.Response;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +22,12 @@ public class TestController {
     private TestService testService;
 
     @GetMapping("/1")
-    public String test1() {
-        return testService.test();
+    public Response<String> test1() {
+        return Response.success(testService.test());
     }
 
     @PostMapping("/getPage")
-    public Page<TestEntity> getPage(@RequestBody TestDTO dto) {
-        return testService.getPage(dto);
+    public Response<Page<TestEntity>> getPage(@RequestBody TestDTO dto) {
+        return Response.success(testService.getPage(dto));
     }
 }
