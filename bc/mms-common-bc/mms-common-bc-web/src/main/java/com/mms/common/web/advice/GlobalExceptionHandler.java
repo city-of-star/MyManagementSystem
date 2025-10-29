@@ -23,58 +23,77 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 处理业务异常(HTTP 400)(自定义异常)
+    /**
+     * 处理业务异常(HTTP 400)
+     * 支持两种方式：规范枚举方式和自定义消息方式
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BusinessException.class)
     public Response<?> handleBusinessException(BusinessException e) {
-        if (e.getMessage() == null) {
-            // 处理业务异常消息
-            log.warn("业务异常: 【{}】", e.getErrorCode().getMessage());
-            return Response.fail(e.getErrorCode().getCode(), e.getErrorCode().getMessage());
-        } else {
-            // 处理自定义业务异常消息
-            log.warn("业务异常: 【{}】", e.getMessage());
-            return Response.fail(ErrorCode.INVALID_OPERATION.getCode(), e.getMessage());
-        }
+        String message = e.getMessage();
+        Integer code = e.getCode();
+        
+        log.warn("业务异常: 【{}】", message);
+        return Response.fail(code, message);
     }
 
-    // 处理服务器异常(HTTP 500)(自定义异常)
+    /**
+     * 处理服务器异常(HTTP 500)
+     */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ServerException.class)
     public Response<?> handleServerException(ServerException e) {
         log.error("服务器异常: 【{}】", e.getMessage());
-        return Response.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), ErrorCode.SYSTEM_ERROR.getMessage());
+        return Response.error(ErrorCode.SYSTEM_ERROR.getCode(), ErrorCode.SYSTEM_ERROR.getMessage());
     }
 
-    // 请求参数解析异常(HTTP 400)
+    /**
+     * 处理请求参数解析异常(HTTP 400)
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Response<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.warn("请求参数解析异常: 【{}】", e.getMessage());
-        return Response.error(HttpStatus.BAD_REQUEST.value(), ErrorCode.PARAMETER_PARSING_EXCEPTION.getMessage());
+        return Response.error(ErrorCode.PARAM_INVALID.getCode(), ErrorCode.PARAM_INVALID.getMessage());
     }
 
-    // 接口不存在异常(HTTP 404)
+    /**
+     * 处理接口不存在异常(HTTP 404)
+     * 开发环境提供更友好的提示
+     */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoHandlerFoundException.class)
     public Response<?> handleNotFound(NoHandlerFoundException e) {
-        log.warn("接口不存在异常: 【{}】", e.getRequestURL());
-        return Response.error(HttpStatus.NOT_FOUND.value(), ErrorCode.RESOURCE_NOT_EXIST.getMessage());
+        String requestUrl = e.getRequestURL();
+        String message = String.format("接口不存在: %s，请检查请求路径是否正确", requestUrl);
+
+        log.warn("接口不存在异常: 【{}】", requestUrl);
+        return Response.error(HttpStatus.NOT_FOUND.value(), message);
     }
 
-    // 请求方法不匹配异常(HTTP 405)
+    /**
+     * 处理请求方法不匹配异常(HTTP 405)
+     * 开发环境提供更友好的提示
+     */
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public Response<?> handleMethodNotAllowed(HttpRequestMethodNotSupportedException e) {
-        log.warn("请求方法不匹配异常: 【{}】", e.getMethod());
-        return Response.error(HttpStatus.METHOD_NOT_ALLOWED.value(), ErrorCode.METHOD_MISMATCH.getMessage());
+        String method = e.getMethod();
+        String[] supportedMethods = e.getSupportedMethods();
+        String supportedMethodsStr = supportedMethods != null ? String.join(", ", supportedMethods) : "未知";
+        String message = String.format("请求方法 %s 不被支持，支持的方法: %s", method, supportedMethodsStr);
+
+        log.warn("请求方法不匹配异常: 【{}】，支持的方法: 【{}】", method, supportedMethodsStr);
+        return Response.error(HttpStatus.METHOD_NOT_ALLOWED.value(), message);
     }
 
-    // 兜底异常处理，捕获所有未被其他处理器处理的异常(HTTP 500)
+    /**
+     * 兜底异常处理，捕获所有未被其他处理器处理的异常(HTTP 500)
+     */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public Response<?> handleAllUncaughtException(Exception e) {
-        log.error("未知异常: 【{}】", e.getMessage(), e);  // 记录完整的异常堆栈信息
-        return Response.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), ErrorCode.SYSTEM_ERROR.getMessage());
+        log.error("未知异常: 【{}】", e.getMessage(), e);
+        return Response.error(ErrorCode.SYSTEM_ERROR.getCode(), ErrorCode.SYSTEM_ERROR.getMessage());
     }
 }

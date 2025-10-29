@@ -5,7 +5,11 @@ import lombok.Getter;
 import java.io.Serial;
 
 /**
- * 实现功能【自定义业务异常】
+ * 实现功能【业务异常类】
+ * 
+ * 支持两种异常方式：
+ * 1. 规范方式：使用预定义的ErrorCode枚举
+ * 2. 灵活方式：使用自定义错误消息
  *
  * @author li.hongyu
  * @date 2025-10-28 20:21:27
@@ -16,14 +20,60 @@ public class BusinessException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 9196224339724626039L;
 
-    private ErrorCode errorCode;
-    private String message = null;
+    /**
+     * 错误码枚举（规范方式）
+     */
+    private final ErrorCode errorCode;
+    
+    /**
+     * 自定义错误消息（灵活方式）
+     */
+    private final String customMessage;
+    
+    /**
+     * 是否为自定义消息模式
+     */
+    private final boolean isCustomMessage;
 
+    /**
+     * 构造方法1：使用预定义的ErrorCode枚举（规范方式）
+     * 
+     * @param errorCode 错误码枚举
+     */
     public BusinessException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
         this.errorCode = errorCode;
+        this.customMessage = null;
+        this.isCustomMessage = false;
     }
 
-    public BusinessException(String message) {
-        this.message = message;
+    /**
+     * 构造方法2：使用自定义错误消息（灵活方式）
+     * 
+     * @param customMessage 自定义错误消息
+     */
+    public BusinessException(String customMessage) {
+        super(customMessage);
+        this.errorCode = ErrorCode.INVALID_OPERATION; // 使用默认错误码
+        this.customMessage = customMessage;
+        this.isCustomMessage = true;
+    }
+
+    /**
+     * 获取最终的错误消息
+     * 
+     * @return 错误消息
+     */
+    public String getMessage() {
+        return isCustomMessage ? customMessage : errorCode.getMessage();
+    }
+
+    /**
+     * 获取最终的错误码
+     * 
+     * @return 错误码
+     */
+    public int getCode() {
+        return errorCode.getCode();
     }
 }
