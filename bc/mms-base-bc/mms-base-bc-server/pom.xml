@@ -40,6 +40,12 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
+        <!-- spring-cloud-openfeign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-openfeign-core</artifactId>
+        </dependency>
+
         <!-- Spring Cloud LoadBalancer -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -62,6 +68,12 @@
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-base-bc-controller</artifactId>
+        </dependency>
+
+        <!-- 依赖 mms-base-bc-feign-api 模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-base-bc-feign-api</artifactId>
         </dependency>
 
         <!-- ==================== 工具相关依赖引入 ==================== -->
