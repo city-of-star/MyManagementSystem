@@ -12,16 +12,29 @@
     <artifactId>mms-base-bc-service</artifactId>
 
     <dependencies>
-        <!-- 依赖 Common 模块 -->
+
+        <!-- ==================== 基础依赖包，非特殊情况无需变动 ==================== -->
+
+        <!-- 依赖 mms-base-bc-common 模块 -->
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-base-bc-common</artifactId>
         </dependency>
 
-        <!-- 依赖mms-common-bc-core模块 -->
+        <!-- Spring Boot Starter Test -->
         <dependency>
-            <groupId>com.mms</groupId>
-            <artifactId>mms-common-bc-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ==================== 工具相关依赖引入 ==================== -->
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- MyBatis Plus -->
@@ -37,19 +50,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Spring Boot Starter Test -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>

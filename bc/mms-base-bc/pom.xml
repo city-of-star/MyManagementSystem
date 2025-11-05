@@ -23,26 +23,20 @@
         <module>mms-base-bc-service</module>
     </modules>
 
+    <!-- 统一依赖，所有子模块都会继承 -->
+    <dependencies>
+
+        <!-- 引入 common 模块聚合包，包含 common 下的所有子模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-common-bc-all</artifactId>
+        </dependency>
+
+    </dependencies>
+
     <!-- 依赖版本管理 -->
     <dependencyManagement>
         <dependencies>
-
-            <!-- Common模块依赖管理 -->
-            <dependency>
-                <groupId>com.mms</groupId>
-                <artifactId>mms-common-bc-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mms</groupId>
-                <artifactId>mms-common-bc-web</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mms</groupId>
-                <artifactId>mms-common-bc-database</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <!-- Base模块内部依赖管理 -->
             <dependency>

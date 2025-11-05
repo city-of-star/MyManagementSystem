@@ -14,16 +14,7 @@
     <dependencies>
 
         <!-- ==================== 依赖其他服务模块 ==================== -->
-        <!-- 依赖mms-common-bc-web模块 -->
-        <dependency>
-            <groupId>com.mms</groupId>
-            <artifactId>mms-common-bc-web</artifactId>
-        </dependency>
-        <!-- 依赖mms-common-bc-core模块 -->
-        <dependency>
-            <groupId>com.mms</groupId>
-            <artifactId>mms-common-bc-core</artifactId>
-        </dependency>
+        <!-- mms-common-bc-all（包含 core、web、database）已从父模块继承，无需重复声明 -->
         <!-- 依赖usercenter-service模块 -->
         <dependency>
             <groupId>com.mms</groupId>

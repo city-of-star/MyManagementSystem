@@ -13,26 +13,22 @@
 
     <dependencies>
 
-        <!-- ==================== 依赖其他服务模块 ==================== -->
-        <!-- 依赖mms-common-bc-web模块 -->
-        <dependency>
-            <groupId>com.mms</groupId>
-            <artifactId>mms-common-bc-web</artifactId>
-        </dependency>
-        <!-- 依赖base-service模块 -->
-        <dependency>
-            <groupId>com.mms</groupId>
-            <artifactId>mms-base-bc-service</artifactId>
-        </dependency>
+        <!-- ==================== 基础依赖包，非特殊情况无需变动 ==================== -->
 
-        <!-- ==================== 基础配置 ==================== -->
         <!-- Spring Boot Starter Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- ==================== 工具相关 ==================== -->
+        <!-- 依赖 mms-base-bc-service 模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-base-bc-service</artifactId>
+        </dependency>
+
+        <!-- ==================== 工具相关依赖引入 ==================== -->
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>

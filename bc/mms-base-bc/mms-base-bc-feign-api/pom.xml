@@ -12,17 +12,22 @@
     <artifactId>mms-base-bc-feign-api</artifactId>
 
     <dependencies>
+
+        <!-- ==================== 基础依赖包，非特殊情况无需变动 ==================== -->
+
         <!-- Spring Cloud OpenFeign -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
-        <!-- 依赖 Common 模块 -->
+        <!-- 依赖 mms-base-bc-common 模块 -->
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-base-bc-common</artifactId>
         </dependency>
+
+        <!-- ==================== 工具相关依赖引入 ==================== -->
 
         <!-- Lombok -->
         <dependency>

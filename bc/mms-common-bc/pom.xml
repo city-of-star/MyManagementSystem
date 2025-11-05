@@ -19,6 +19,7 @@
         <module>mms-common-bc-core</module>
         <module>mms-common-bc-web</module>
         <module>mms-common-bc-database</module>
+        <module>mms-common-bc-all</module>
     </modules>
 
 </project>

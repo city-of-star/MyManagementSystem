@@ -51,9 +51,6 @@
         <lombok.version>1.18.30</lombok.version>
         <hutool.version>5.8.25</hutool.version>
         
-        <!-- JSON处理 -->
-        <fastjson.version>2.0.43</fastjson.version>
-        
         <!-- Knife4j文档 -->
         <knife4j.version>4.4.0</knife4j.version>
     </properties>
@@ -88,6 +85,28 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- MMS Common BC 模块版本管理 -->
+            <dependency>
+                <groupId>com.mms</groupId>
+                <artifactId>mms-common-bc-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mms</groupId>
+                <artifactId>mms-common-bc-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mms</groupId>
+                <artifactId>mms-common-bc-database</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mms</groupId>
+                <artifactId>mms-common-bc-all</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- MyBatis Plus -->
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -115,13 +134,6 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
-            </dependency>
-
-            <!-- FastJSON -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson2</artifactId>
-                <version>${fastjson.version}</version>
             </dependency>
 
             <!-- Knife4j文档 -->

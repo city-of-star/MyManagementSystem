@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.mms</groupId>
+        <artifactId>mms-common-bc</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>mms-common-bc-all</artifactId>
+    <name>MMS Common BC All</name>
+    <description>Common模块聚合包，包含common下的所有子模块，方便其他服务统一引入</description>
+
+    <dependencies>
+        <!-- 依赖 mms-common-bc-core 模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-common-bc-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- 依赖 mms-common-bc-web 模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-common-bc-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- 依赖 mms-common-bc-database 模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-common-bc-database</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -12,11 +12,16 @@
     <artifactId>mms-base-bc-common</artifactId>
 
     <dependencies>
+
+        <!-- ==================== 基础依赖包，非特殊情况无需变动 ==================== -->
+
         <!-- Spring Boot Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+
+        <!-- ==================== 工具相关依赖引入 ==================== -->
 
         <!-- Lombok -->
         <dependency>
@@ -29,12 +34,6 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations-jakarta</artifactId>
-            <version>2.2.19</version>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>
