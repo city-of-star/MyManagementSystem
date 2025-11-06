@@ -1,15 +1,18 @@
 package com.mms.usercenter.server;
 
+import com.mms.common.core.constants.scan.FeignScanConstant;
+import com.mms.common.core.constants.scan.MapperScanConstant;
+import com.mms.common.core.constants.scan.PackageScanConstant;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@SpringBootApplication(scanBasePackages = {"com.mms.usercenter", "com.mms.common"})
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"com.mms.usercenter.feign.test"})
-@MapperScan("com.mms.usercenter.service.**.mapper")
+@MapperScan(MapperScanConstant.USERCENTER_MAPPER_SCAN)
+@EnableFeignClients(basePackages = {FeignScanConstant.USERCENTER_FEIGN_SCAN})
+@SpringBootApplication(scanBasePackages = {PackageScanConstant.USERCENTER_PACKAGE_SCAN, PackageScanConstant.COMMON_PACKAGE_SCAN})
 public class UserCenterApplication {
     public static void main(String[] args) {
         SpringApplication.run(UserCenterApplication.class, args);
