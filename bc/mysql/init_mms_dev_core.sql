@@ -4,8 +4,9 @@ CREATE DATABASE `mms_dev_core` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 -- 使用该数据库
 USE `mms_dev_core`;
 
--- 创建 test 表
-CREATE TABLE test
+-- ==================== test 表 ====================
+
+CREATE TABLE IF NOT EXISTS test
 (
     id          bigint auto_increment comment '主键'
         primary key,
@@ -15,4 +16,234 @@ CREATE TABLE test
     update_time datetime     not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
     INDEX idx_title (title),
     INDEX idx_create_time (create_time)
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci comment '测试表-用于测试服务基础功能';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='测试表-用于测试服务基础功能';
+
+-- ==================== 用户中心服务相关表 ====================
+
+-- 1. 用户表
+CREATE TABLE IF NOT EXISTS `sys_user` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+    `username` varchar(64) NOT NULL COMMENT '用户名（登录账号）',
+    `password` varchar(255) NOT NULL COMMENT '密码（加密后）',
+    `nickname` varchar(64) DEFAULT NULL COMMENT '昵称',
+    `real_name` varchar(64) DEFAULT NULL COMMENT '真实姓名',
+    `avatar` varchar(1024) DEFAULT NULL COMMENT '头像URL',
+    `email` varchar(128) DEFAULT NULL COMMENT '邮箱（可为空，但填写后必须唯一）',
+    `phone` varchar(32) DEFAULT NULL COMMENT '手机号（可为空，但填写后必须唯一）',
+    `gender` tinyint DEFAULT 0 COMMENT '性别：0-未知，1-男，2-女',
+    `birthday` date DEFAULT NULL COMMENT '生日',
+    `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
+    `locked` tinyint NOT NULL DEFAULT 0 COMMENT '是否锁定：0-未锁定，1-已锁定',
+    `lock_time` datetime DEFAULT NULL COMMENT '锁定时间',
+    `lock_reason` varchar(255) DEFAULT NULL COMMENT '锁定原因',
+    `last_login_time` datetime DEFAULT NULL COMMENT '最后登录时间',
+    `last_login_ip` varchar(64) DEFAULT NULL COMMENT '最后登录IP',
+    `password_update_time` datetime DEFAULT NULL COMMENT '密码更新时间',
+    `remark` varchar(512) DEFAULT NULL COMMENT '备注',
+    `deleted` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
+    `create_by` bigint DEFAULT NULL COMMENT '创建人ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_by` bigint DEFAULT NULL COMMENT '更新人ID',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_username` (`username`),
+    UNIQUE KEY `uk_email` (`email`),
+    UNIQUE KEY `uk_phone` (`phone`),
+    KEY `idx_status` (`status`),
+    KEY `idx_deleted` (`deleted`),
+    KEY `idx_create_time` (`create_time`),
+    KEY `idx_status_deleted` (`status`, `deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户表';
+
+-- 2. 用户登录日志表
+CREATE TABLE IF NOT EXISTS `sys_user_login_log` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '日志ID',
+    `user_id` bigint DEFAULT NULL COMMENT '用户ID',
+    `username` varchar(64) DEFAULT NULL COMMENT '用户名',
+    `login_type` varchar(32) DEFAULT NULL COMMENT '登录类型：password-密码登录，sms-短信登录，email-邮箱登录',
+    `login_ip` varchar(64) DEFAULT NULL COMMENT '登录IP',
+    `login_location` varchar(128) DEFAULT NULL COMMENT '登录地点',
+    `user_agent` text DEFAULT NULL COMMENT '用户代理（浏览器信息）',
+    `login_status` tinyint NOT NULL DEFAULT 0 COMMENT '登录状态：0-失败，1-成功',
+    `login_message` varchar(255) DEFAULT NULL COMMENT '登录消息（失败原因等）',
+    `login_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '登录时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_user_id` (`user_id`),
+    KEY `idx_username` (`username`),
+    KEY `idx_login_time` (`login_time`),
+    KEY `idx_login_status` (`login_status`),
+    KEY `idx_user_login_time` (`user_id`, `login_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户登录日志表';
+
+-- ==================== 组织权限服务相关表 ====================
+
+-- 3. 部门表
+CREATE TABLE IF NOT EXISTS `sys_dept` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '部门ID',
+    `parent_id` bigint NOT NULL DEFAULT 0 COMMENT '父部门ID，0表示顶级部门',
+    `dept_name` varchar(64) NOT NULL COMMENT '部门名称',
+    `dept_code` varchar(64) NOT NULL COMMENT '部门编码',
+    `leader` varchar(64) DEFAULT NULL COMMENT '负责人',
+    `phone` varchar(32) DEFAULT NULL COMMENT '联系电话',
+    `email` varchar(128) DEFAULT NULL COMMENT '邮箱',
+    `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序号',
+    `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
+    `remark` varchar(512) DEFAULT NULL COMMENT '备注',
+    `deleted` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
+    `create_by` bigint DEFAULT NULL COMMENT '创建人ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_by` bigint DEFAULT NULL COMMENT '更新人ID',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_dept_code` (`dept_code`),
+    KEY `idx_parent_id` (`parent_id`),
+    KEY `idx_status` (`status`),
+    KEY `idx_deleted` (`deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='部门表';
+
+-- 4. 岗位表
+CREATE TABLE IF NOT EXISTS `sys_post` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '岗位ID',
+    `post_code` varchar(64) NOT NULL COMMENT '岗位编码',
+    `post_name` varchar(64) NOT NULL COMMENT '岗位名称',
+    `post_level` varchar(32) DEFAULT NULL COMMENT '岗位等级',
+    `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序号',
+    `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
+    `remark` varchar(512) DEFAULT NULL COMMENT '备注',
+    `deleted` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
+    `create_by` bigint DEFAULT NULL COMMENT '创建人ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_by` bigint DEFAULT NULL COMMENT '更新人ID',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_post_code` (`post_code`),
+    KEY `idx_status` (`status`),
+    KEY `idx_deleted` (`deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='岗位表';
+
+-- 5. 角色表
+CREATE TABLE IF NOT EXISTS `sys_role` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '角色ID',
+    `role_code` varchar(64) NOT NULL COMMENT '角色编码',
+    `role_name` varchar(64) NOT NULL COMMENT '角色名称',
+    `role_type` varchar(32) DEFAULT NULL COMMENT '角色类型：system-系统角色，custom-自定义角色',
+    `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序号',
+    `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
+    `remark` varchar(512) DEFAULT NULL COMMENT '备注',
+    `deleted` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
+    `create_by` bigint DEFAULT NULL COMMENT '创建人ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_by` bigint DEFAULT NULL COMMENT '更新人ID',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_role_code` (`role_code`),
+    KEY `idx_status` (`status`),
+    KEY `idx_deleted` (`deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色表';
+
+-- 6. 权限表（菜单/按钮/接口权限）
+CREATE TABLE IF NOT EXISTS `sys_permission` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '权限ID',
+    `parent_id` bigint NOT NULL DEFAULT 0 COMMENT '父权限ID，0表示顶级权限',
+    `permission_type` varchar(32) NOT NULL COMMENT '权限类型：menu-菜单，button-按钮，api-接口',
+    `permission_name` varchar(64) NOT NULL COMMENT '权限名称',
+    `permission_code` varchar(128) NOT NULL COMMENT '权限编码（唯一标识）',
+    `path` varchar(255) DEFAULT NULL COMMENT '路由路径（菜单类型使用）',
+    `component` varchar(255) DEFAULT NULL COMMENT '组件路径（菜单类型使用）',
+    `icon` varchar(64) DEFAULT NULL COMMENT '图标（菜单类型使用）',
+    `api_url` varchar(255) DEFAULT NULL COMMENT '接口URL（接口类型使用）',
+    `api_method` varchar(16) DEFAULT NULL COMMENT '接口请求方式：GET,POST,PUT,DELETE等（接口类型使用）',
+    `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序号',
+    `visible` tinyint NOT NULL DEFAULT 1 COMMENT '是否显示：0-隐藏，1-显示',
+    `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
+    `remark` varchar(512) DEFAULT NULL COMMENT '备注',
+    `deleted` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
+    `create_by` bigint DEFAULT NULL COMMENT '创建人ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_by` bigint DEFAULT NULL COMMENT '更新人ID',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_permission_code` (`permission_code`),
+    KEY `idx_parent_id` (`parent_id`),
+    KEY `idx_permission_type` (`permission_type`),
+    KEY `idx_status` (`status`),
+    KEY `idx_deleted` (`deleted`),
+    KEY `idx_status_deleted_type` (`status`, `deleted`, `permission_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='权限表';
+
+-- 7. 用户角色关联表
+CREATE TABLE IF NOT EXISTS `sys_user_role` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '关联ID',
+    `user_id` bigint NOT NULL COMMENT '用户ID',
+    `role_id` bigint NOT NULL COMMENT '角色ID',
+    `create_by` bigint DEFAULT NULL COMMENT '创建人ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_role` (`user_id`, `role_id`),
+    KEY `idx_user_id` (`user_id`),
+    KEY `idx_role_id` (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户角色关联表';
+
+-- 8. 角色权限关联表
+CREATE TABLE IF NOT EXISTS `sys_role_permission` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '关联ID',
+    `role_id` bigint NOT NULL COMMENT '角色ID',
+    `permission_id` bigint NOT NULL COMMENT '权限ID',
+    `create_by` bigint DEFAULT NULL COMMENT '创建人ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_role_permission` (`role_id`, `permission_id`),
+    KEY `idx_role_id` (`role_id`),
+    KEY `idx_permission_id` (`permission_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色权限关联表';
+
+-- 9. 用户部门关联表
+CREATE TABLE IF NOT EXISTS `sys_user_dept` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '关联ID',
+    `user_id` bigint NOT NULL COMMENT '用户ID',
+    `dept_id` bigint NOT NULL COMMENT '部门ID',
+    `is_primary` tinyint NOT NULL DEFAULT 0 COMMENT '是否主部门：0-否，1-是',
+    `create_by` bigint DEFAULT NULL COMMENT '创建人ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_dept` (`user_id`, `dept_id`),
+    KEY `idx_user_id` (`user_id`),
+    KEY `idx_dept_id` (`dept_id`),
+    KEY `idx_is_primary` (`is_primary`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户部门关联表';
+
+-- 10. 用户岗位关联表
+CREATE TABLE IF NOT EXISTS `sys_user_post` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '关联ID',
+    `user_id` bigint NOT NULL COMMENT '用户ID',
+    `post_id` bigint NOT NULL COMMENT '岗位ID',
+    `is_primary` tinyint NOT NULL DEFAULT 0 COMMENT '是否主岗位：0-否，1-是',
+    `create_by` bigint DEFAULT NULL COMMENT '创建人ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_post` (`user_id`, `post_id`),
+    KEY `idx_user_id` (`user_id`),
+    KEY `idx_post_id` (`post_id`),
+    KEY `idx_is_primary` (`is_primary`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户岗位关联表';
+
+-- ==================== 初始化数据 ====================
+
+-- 初始化超级管理员用户（密码：admin123）
+-- 注意：密码使用BCrypt加密，这里是示例密码"admin123"的加密结果
+-- 实际使用时，应该通过代码生成BCrypt加密后的密码
+-- BCrypt("admin123") = $2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iwK8pJ6C
+INSERT IGNORE INTO `sys_user` (`id`, `username`, `password`, `nickname`, `real_name`, `status`, `locked`, `deleted`, `create_time`, `update_time`) 
+VALUES (1, 'admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iwK8pJ6C', '超级管理员', '超级管理员', 1, 0, 0, NOW(), NOW());
+
+-- 初始化系统管理员角色
+INSERT IGNORE INTO `sys_role` (`id`, `role_code`, `role_name`, `role_type`, `status`, `deleted`, `create_time`, `update_time`)
+VALUES (1, 'admin', '超级管理员', 'system', 1, 0, NOW(), NOW());
+
+-- 初始化普通用户角色
+INSERT IGNORE INTO `sys_role` (`id`, `role_code`, `role_name`, `role_type`, `status`, `deleted`, `create_time`, `update_time`)
+VALUES (2, 'user', '普通用户', 'system', 1, 0, NOW(), NOW());
+
+-- 给超级管理员分配角色
+INSERT IGNORE INTO `sys_user_role` (`user_id`, `role_id`, `create_time`) 
+VALUES (1, 1, NOW());
