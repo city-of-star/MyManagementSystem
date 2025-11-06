@@ -1,5 +1,5 @@
 -- 创建 mms_dev_core 数据库
-CREATE DATABASE `mms_dev_core` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS `mms_dev_core` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 使用该数据库
 USE `mms_dev_core`;
