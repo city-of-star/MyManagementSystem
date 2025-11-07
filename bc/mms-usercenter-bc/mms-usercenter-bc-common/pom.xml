@@ -12,11 +12,16 @@
     <artifactId>mms-usercenter-bc-common</artifactId>
 
     <dependencies>
+
+        <!-- ==================== 基础依赖包，非特殊情况无需变动 ==================== -->
+
         <!-- Spring Boot Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+
+        <!-- ==================== 工具相关依赖引入 ==================== -->
 
         <!-- Lombok -->
         <dependency>
@@ -24,6 +29,19 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!-- MyBatis Plus -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        </dependency>
+
+        <!-- Knife4j文档 -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

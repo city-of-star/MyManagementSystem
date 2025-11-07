@@ -23,6 +23,7 @@
         <module>mms-common-bc</module>
         <module>mms-base-bc</module>
         <module>mms-usercenter-bc</module>
+        <module>mms-gateway-bc</module>
     </modules>
 
     <!-- 属性配置 -->
