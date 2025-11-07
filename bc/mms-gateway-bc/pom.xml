@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.mms</groupId>
         <artifactId>mms-parent</artifactId>
@@ -10,11 +11,19 @@
     </parent>
 
     <artifactId>mms-gateway-bc</artifactId>
+    <packaging>pom</packaging>
+    <name>MMS Gateway BC</name>
+    <description>网关服务模块</description>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <!-- 统一依赖，所有子模块都会继承 -->
+    <dependencies>
+
+        <!-- 引入 common 模块聚合包，包含 common 下的所有子模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-common-bc-all</artifactId>
+        </dependency>
+
+    </dependencies>
 
 </project>

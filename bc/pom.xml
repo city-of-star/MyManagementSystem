@@ -51,6 +51,7 @@
         <!-- 工具类 -->
         <lombok.version>1.18.30</lombok.version>
         <hutool.version>5.8.25</hutool.version>
+        <jjwt.version>0.12.5</jjwt.version>
         
         <!-- Knife4j文档 -->
         <knife4j.version>4.4.0</knife4j.version>
@@ -135,6 +136,23 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
+            </dependency>
+
+            <!-- JWT工具类 -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
             </dependency>
 
             <!-- Knife4j文档 -->
