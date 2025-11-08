@@ -52,6 +52,7 @@
         <lombok.version>1.18.30</lombok.version>
         <hutool.version>5.8.25</hutool.version>
         <jjwt.version>0.12.5</jjwt.version>
+        <jbcrypt.version>0.4</jbcrypt.version>
         
         <!-- Knife4j文档 -->
         <knife4j.version>4.4.0</knife4j.version>
@@ -153,6 +154,13 @@
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-jackson</artifactId>
                 <version>${jjwt.version}</version>
+            </dependency>
+
+            <!-- BCrypt 密码加密 -->
+            <dependency>
+                <groupId>org.mindrot</groupId>
+                <artifactId>jbcrypt</artifactId>
+                <version>${jbcrypt.version}</version>
             </dependency>
 
             <!-- Knife4j文档 -->

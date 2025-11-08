@@ -45,6 +45,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- BCrypt 密码加密 -->
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+        </dependency>
+
         <!-- Spring Boot Starter Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

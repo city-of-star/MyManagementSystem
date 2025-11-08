@@ -234,7 +234,7 @@ CREATE TABLE IF NOT EXISTS `sys_user_post` (
 -- 实际使用时，应该通过代码生成BCrypt加密后的密码
 -- BCrypt("admin123") = $2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iwK8pJ6C
 INSERT IGNORE INTO `sys_user` (`id`, `username`, `password`, `nickname`, `real_name`, `status`, `locked`, `deleted`, `create_time`, `update_time`) 
-VALUES (1, 'admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iwK8pJ6C', '超级管理员', '超级管理员', 1, 0, 0, NOW(), NOW());
+VALUES (1, 'admin', '$2a$10$cU5acgjEYlHA.2cql1DmiOVcTKexIR0iKpKAIda0gJyLdKxeE8Lt.', '超级管理员', '超级管理员', 1, 0, 0, NOW(), NOW());
 
 -- 初始化系统管理员角色
 INSERT IGNORE INTO `sys_role` (`id`, `role_code`, `role_name`, `role_type`, `status`, `deleted`, `create_time`, `update_time`)
