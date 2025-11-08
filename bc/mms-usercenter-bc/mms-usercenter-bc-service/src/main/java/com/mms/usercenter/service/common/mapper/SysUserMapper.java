@@ -1,7 +1,7 @@
 package com.mms.usercenter.service.common.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.mms.usercenter.common.login.entity.SysUserEntity;
+import com.mms.usercenter.common.auth.entity.SysUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

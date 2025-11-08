@@ -1,19 +1,19 @@
-package com.mms.usercenter.service.login.service.impl;
+package com.mms.usercenter.service.auth.service.impl;
 
 import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import com.mms.usercenter.common.common.utils.JwtUtil;
-import com.mms.usercenter.common.login.dto.LoginDto;
-import com.mms.usercenter.common.login.entity.SysUserEntity;
-import com.mms.usercenter.common.login.vo.LoginVo;
+import com.mms.usercenter.common.auth.dto.LoginDto;
+import com.mms.usercenter.common.auth.entity.SysUserEntity;
+import com.mms.usercenter.common.auth.vo.LoginVo;
 import com.mms.usercenter.service.common.mapper.SysUserMapper;
-import com.mms.usercenter.service.login.service.LoginService;
+import com.mms.usercenter.service.auth.service.AuthService;
 import jakarta.annotation.Resource;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 /**
- * 实现功能【用户登录注册服务实现类】
+ * 实现功能【用户认证服务实现类】
  * <p>
  *
  * <p>
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
  * @date 2025-11-07 11:39:50
  */
 @Service
-public class LoginServiceImpl implements LoginService {
+public class AuthServiceImpl implements AuthService {
 
     @Resource
     private SysUserMapper sysUserMapper;

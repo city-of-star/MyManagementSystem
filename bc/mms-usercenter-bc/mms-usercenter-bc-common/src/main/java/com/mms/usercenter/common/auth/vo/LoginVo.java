@@ -1,4 +1,4 @@
-package com.mms.usercenter.common.login.vo;
+package com.mms.usercenter.common.auth.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
