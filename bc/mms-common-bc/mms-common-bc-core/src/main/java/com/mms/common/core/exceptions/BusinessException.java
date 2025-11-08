@@ -60,6 +60,19 @@ public class BusinessException extends RuntimeException {
     }
 
     /**
+     * 构造方法3：使用自定义错误消息来覆盖预定义的ErrorCode枚举中的消息（灵活方式）
+     *
+     * @param errorCode 错误码枚举
+     * @param customMessage 自定义错误消息
+     */
+    public BusinessException(ErrorCode errorCode, String customMessage) {
+        super(customMessage);
+        this.errorCode = errorCode;
+        this.customMessage = customMessage;
+        this.isCustomMessage = true;
+    }
+
+    /**
      * 获取最终的错误消息
      * 
      * @return 错误消息

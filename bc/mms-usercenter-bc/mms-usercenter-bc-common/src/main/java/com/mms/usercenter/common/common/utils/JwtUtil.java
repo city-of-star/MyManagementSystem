@@ -47,12 +47,12 @@ public class JwtUtil {
     /**
      * 生成 JWT Token
      *
-     * @param userId 用户ID
+     * @param username 用户账号
      * @return JWT Token
      */
-    public String generateToken(Long userId) {
+    public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId);
+        claims.put("username", username);
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
