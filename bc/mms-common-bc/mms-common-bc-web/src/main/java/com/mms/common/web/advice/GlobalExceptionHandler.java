@@ -5,16 +5,22 @@ import com.mms.common.core.exceptions.BusinessException;
 import com.mms.common.core.exceptions.ServerException;
 import com.mms.common.web.response.Response;
 import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.util.Set;
+
 /**
- * 实现功能【全局异常捕获处理类】
+ * 实现功能【全局异常捕获处理器】
  *
  * @author li.hongyu
  * @date 2025-10-28 20:22:30
@@ -45,6 +51,39 @@ public class GlobalExceptionHandler {
     public Response<?> handleServerException(ServerException e) {
         log.error("服务器异常: 【{}】", e.getMessage());
         return Response.error(ErrorCode.SYSTEM_ERROR.getCode(), ErrorCode.SYSTEM_ERROR.getMessage());
+    }
+
+    /**
+     * 处理请求参数约束违反异常(HTTP 400)
+     * 处理 @RequestBody @Valid 注解触发的验证异常（ POST方法 ）
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Response<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        // 获取第一个验证失败的错误信息
+        FieldError fieldError = e.getBindingResult().getFieldError();
+        String message = fieldError != null ? fieldError.getDefaultMessage() : "参数验证失败";
+        
+        log.warn("参数约束违反异常: 【{}】", message);
+        return Response.error(ErrorCode.PARAM_INVALID.getCode(), message);
+    }
+
+    /**
+     * 处理请求参数约束违反异常(HTTP 400)
+     * 处理 @RequestParam @Valid 注解触发的验证异常（ GET方法 ）
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Response<?> handleConstraintViolationException(ConstraintViolationException e) {
+        // 获取第一个验证失败的错误信息
+        Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+        String message = violations.stream()
+                .map(ConstraintViolation::getMessage)
+                .findFirst()
+                .orElse("参数验证失败");
+        
+        log.warn("参数约束违反异常: 【{}】", message);
+        return Response.error(ErrorCode.PARAM_INVALID.getCode(), message);
     }
 
     /**
