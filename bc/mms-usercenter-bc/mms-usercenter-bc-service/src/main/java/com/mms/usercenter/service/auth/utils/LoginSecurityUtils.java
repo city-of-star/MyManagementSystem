@@ -1,4 +1,4 @@
-package com.mms.usercenter.service.auth.service;
+package com.mms.usercenter.service.auth.utils;
 
 import com.mms.usercenter.service.auth.config.LoginSecurityConfig;
 import jakarta.annotation.Resource;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2025-11-08 16:59:52
  */
 @Component
-public class LoginSecurityService {
+public class LoginSecurityUtils {
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;

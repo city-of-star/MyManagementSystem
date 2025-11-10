@@ -8,7 +8,7 @@ import com.mms.usercenter.common.auth.dto.LoginDto;
 import com.mms.usercenter.common.auth.entity.SysUserEntity;
 import com.mms.usercenter.common.auth.vo.LoginVo;
 import com.mms.usercenter.service.auth.config.LoginSecurityConfig;
-import com.mms.usercenter.service.auth.service.LoginSecurityService;
+import com.mms.usercenter.service.auth.utils.LoginSecurityUtils;
 import com.mms.usercenter.service.common.mapper.SysUserMapper;
 import com.mms.usercenter.service.auth.service.AuthService;
 import jakarta.annotation.Resource;
@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
     private JwtUtil jwtUtil;
 
     @Resource
-    private LoginSecurityService loginSecurityService;
+    private LoginSecurityUtils loginSecurityUtils;
 
     @Resource
     private LoginSecurityConfig securityConfig;
@@ -42,8 +42,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginVo login(LoginDto dto) {
         try {
-            if (loginSecurityService.isAccountLocked(dto.getUsername())) {
-                long remainingTime = loginSecurityService.getLockRemainingTime(dto.getUsername());
+            if (loginSecurityUtils.isAccountLocked(dto.getUsername())) {
+                long remainingTime = loginSecurityUtils.getLockRemainingTime(dto.getUsername());
                 throw new BusinessException(ErrorCode.ACCOUNT_LOCKED,
                         String.format("账号已被锁定，请在 %d 分钟后重试", remainingTime / 60));
             }
@@ -74,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
             }
 
             // 登录成功，重置失败次数
-            loginSecurityService.resetLoginAttempts(dto.getUsername());
+            loginSecurityUtils.resetLoginAttempts(dto.getUsername());
 
             // 更新最后登录时间和IP（需要获取客户端IP）
             // user.setLastLoginTime(LocalDateTime.now());
@@ -100,22 +100,16 @@ public class AuthServiceImpl implements AuthService {
      */
     private void handleLoginFailure(String username, SysUserEntity user) {
         // 增加失败次数
-        loginSecurityService.incrementLoginAttempts(username);
+        loginSecurityUtils.incrementLoginAttempts(username);
 
         // 获取失败次数
-        int attempts = loginSecurityService.getLoginAttempts(username);
+        int attempts = loginSecurityUtils.getLoginAttempts(username);
 
         // 如果达到最大尝试次数，锁定账号
         if (attempts >= securityConfig.getMaxAttempts()) {
 
             // 锁定账号
-            loginSecurityService.lockAccount(username);
-
-            // 更新数据库中的锁定状态
-             if (user != null) {
-                 user.setLocked(1);
-                 sysUserMapper.updateById(user);
-             }
+            loginSecurityUtils.lockAccount(username);
 
             throw new BusinessException(ErrorCode.ACCOUNT_LOCKED,
                     String.format("登录失败次数过多，账号已被锁定 %d 分钟", securityConfig.getLockTime()));
@@ -135,17 +129,10 @@ public class AuthServiceImpl implements AuthService {
     public void unlockAccount(String username) {
 
         // 重置登录失败次数
-        loginSecurityService.resetLoginAttempts(username);
+        loginSecurityUtils.resetLoginAttempts(username);
 
         // 删除锁定状态
-        loginSecurityService.clearAccountLock(username);
-
-        // 更新数据库中的锁定状态
-         SysUserEntity user = sysUserMapper.selectByUsername(username);
-         if (user != null) {
-             user.setLocked(0);
-             sysUserMapper.updateById(user);
-         }
+        loginSecurityUtils.clearAccountLock(username);
     }
 
 }
