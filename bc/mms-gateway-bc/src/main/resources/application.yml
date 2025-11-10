@@ -1,0 +1,43 @@
+server:
+  port: 5092
+
+spring:
+  application:
+    name: gateway
+  profiles:
+    active: DEV
+  config:
+    import:
+      - optional:nacos:public-${spring.profiles.active}.yaml?refreshEnabled=true
+      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml?refreshEnabled=true
+  cloud:
+    nacos:
+      server-addr: 111.229.150.28:8848
+      username: nacos
+      password: nacos
+      config:
+        namespace: ${spring.profiles.active}
+        group: DEFAULT_GROUP
+        file-extension: yaml
+      discovery:
+        namespace: ${spring.profiles.active}
+        group: DEFAULT_GROUP
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      default-filters: []
+      routes:
+        - id: usercenter-route
+          uri: lb://usercenter
+          predicates:
+            - Path=/usercenter/**
+          filters:
+            - StripPrefix=1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
