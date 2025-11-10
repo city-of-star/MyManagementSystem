@@ -34,10 +34,42 @@ spring:
             - Path=/usercenter/**
           filters:
             - StripPrefix=1
+        
+        - id: base-route
+          uri: lb://base
+          predicates:
+            - Path=/base/**
+          filters:
+            - StripPrefix=1
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics  # 可以加上metrics查看指标
+  endpoint:
+    health:
+      show-details: always  # 显示详细健康信息
+      show-components: always  # 显示组件状态
+    metrics:
+      enabled: true
+
+# Info端点信息配置
+info:
+  app:
+    name: "网关服务"
+    version: "1.0.0"
+    description: "业务中台API网关"
+  build:
+    artifact: "mms-gateway-bc"
+    version: "1.0.0"
+  environment: ${spring.profiles.active:default}
+  contact:
+    team: "架构组"
+    email: "2722562862@qq.com"
+  features:
+    - "服务路由"
+    - "负载均衡"
+    - "服务发现"
+    - "配置管理"
 
