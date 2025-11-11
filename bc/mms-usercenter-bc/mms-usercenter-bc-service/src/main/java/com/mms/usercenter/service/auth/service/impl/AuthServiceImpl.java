@@ -3,7 +3,7 @@ package com.mms.usercenter.service.auth.service.impl;
 import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import com.mms.common.core.exceptions.ServerException;
-import com.mms.usercenter.common.common.utils.JwtUtil;
+import com.mms.common.security.jwt.JwtUtil;
 import com.mms.usercenter.common.auth.dto.LoginDto;
 import com.mms.usercenter.common.auth.entity.SysUserEntity;
 import com.mms.usercenter.common.auth.vo.LoginVo;

@@ -41,6 +41,13 @@
             <artifactId>mms-common-bc-database</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <!-- 依赖 mms-common-bc-security 模块（提供JWT等安全能力） -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-common-bc-security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>
