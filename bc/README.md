@@ -20,10 +20,12 @@ MMS（Management System）是一个企业级管理系统，采用微服务架构
 
 ```
 bc/
-├── mms-common-bc/              # 公共模块
-│   ├── mms-common-bc-core/     # 核心工具类
-│   ├── mms-common-bc-mybatis/  # MyBatis配置
-│   └── mms-common-bc-web/      # Web相关配置
+├── mms-common-bc/                  # 公共模块
+│   ├── mms-common-bc-core/         # 核心工具类
+│   ├── mms-common-bc-web-common/   # Web通用模块（Response等纯POJO，无MVC依赖）
+│   ├── mms-common-bc-web-mvc/      # Web MVC模块（全局异常处理器、Swagger配置）
+│   ├── mms-common-bc-database/     # 数据库配置
+│   └── mms-common-bc-all/          # Common模块聚合包
 ├── mms-base-bc/                # 基础数据模块
 │   ├── mms-base-bc-common/     # 公共组件
 │   ├── mms-base-bc-controller/ # 控制器层

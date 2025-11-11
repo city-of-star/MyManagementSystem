@@ -17,7 +17,8 @@
 
     <modules>
         <module>mms-common-bc-core</module>
-        <module>mms-common-bc-web</module>
+        <module>mms-common-bc-web-common</module>
+        <module>mms-common-bc-web-mvc</module>
         <module>mms-common-bc-database</module>
         <module>mms-common-bc-all</module>
     </modules>

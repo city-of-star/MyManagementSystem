@@ -21,6 +21,9 @@ import java.util.Set;
 
 /**
  * 实现功能【全局异常捕获处理器】
+ * <p>
+ *     仅适用于Spring MVC服务（业务服务），不适用于Spring Cloud Gateway（WebFlux）
+ * <p/>
  *
  * @author li.hongyu
  * @date 2025-10-28 20:22:30
@@ -136,3 +139,4 @@ public class GlobalExceptionHandler {
         return Response.error(ErrorCode.SYSTEM_ERROR.getCode(), ErrorCode.SYSTEM_ERROR.getMessage());
     }
 }
+

@@ -19,9 +19,16 @@
     <dependencies>
 
         <!-- 引入 common 模块聚合包，包含 common 下的所有子模块 -->
+        <!-- 网关服务排除 web-mvc 模块，避免引入 Spring MVC 依赖（网关使用 WebFlux） -->
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-common-bc-all</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.mms</groupId>
+                    <artifactId>mms-common-bc-web-mvc</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Spring Cloud Gateway -->
