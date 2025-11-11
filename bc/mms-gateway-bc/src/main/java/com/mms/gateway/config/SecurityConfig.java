@@ -34,9 +34,10 @@ public class SecurityConfig {
                         .pathMatchers("/actuator/**").permitAll()
                         // 放行usercenter端点，用于登录和注册
                         .pathMatchers("/usercenter/auth/**").permitAll()
-                        // 全部放权
+                        // 其余接口默认放行（若启用鉴权，在此改为 .anyExchange().authenticated()）
                         .anyExchange().permitAll()
                 )
+                // 交由 Spring Cloud Gateway 的 GlobalFilter（如 JwtAuthFilter）做统一鉴权
                 .build();
     }
 }

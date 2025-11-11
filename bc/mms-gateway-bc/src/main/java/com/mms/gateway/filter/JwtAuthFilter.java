@@ -31,11 +31,15 @@ import java.util.Optional;
 
 /**
  * 实现功能【JWT 鉴权过滤器】
- *
+ * <p>
  * - 支持白名单放行
  * - 校验 Authorization: Bearer <token>
  * - 解析用户信息并透传到下游
  * - 未认证/无效时返回标准响应体（带 traceId）
+ * </p>
+ *
+ * @author li.hongyu
+ * @date 2025-11-10 15:36:17
  */
 @Component
 public class JwtAuthFilter implements GlobalFilter, Ordered {
@@ -67,15 +71,18 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
+        // 1) 白名单直接放行（无需校验 JWT）
         if (isWhitelisted(path)) {
             return chain.filter(exchange);
         }
 
+        // 2) 基础依赖校验（避免配置缺失导致 NPE）
         if (jwtUtil == null) {
             log.error("JWT 未配置，拒绝访问");
             return writeError(exchange, HttpStatus.INTERNAL_SERVER_ERROR, "网关JWT配置缺失");
         }
 
+        // 3) 读取并校验 Authorization 头部
         String authHeader = request.getHeaders().getFirst(HEADER_AUTHORIZATION);
         if (!StringUtils.hasText(authHeader) || !authHeader.startsWith("Bearer ")) {
             return writeError(exchange, HttpStatus.UNAUTHORIZED, "未认证");
@@ -86,12 +93,13 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             return writeError(exchange, HttpStatus.UNAUTHORIZED, "令牌无效或已过期");
         }
 
+        // 4) 解析 Token，提取用户关键信息（示例：username）
         Claims claims = jwtUtil.parseToken(token);
         String username = Optional.ofNullable(claims.get("username"))
                 .map(Object::toString)
                 .orElse(null);
 
-        // 将用户信息透传到下游服务
+        // 5) 将用户信息透传到下游服务（通过自定义请求头），避免各服务重复解析 JWT
         ServerHttpRequest mutatedRequest = request.mutate()
                 .headers(httpHeaders -> {
                     if (StringUtils.hasText(username)) {
@@ -117,12 +125,13 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         response.setStatusCode(status);
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-        // 确保 traceId 写入 MDC 以便 Response 序列化包含
+        // 将 traceId 放入 MDC，便于统一响应结构（如日志/返回体）写回 traceId
         String traceId = exchange.getRequest().getHeaders().getFirst(HEADER_TRACE_ID);
         if (StringUtils.hasText(traceId)) {
             MDC.put("traceId", traceId);
         }
 
+        // 标准错误响应体（与后端服务保持一致的 Response 结构）
         Response<Object> body = Response.error(status.value(), message);
         byte[] bytes = toJsonBytes(body);
         DataBuffer buffer = response.bufferFactory().wrap(bytes);
@@ -142,7 +151,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        // 在 TraceFilter 之后执行，保证已生成 traceId
+        // 在 TraceFilter 之后执行，保证 traceId 已经生成并透传到请求头
         return Ordered.HIGHEST_PRECEDENCE + 20;
     }
 }
