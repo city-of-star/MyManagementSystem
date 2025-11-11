@@ -20,10 +20,10 @@ import reactor.core.publisher.Mono;
  * @date 2025-11-10 15:36:17
  */
 @Component
-public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
+public class JwtAuthFilter implements GlobalFilter, Ordered {
 
     // 日志记录器
-    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
