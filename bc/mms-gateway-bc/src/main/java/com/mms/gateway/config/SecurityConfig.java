@@ -34,9 +34,8 @@ public class SecurityConfig {
                         .pathMatchers("/actuator/**").permitAll()
                         // 放行usercenter端点，用于登录和注册
                         .pathMatchers("/usercenter/auth/**").permitAll()
-                        .pathMatchers("/base/**").permitAll()
-                        // 所有其他请求都需要鉴权
-                        .anyExchange().authenticated()
+                        // 全部放权
+                        .anyExchange().permitAll()
                 )
                 .build();
     }
