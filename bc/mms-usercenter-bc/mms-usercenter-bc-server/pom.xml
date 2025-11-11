@@ -14,6 +14,8 @@
 
     <dependencies>
 
+        <!-- ==================== 基础依赖包，非特殊情况无需变动 ==================== -->
+
         <!-- Spring Boot Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -22,22 +24,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- mms-common-bc-all（包含 core、web、database）已从父模块继承，无需重复声明 -->
-
-        <!-- 依赖其他模块 -->
-        <dependency>
-            <groupId>com.mms</groupId>
-            <artifactId>mms-usercenter-bc-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mms</groupId>
-            <artifactId>mms-usercenter-bc-service</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mms</groupId>
-            <artifactId>mms-usercenter-bc-controller</artifactId>
         </dependency>
 
         <!-- Nacos Config -->
@@ -64,6 +50,33 @@
             <artifactId>spring-cloud-openfeign-core</artifactId>
         </dependency>
 
+        <!-- 依赖 mms-usercenter-bc-common 模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-usercenter-bc-common</artifactId>
+        </dependency>
+
+        <!-- 依赖 mms-usercenter-bc-controller 模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-usercenter-bc-controller</artifactId>
+        </dependency>
+
+        <!-- 依赖 mms-usercenter-bc-service 模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-usercenter-bc-service</artifactId>
+        </dependency>
+
+        <!-- ==================== 工具相关依赖引入 ==================== -->
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- MyBatis Plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -77,12 +90,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
+
 
     </dependencies>
 

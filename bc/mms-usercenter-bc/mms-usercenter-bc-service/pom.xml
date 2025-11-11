@@ -12,18 +12,36 @@
     <artifactId>mms-usercenter-bc-service</artifactId>
 
     <dependencies>
-        <!-- 依赖 feign-api 模块 -->
+
+        <!-- ==================== 基础依赖包，非特殊情况无需变动 ==================== -->
+
+        <!-- Spring Boot Starter Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 依赖 mms-usercenter-bc-feign-api 模块 -->
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-usercenter-bc-feign-api</artifactId>
         </dependency>
-        <!-- 依赖 Common 模块 -->
+
+        <!-- 依赖 mms-usercenter-bc-common 模块 -->
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-usercenter-bc-common</artifactId>
         </dependency>
 
-        <!-- mms-common-bc-all（包含 core、web、database）已从父模块继承，无需重复声明 -->
+        <!-- ==================== 工具相关依赖引入 ==================== -->
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- MyBatis Plus -->
         <dependency>
@@ -38,24 +56,10 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- BCrypt 密码加密 -->
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
-        </dependency>
-
-        <!-- Spring Boot Starter Test -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
