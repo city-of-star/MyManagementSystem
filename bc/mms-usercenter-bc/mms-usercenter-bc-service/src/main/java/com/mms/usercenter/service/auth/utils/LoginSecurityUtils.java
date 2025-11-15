@@ -77,8 +77,7 @@ public class LoginSecurityUtils {
      */
     public long getLockRemainingTime(String username) {
         String lockKey = securityConfig.getLockKeyPrefix() + username;
-        Long remainingSeconds = redisTemplate.getExpire(lockKey, TimeUnit.SECONDS);
-        return remainingSeconds != null ? remainingSeconds : 0L;
+        return redisTemplate.getExpire(lockKey, TimeUnit.SECONDS);
     }
 
     /**

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 实现功能【Swagger 配置】
  * <p>
- *     仅适用于Spring MVC服务（业务服务），不适用于Spring Cloud Gateway（WebFlux）
+ *   仅适用于Spring MVC服务（业务服务），不适用于Spring Cloud Gateway（WebFlux）
  * <p/>
  *
  * @author li.hongyu
