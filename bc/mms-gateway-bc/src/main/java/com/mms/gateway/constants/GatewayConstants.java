@@ -53,14 +53,19 @@ public class GatewayConstants {
      */
     public static class FilterOrder {
         /**
-         * TraceFilter 的执行顺序（最高优先级）
+         * 全局异常处理器的执行顺序（最高优先级，确保最先处理异常）
          */
-        public static final int TRACE_FILTER = Integer.MIN_VALUE;
+        public static final int GLOBAL_EXCEPTION_HANDLER = Integer.MIN_VALUE + 100;
+
+        /**
+         * TraceFilter 的执行顺序（在异常处理器之后）
+         */
+        public static final int TRACE_FILTER = GLOBAL_EXCEPTION_HANDLER + 100;
 
         /**
          * JwtAuthFilter 的执行顺序（在 TraceFilter 之后）
          */
-        public static final int JWT_AUTH_FILTER = TRACE_FILTER + 20;
+        public static final int JWT_AUTH_FILTER = TRACE_FILTER + 100;
     }
 
     /**

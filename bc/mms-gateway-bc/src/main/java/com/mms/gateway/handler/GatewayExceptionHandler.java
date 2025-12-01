@@ -1,5 +1,6 @@
 package com.mms.gateway.handler;
 
+import com.mms.gateway.constants.GatewayConstants;
 import com.mms.gateway.utils.GatewayExceptionUtils;
 import com.mms.gateway.utils.GatewayResponseUtils;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -21,8 +22,7 @@ import reactor.core.publisher.Mono;
  * @date 2025-11-11 20:41:36
  */
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE) // 最高优先级，确保最先处理异常
-public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
+public class GatewayExceptionHandler implements ErrorWebExceptionHandler, Ordered {
 
 	@Override
 	public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
@@ -33,6 +33,12 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
 
 		// 使用统一的响应工具写入错误响应
 		return GatewayResponseUtils.writeError(exchange, status, message);
+	}
+
+	@Override
+	public int getOrder() {
+		// 设置为最高优先级，确保最先执行
+		return GatewayConstants.FilterOrder.GLOBAL_EXCEPTION_HANDLER;
 	}
 }
 
