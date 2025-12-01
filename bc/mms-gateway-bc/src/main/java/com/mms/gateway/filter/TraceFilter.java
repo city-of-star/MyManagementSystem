@@ -5,6 +5,7 @@ import com.mms.gateway.utils.GatewayMdcUtils;
 import com.mms.gateway.utils.GatewayTraceUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -21,8 +22,7 @@ import reactor.core.publisher.Mono;
  * @date 2025-11-10 15:36:17
  */
 @Component
-@Order(GatewayConstants.FilterOrder.TRACE_FILTER)
-public class TraceFilter implements GlobalFilter {
+public class TraceFilter implements GlobalFilter, Ordered {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -41,6 +41,12 @@ public class TraceFilter implements GlobalFilter {
 		// 4) 继续过滤器链，并在完成后清理 MDC
 		return chain.filter(exchange.mutate().request(mutated).build())
 				.doFinally(signalType -> GatewayMdcUtils.removeTraceId()); // 清理 MDC，避免线程复用污染
+	}
+
+	@Override
+	public int getOrder() {
+		// 设置为最高优先级（Order值最小），确保最先执行
+		return GatewayConstants.FilterOrder.TRACE_FILTER;
 	}
 }
 
