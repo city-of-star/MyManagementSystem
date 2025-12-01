@@ -1,4 +1,4 @@
-package com.mms.gateway.util;
+package com.mms.gateway.utils;
 
 import com.mms.gateway.constants.GatewayConstants;
 import org.springframework.util.StringUtils;
@@ -15,7 +15,7 @@ import java.util.UUID;
  * @author li.hongyu
  * @date 2025-11-12
  */
-public class GatewayTraceUtil {
+public class GatewayTraceUtils {
 
     /**
      * 从请求中提取或生成 TraceId
@@ -56,7 +56,7 @@ public class GatewayTraceUtil {
     /**
      * 私有构造函数，防止实例化
      */
-    private GatewayTraceUtil() {
+    private GatewayTraceUtils() {
         throw new UnsupportedOperationException("工具类不允许实例化");
     }
 }

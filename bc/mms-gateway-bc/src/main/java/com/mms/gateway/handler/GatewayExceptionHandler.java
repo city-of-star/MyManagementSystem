@@ -1,7 +1,7 @@
 package com.mms.gateway.handler;
 
-import com.mms.gateway.util.GatewayExceptionUtil;
-import com.mms.gateway.util.GatewayResponseUtil;
+import com.mms.gateway.utils.GatewayExceptionUtils;
+import com.mms.gateway.utils.GatewayResponseUtils;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -27,12 +27,12 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
 	@Override
 	public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
 		// 根据异常类型解析对应的 HTTP 状态码
-		HttpStatus status = GatewayExceptionUtil.resolveHttpStatus(ex);
+		HttpStatus status = GatewayExceptionUtils.resolveHttpStatus(ex);
 		// 根据异常和状态码解析用户友好的错误消息
-		String message = GatewayExceptionUtil.resolveMessage(ex, status);
+		String message = GatewayExceptionUtils.resolveMessage(ex, status);
 
 		// 使用统一的响应工具写入错误响应
-		return GatewayResponseUtil.writeError(exchange, status, message);
+		return GatewayResponseUtils.writeError(exchange, status, message);
 	}
 }
 

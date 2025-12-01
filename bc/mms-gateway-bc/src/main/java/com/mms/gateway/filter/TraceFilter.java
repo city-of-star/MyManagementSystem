@@ -1,11 +1,10 @@
 package com.mms.gateway.filter;
 
 import com.mms.gateway.constants.GatewayConstants;
-import com.mms.gateway.util.GatewayMdcUtil;
-import com.mms.gateway.util.GatewayTraceUtil;
+import com.mms.gateway.utils.GatewayMdcUtils;
+import com.mms.gateway.utils.GatewayTraceUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -28,10 +27,10 @@ public class TraceFilter implements GlobalFilter {
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		// 1) 从请求头读取 traceId；若不存在则生成新的 traceId
-		String traceId = GatewayTraceUtil.getOrGenerateTraceId(exchange);
+		String traceId = GatewayTraceUtils.getOrGenerateTraceId(exchange);
 
 		// 2) 写入 MDC，便于日志打印关联
-		GatewayMdcUtil.putTraceId(traceId);
+		GatewayMdcUtils.putTraceId(traceId);
 
 		// 3) 将 traceId 透传到下游服务（写入请求头）
 		ServerHttpRequest mutated = exchange.getRequest()
@@ -41,7 +40,7 @@ public class TraceFilter implements GlobalFilter {
 
 		// 4) 继续过滤器链，并在完成后清理 MDC
 		return chain.filter(exchange.mutate().request(mutated).build())
-				.doFinally(signalType -> GatewayMdcUtil.removeTraceId()); // 清理 MDC，避免线程复用污染
+				.doFinally(signalType -> GatewayMdcUtils.removeTraceId()); // 清理 MDC，避免线程复用污染
 	}
 }
 

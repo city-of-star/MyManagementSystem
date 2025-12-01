@@ -1,4 +1,4 @@
-package com.mms.gateway.util;
+package com.mms.gateway.utils;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeoutException;
  * @author li.hongyu
  * @date 2025-11-12
  */
-public class GatewayExceptionUtil {
+public class GatewayExceptionUtils {
 
     /**
      * 根据异常类型解析对应的 HTTP 状态码
@@ -92,7 +92,7 @@ public class GatewayExceptionUtil {
     /**
      * 私有构造函数，防止实例化
      */
-    private GatewayExceptionUtil() {
+    private GatewayExceptionUtils() {
         throw new UnsupportedOperationException("工具类不允许实例化");
     }
 }

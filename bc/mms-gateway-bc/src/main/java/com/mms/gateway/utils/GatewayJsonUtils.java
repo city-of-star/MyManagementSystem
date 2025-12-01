@@ -1,4 +1,4 @@
-package com.mms.gateway.util;
+package com.mms.gateway.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
  * @author li.hongyu
  * @date 2025-11-12
  */
-public class GatewayJsonUtil {
+public class GatewayJsonUtils {
 
     /**
      * JSON 序列化工具（线程安全）
@@ -57,7 +57,7 @@ public class GatewayJsonUtil {
     /**
      * 私有构造函数，防止实例化
      */
-    private GatewayJsonUtil() {
+    private GatewayJsonUtils() {
         throw new UnsupportedOperationException("工具类不允许实例化");
     }
 }

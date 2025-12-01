@@ -1,7 +1,6 @@
-package com.mms.gateway.util;
+package com.mms.gateway.utils;
 
 import com.mms.common.web.response.Response;
-import org.slf4j.MDC;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,7 +17,7 @@ import reactor.core.publisher.Mono;
  * @author li.hongyu
  * @date 2025-11-12
  */
-public class GatewayResponseUtil {
+public class GatewayResponseUtils {
 
     /**
      * 写入错误响应
@@ -37,16 +36,16 @@ public class GatewayResponseUtil {
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         // 将 traceId 放入 MDC，便于统一响应结构（如日志/返回体）写回 traceId
-        GatewayMdcUtil.putTraceIdFromRequest(exchange);
+        GatewayMdcUtils.putTraceIdFromRequest(exchange);
 
         // 标准错误响应体（与后端服务保持一致的 Response 结构）
         Response<Object> body = Response.error(status.value(), message);
-        byte[] bytes = GatewayJsonUtil.toJsonBytes(body);
+        byte[] bytes = GatewayJsonUtils.toJsonBytes(body);
         DataBuffer buffer = response.bufferFactory().wrap(bytes);
 
         // 写入响应并清理 MDC
         return response.writeWith(Mono.just(buffer))
-                .doFinally(signalType -> GatewayMdcUtil.removeTraceId());
+                .doFinally(signalType -> GatewayMdcUtils.removeTraceId());
     }
 
     /**
@@ -63,20 +62,20 @@ public class GatewayResponseUtil {
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         // 将 traceId 放入 MDC
-        GatewayMdcUtil.putTraceIdFromRequest(exchange);
+        GatewayMdcUtils.putTraceIdFromRequest(exchange);
 
-        byte[] bytes = GatewayJsonUtil.toJsonBytes(body);
+        byte[] bytes = GatewayJsonUtils.toJsonBytes(body);
         DataBuffer buffer = response.bufferFactory().wrap(bytes);
 
         // 写入响应并清理 MDC
         return response.writeWith(Mono.just(buffer))
-                .doFinally(signalType -> GatewayMdcUtil.removeTraceId());
+                .doFinally(signalType -> GatewayMdcUtils.removeTraceId());
     }
 
     /**
      * 私有构造函数，防止实例化
      */
-    private GatewayResponseUtil() {
+    private GatewayResponseUtils() {
         throw new UnsupportedOperationException("工具类不允许实例化");
     }
 }

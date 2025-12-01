@@ -3,7 +3,7 @@ package com.mms.gateway.filter;
 import com.mms.common.security.jwt.JwtUtil;
 import com.mms.gateway.config.GatewayWhitelistConfig;
 import com.mms.gateway.constants.GatewayConstants;
-import com.mms.gateway.util.GatewayResponseUtil;
+import com.mms.gateway.utils.GatewayResponseUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -60,14 +60,14 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         String authHeader = request.getHeaders().getFirst(GatewayConstants.Headers.AUTHORIZATION);
         // 检查 Authorization 头是否存在且格式正确
         if (!StringUtils.hasText(authHeader) || !authHeader.startsWith(GatewayConstants.Headers.BEARER_PREFIX)) {
-            return GatewayResponseUtil.writeError(exchange, HttpStatus.UNAUTHORIZED, "未认证");
+            return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "未认证");
         }
 
         // 提取 JWT Token
         String token = authHeader.substring(GatewayConstants.Headers.BEARER_PREFIX.length()).trim();
         // 验证 Token 有效性
         if (!jwtUtil.validateToken(token)) {
-            return GatewayResponseUtil.writeError(exchange, HttpStatus.UNAUTHORIZED, "令牌无效或已过期");
+            return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "令牌无效或已过期");
         }
 
         // 3) 解析 Token，提取用户关键信息（示例：username）

@@ -1,5 +1,6 @@
 package com.mms.gateway.config;
 
+import com.mms.gateway.utils.GatewayPathMatcher;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -60,7 +61,7 @@ public class GatewayWhitelistConfig {
      * @return 如果路径在白名单中则返回 true
      */
     public boolean isWhitelisted(String path) {
-        return com.mms.gateway.util.GatewayPathMatcher.isWhitelisted(path, this.paths);
+        return GatewayPathMatcher.isWhitelisted(path, this.paths);
     }
 }
 

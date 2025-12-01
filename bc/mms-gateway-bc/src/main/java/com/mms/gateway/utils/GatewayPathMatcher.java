@@ -1,4 +1,4 @@
-package com.mms.gateway.util;
+package com.mms.gateway.utils;
 
 import org.springframework.util.AntPathMatcher;
 

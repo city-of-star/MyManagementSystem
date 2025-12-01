@@ -1,4 +1,4 @@
-package com.mms.gateway.util;
+package com.mms.gateway.utils;
 
 import com.mms.gateway.constants.GatewayConstants;
 import org.slf4j.MDC;
@@ -14,7 +14,7 @@ import org.springframework.web.server.ServerWebExchange;
  * @author li.hongyu
  * @date 2025-11-12
  */
-public class GatewayMdcUtil {
+public class GatewayMdcUtils {
 
     /**
      * 从请求头中提取 TraceId 并放入 MDC
@@ -68,7 +68,7 @@ public class GatewayMdcUtil {
     /**
      * 私有构造函数，防止实例化
      */
-    private GatewayMdcUtil() {
+    private GatewayMdcUtils() {
         throw new UnsupportedOperationException("工具类不允许实例化");
     }
 }
