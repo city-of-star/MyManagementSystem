@@ -30,14 +30,10 @@ public class SecurityConfig {
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 // 配置请求授权规则
                 .authorizeExchange(authorize -> authorize
-                        // 放行Actuator端点，用于监控和管理
-                        .pathMatchers("/actuator/**").permitAll()
-                        // 放行usercenter端点，用于登录和注册
-                        .pathMatchers("/usercenter/auth/**").permitAll()
-                        // 其余接口默认放行（若启用鉴权，在此改为 .anyExchange().authenticated()）
+                        // 所有接口全部放行
                         .anyExchange().permitAll()
                 )
-                // 交由 Spring Cloud Gateway 的 GlobalFilter（如 JwtAuthFilter）做统一鉴权
+                // 交由 Spring Cloud Gateway 的 JwtAuthFilter 做统一鉴权
                 .build();
     }
 }
