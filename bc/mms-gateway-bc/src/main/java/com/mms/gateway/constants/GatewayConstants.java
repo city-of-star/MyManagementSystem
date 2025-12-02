@@ -33,6 +33,11 @@ public class GatewayConstants {
         public static final String USER_NAME = "X-User-Name";
 
         /**
+         * 客户端IP请求头（透传到下游服务）
+         */
+        public static final String CLIENT_IP = "X-Client-Ip";
+
+        /**
          * Bearer Token 前缀
          */
         public static final String BEARER_PREFIX = "Bearer ";
@@ -63,9 +68,14 @@ public class GatewayConstants {
         public static final int TRACE_FILTER = GLOBAL_EXCEPTION_HANDLER + 100;
 
         /**
-         * JwtAuthFilter 的执行顺序（在 TraceFilter 之后）
+         * ClientIpFilter 的执行顺序（在 TraceFilter 之后）
          */
-        public static final int JWT_AUTH_FILTER = TRACE_FILTER + 100;
+        public static final int CLIENT_IP_FILTER = TRACE_FILTER + 100;
+
+        /**
+         * JwtAuthFilter 的执行顺序（在 ClientIpFilter 之后）
+         */
+        public static final int JWT_AUTH_FILTER = CLIENT_IP_FILTER + 100;
     }
 
     /**

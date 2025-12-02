@@ -4,6 +4,7 @@ import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import com.mms.common.core.exceptions.ServerException;
 import com.mms.common.security.jwt.JwtUtil;
+import com.mms.common.web.context.UserContextUtils;
 import com.mms.usercenter.common.auth.dto.LoginDto;
 import com.mms.usercenter.common.auth.entity.SysUserEntity;
 import com.mms.usercenter.common.auth.vo.LoginVo;
@@ -14,6 +15,9 @@ import com.mms.usercenter.service.auth.service.AuthService;
 import jakarta.annotation.Resource;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.time.LocalDateTime;
 
 /**
  * 实现功能【用户认证服务实现类】
@@ -76,10 +80,11 @@ public class AuthServiceImpl implements AuthService {
             // 登录成功，重置失败次数
             loginSecurityUtils.resetLoginAttempts(dto.getUsername());
 
-            // 更新最后登录时间和IP（需要获取客户端IP）
-            // user.setLastLoginTime(LocalDateTime.now());
-            // user.setLastLoginIp(getClientIp());
-            // sysUserMapper.updateById(user);
+            // 更新最后登录时间和IP
+            user.setLastLoginTime(LocalDateTime.now());
+            String clientIp = UserContextUtils.getClientIp();
+            user.setLastLoginIp(StringUtils.hasText(clientIp) ? clientIp : "unknown");
+            sysUserMapper.updateById(user);
 
             // 生成 JWT Token
             String token = jwtUtil.generateToken(dto.getUsername());
