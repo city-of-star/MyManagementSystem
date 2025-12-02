@@ -9,7 +9,7 @@ import org.springframework.http.HttpHeaders;
  * </p>
  *
  * @author li.hongyu
- * @date 2025-11-12
+ * @date 2025-12-01 14:46:18
  */
 public class GatewayConstants {
 

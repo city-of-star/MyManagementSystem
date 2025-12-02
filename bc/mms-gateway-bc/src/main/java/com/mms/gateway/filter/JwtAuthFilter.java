@@ -51,32 +51,32 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
-        // 1) 白名单直接放行（无需校验 JWT）
+        // 白名单直接放行
         if (whitelistConfig.isWhitelisted(path)) {
             return chain.filter(exchange);
         }
 
-        // 2) 读取并校验 Authorization 头部
+        // 读取 Authorization 头部
         String authHeader = request.getHeaders().getFirst(GatewayConstants.Headers.AUTHORIZATION);
         // 检查 Authorization 头是否存在且格式正确
         if (!StringUtils.hasText(authHeader) || !authHeader.startsWith(GatewayConstants.Headers.BEARER_PREFIX)) {
-            return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "未认证");
+            return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "请求未携带认证信息，请检查Authorization请求头是否存在");
         }
 
         // 提取 JWT Token
         String token = authHeader.substring(GatewayConstants.Headers.BEARER_PREFIX.length()).trim();
         // 验证 Token 有效性
         if (!jwtUtil.validateToken(token)) {
-            return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "令牌无效或已过期");
+            return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "身份验证已失效，请重新登录");
         }
 
-        // 3) 解析 Token，提取用户关键信息（示例：username）
+        // 解析 Token，提取用户关键信息
         Claims claims = jwtUtil.parseToken(token);
         String username = Optional.ofNullable(claims.get("username"))
                 .map(Object::toString)
                 .orElse(null);
 
-        // 4) 将用户信息透传到下游服务（通过自定义请求头），避免各服务重复解析 JWT
+        // 将用户信息透传到下游服务
         ServerHttpRequest mutatedRequest = request.mutate()
                 .headers(httpHeaders -> {
                     if (StringUtils.hasText(username)) {

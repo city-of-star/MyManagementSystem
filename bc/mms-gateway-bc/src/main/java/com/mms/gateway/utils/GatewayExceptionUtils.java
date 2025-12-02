@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
  * </p>
  *
  * @author li.hongyu
- * @date 2025-11-12
+ * @date 2025-12-01 15:36:27
  */
 public class GatewayExceptionUtils {
 

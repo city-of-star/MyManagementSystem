@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
  * </p>
  *
  * @author li.hongyu
- * @date 2025-11-12
+ * @date 2025-12-01 15:36:57
  */
 public class GatewayJsonUtils {
 

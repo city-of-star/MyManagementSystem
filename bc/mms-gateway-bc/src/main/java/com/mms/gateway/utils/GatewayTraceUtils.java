@@ -13,7 +13,7 @@ import java.util.UUID;
  * </p>
  *
  * @author li.hongyu
- * @date 2025-11-12
+ * @date 2025-12-01 15:54:19
  */
 public class GatewayTraceUtils {
 
