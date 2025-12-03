@@ -14,24 +14,11 @@
     <description>Common模块聚合包，包含common下的所有子模块，方便其他服务统一引入</description>
 
     <dependencies>
+
         <!-- 依赖 mms-common-bc-core 模块 -->
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-common-bc-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- 依赖 mms-common-bc-web-common 模块（包含Response等纯POJO，无MVC依赖） -->
-        <dependency>
-            <groupId>com.mms</groupId>
-            <artifactId>mms-common-bc-web-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- 依赖 mms-common-bc-web-mvc 模块（包含全局异常处理器和Swagger配置，仅用于业务服务） -->
-        <dependency>
-            <groupId>com.mms</groupId>
-            <artifactId>mms-common-bc-web-mvc</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -48,6 +35,14 @@
             <artifactId>mms-common-bc-security</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- 依赖 mms-common-bc-web-mvc 模块（包含全局异常处理器和Swagger配置，仅用于业务服务） -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-common-bc-web-mvc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>
