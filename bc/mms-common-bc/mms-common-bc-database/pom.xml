@@ -10,6 +10,8 @@
     </parent>
 
     <artifactId>mms-common-bc-database</artifactId>
+    <name>MMS Common BC Database</name>
+    <description>数据存储组件（MySql、Redis等）</description>
 
     <dependencies>
 

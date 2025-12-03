@@ -1,6 +1,6 @@
 package com.mms.usercenter.controller.test;
 
-import com.mms.common.web.response.Response;
+import com.mms.common.core.response.Response;
 import com.mms.usercenter.service.test.service.TestService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;

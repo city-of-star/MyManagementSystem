@@ -1,6 +1,6 @@
 package com.mms.usercenter.controller.auth;
 
-import com.mms.common.web.response.Response;
+import com.mms.common.core.response.Response;
 import com.mms.usercenter.common.auth.dto.LoginDto;
 import com.mms.usercenter.common.auth.vo.LoginVo;
 import com.mms.usercenter.service.auth.service.AuthService;

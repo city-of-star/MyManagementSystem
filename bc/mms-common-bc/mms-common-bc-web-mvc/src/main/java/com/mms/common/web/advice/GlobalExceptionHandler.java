@@ -3,7 +3,7 @@ package com.mms.common.web.advice;
 import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import com.mms.common.core.exceptions.ServerException;
-import com.mms.common.web.response.Response;
+import com.mms.common.core.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;

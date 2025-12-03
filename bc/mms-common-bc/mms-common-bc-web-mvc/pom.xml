@@ -14,10 +14,10 @@
     <description>Web MVC模块，包含全局异常处理器和Swagger配置，仅用于业务服务（不适用于网关）</description>
 
     <dependencies>
-        <!-- 依赖 mms-common-bc-web-common 模块（包含Response类） -->
+        <!-- 依赖 mms-common-bc-core 模块（包含Response类） -->
         <dependency>
             <groupId>com.mms</groupId>
-            <artifactId>mms-common-bc-web-common</artifactId>
+            <artifactId>mms-common-bc-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mms.base.common.test.dto.TestDTO;
 import com.mms.base.common.test.entity.TestEntity;
 import com.mms.base.service.test.service.TestService;
-import com.mms.common.web.response.Response;
+import com.mms.common.core.response.Response;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 

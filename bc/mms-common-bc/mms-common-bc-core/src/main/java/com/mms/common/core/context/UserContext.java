@@ -1,4 +1,4 @@
-package com.mms.common.web.context;
+package com.mms.common.core.context;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.mms.common.web.response;
+package com.mms.common.core.response;
 
 import lombok.Data;
 import org.slf4j.MDC;

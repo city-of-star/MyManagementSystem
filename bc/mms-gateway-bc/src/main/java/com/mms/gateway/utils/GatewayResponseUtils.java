@@ -1,6 +1,6 @@
 package com.mms.gateway.utils;
 
-import com.mms.common.web.response.Response;
+import com.mms.common.core.response.Response;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
