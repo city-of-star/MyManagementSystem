@@ -2,6 +2,15 @@ package com.mms.common.security.jwt;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * 实现功能【JWT 配置属性】
+ * <p>
+ *
+ * <p>
+ *
+ * @author li.hongyu
+ * @date 2025-12-04 15:46:51
+ */
 @ConfigurationProperties(prefix = "jwt")
 public class JwtProperties {
 

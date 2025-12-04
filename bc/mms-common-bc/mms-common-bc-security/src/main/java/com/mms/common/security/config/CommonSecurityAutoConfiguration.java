@@ -10,6 +10,15 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * 实现功能【JWT 自动装配配置】
+ * <p>
+ *
+ * <p>
+ *
+ * @author li.hongyu
+ * @date 2025-12-04 15:46:51
+ */
 @Configuration
 @EnableConfigurationProperties(JwtProperties.class)
 @ConditionalOnClass(Jwts.class)

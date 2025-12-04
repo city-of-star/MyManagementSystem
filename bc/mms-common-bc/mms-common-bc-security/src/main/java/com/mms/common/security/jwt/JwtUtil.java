@@ -11,7 +11,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * JWT 工具类：生成、解析、验证JWT
+ * 实现功能【JWT 工具类：生成、解析、验证JWT】
+ * <p>
+ *
+ * <p>
+ *
+ * @author li.hongyu
+ * @date 2025-12-04 15:46:51
  */
 public class JwtUtil {
 
