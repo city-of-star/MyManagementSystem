@@ -1,6 +1,8 @@
 package com.mms.gateway.filter;
 
+import com.mms.common.security.jwt.JwtConstants;
 import com.mms.common.security.jwt.JwtUtil;
+import com.mms.common.security.jwt.TokenType;
 import com.mms.gateway.config.GatewayWhitelistConfig;
 import com.mms.gateway.constants.GatewayConstants;
 import com.mms.gateway.utils.GatewayResponseUtils;
@@ -11,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -46,6 +49,10 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     @Resource
     private GatewayWhitelistConfig whitelistConfig;
 
+    // Redis模板，用于检查黑名单
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
@@ -72,7 +79,23 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
         // 解析 Token，提取用户关键信息
         Claims claims = jwtUtil.parseToken(token);
-        String username = Optional.ofNullable(claims.get("username"))
+
+        // 验证Token类型必须是ACCESS
+        TokenType tokenType = jwtUtil.extractTokenType(claims);
+        if (tokenType != TokenType.ACCESS) {
+            return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "令牌类型错误，请使用Access Token");
+        }
+
+        // 检查Token是否在黑名单中
+        String jti = claims.getId();
+        if (StringUtils.hasText(jti)) {
+            String blacklistKey = JwtConstants.TOKEN_BLACKLIST_PREFIX + jti;
+            if (Boolean.TRUE.equals(redisTemplate.hasKey(blacklistKey))) {
+                return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "登录状态已失效，请重新登录");
+            }
+        }
+
+        String username = Optional.ofNullable(claims.get(JwtConstants.CLAIM_USERNAME))
                 .map(Object::toString)
                 .orElse(null);
 

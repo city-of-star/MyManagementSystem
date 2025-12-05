@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 实现功能【JWT 工具类：生成、解析、验证JWT】
@@ -63,6 +64,100 @@ public class JwtUtil {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	/**
+	 * 生成Access Token
+	 *
+	 * @param username 用户名
+	 * @return Access Token
+	 */
+	public String generateAccessToken(String username) {
+		Map<String, Object> claims = new HashMap<>();
+		claims.put(JwtConstants.CLAIM_USERNAME, username);
+		claims.put(JwtConstants.CLAIM_TOKEN_TYPE, TokenType.ACCESS.name());
+
+		Date now = new Date();
+		long expiration = jwtProperties.getAccessExpiration() != null
+				? jwtProperties.getAccessExpiration() : 900000L; // 默认15分钟
+		Date expiryDate = new Date(now.getTime() + expiration);
+
+		String jti = UUID.randomUUID().toString();
+
+		return Jwts.builder()
+				.id(jti)
+				.claims(claims)
+				.issuedAt(now)
+				.expiration(expiryDate)
+				.signWith(getSigningKey())
+				.compact();
+	}
+
+	/**
+	 * 生成Refresh Token
+	 *
+	 * @param username 用户名
+	 * @return Refresh Token
+	 */
+	public String generateRefreshToken(String username) {
+		Map<String, Object> claims = new HashMap<>();
+		claims.put(JwtConstants.CLAIM_USERNAME, username);
+		claims.put(JwtConstants.CLAIM_TOKEN_TYPE, TokenType.REFRESH.name());
+
+		Date now = new Date();
+		long expiration = jwtProperties.getRefreshExpiration() != null
+				? jwtProperties.getRefreshExpiration() : 604800000L; // 默认7天
+		Date expiryDate = new Date(now.getTime() + expiration);
+
+		String jti = UUID.randomUUID().toString();
+
+		return Jwts.builder()
+				.id(jti)
+				.claims(claims)
+				.issuedAt(now)
+				.expiration(expiryDate)
+				.signWith(getSigningKey())
+				.compact();
+	}
+
+	/**
+	 * 从Claims中提取Token类型
+	 *
+	 * @param claims JWT Claims
+	 * @return Token类型，如果不存在则返回null
+	 */
+	public TokenType extractTokenType(Claims claims) {
+		Object tokenTypeObj = claims.get(JwtConstants.CLAIM_TOKEN_TYPE);
+		if (tokenTypeObj == null) {
+			return null;
+		}
+		try {
+			return TokenType.valueOf(tokenTypeObj.toString());
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/**
+	 * 获取Access Token的TTL（秒数）
+	 *
+	 * @return TTL（秒）
+	 */
+	public long getAccessTokenTtlSeconds() {
+		long expiration = jwtProperties.getAccessExpiration() != null
+				? jwtProperties.getAccessExpiration() : 900000L;
+		return expiration / 1000;
+	}
+
+	/**
+	 * 获取Refresh Token的TTL（秒数）
+	 *
+	 * @return TTL（秒）
+	 */
+	public long getRefreshTokenTtlSeconds() {
+		long expiration = jwtProperties.getRefreshExpiration() != null
+				? jwtProperties.getRefreshExpiration() : 604800000L;
+		return expiration / 1000;
 	}
 }
 

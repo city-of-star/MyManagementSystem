@@ -1,6 +1,8 @@
 package com.mms.usercenter.service.auth.service;
 
 import com.mms.usercenter.common.auth.dto.LoginDto;
+import com.mms.usercenter.common.auth.dto.LogoutDto;
+import com.mms.usercenter.common.auth.dto.RefreshTokenDto;
 import com.mms.usercenter.common.auth.vo.LoginVo;
 
 /**
@@ -17,7 +19,21 @@ public interface AuthService {
     /**
      * 用户登录
      * @param dto 用户名、密码
-     * @return 访问令牌
+     * @return 访问令牌和刷新令牌
      */
     LoginVo login(LoginDto dto);
+
+    /**
+     * 刷新Token
+     * @param dto 刷新令牌
+     * @return 新的访问令牌和刷新令牌
+     */
+    LoginVo refreshToken(RefreshTokenDto dto);
+
+    /**
+     * 用户登出
+     * @param accessToken 访问令牌
+     * @param dto 刷新令牌
+     */
+    void logout(String accessToken, LogoutDto dto);
 }
