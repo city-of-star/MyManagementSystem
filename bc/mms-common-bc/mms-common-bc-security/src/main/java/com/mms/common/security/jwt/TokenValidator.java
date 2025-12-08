@@ -264,12 +264,11 @@ public class TokenValidator {
             return null;
         }
 
-        String bearerPrefix = GatewayConstants.Headers.BEARER_PREFIX;
-        if (!authHeader.startsWith(bearerPrefix)) {
+        if (!authHeader.startsWith(GatewayConstants.Headers.BEARER_PREFIX)) {
             return null;
         }
 
-        String token = authHeader.substring(bearerPrefix.length()).trim();
+        String token = authHeader.substring(GatewayConstants.Headers.BEARER_PREFIX.length()).trim();
         return StringUtils.hasText(token) ? token : null;
     }
 

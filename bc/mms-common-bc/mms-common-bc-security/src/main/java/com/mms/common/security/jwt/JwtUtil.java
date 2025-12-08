@@ -3,12 +3,11 @@ package com.mms.common.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -20,26 +19,10 @@ import java.util.UUID;
  * @author li.hongyu
  * @date 2025-12-04 15:46:51
  */
+@AllArgsConstructor
 public class JwtUtil {
 
 	private final JwtProperties jwtProperties;
-
-	public JwtUtil(JwtProperties jwtProperties) {
-		this.jwtProperties = jwtProperties;
-	}
-
-	private SecretKey getSigningKey() {
-		byte[] keyBytes = jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8);
-		return Keys.hmacShaKeyFor(keyBytes);
-	}
-
-	public Claims parseToken(String token) {
-		return Jwts.parser()
-				.verifyWith(getSigningKey())
-				.build()
-				.parseSignedClaims(token)
-				.getPayload();
-	}
 
 	/**
 	 * 生成Access Token
@@ -48,24 +31,7 @@ public class JwtUtil {
 	 * @return Access Token
 	 */
 	public String generateAccessToken(String username) {
-		Map<String, Object> claims = new HashMap<>();
-		claims.put(JwtConstants.CLAIM_USERNAME, username);
-		claims.put(JwtConstants.CLAIM_TOKEN_TYPE, TokenType.ACCESS.name());
-
-		Date now = new Date();
-		long expiration = jwtProperties.getAccessExpiration() != null
-				? jwtProperties.getAccessExpiration() : 900000L; // 默认15分钟
-		Date expiryDate = new Date(now.getTime() + expiration);
-
-		String jti = UUID.randomUUID().toString();
-
-		return Jwts.builder()
-				.id(jti)
-				.claims(claims)
-				.issuedAt(now)
-				.expiration(expiryDate)
-				.signWith(getSigningKey())
-				.compact();
+		return generateToken(username, TokenType.ACCESS, jwtProperties.getAccessExpiration());
 	}
 
 	/**
@@ -75,24 +41,44 @@ public class JwtUtil {
 	 * @return Refresh Token
 	 */
 	public String generateRefreshToken(String username) {
-		Map<String, Object> claims = new HashMap<>();
-		claims.put(JwtConstants.CLAIM_USERNAME, username);
-		claims.put(JwtConstants.CLAIM_TOKEN_TYPE, TokenType.REFRESH.name());
+		return generateToken(username, TokenType.REFRESH, jwtProperties.getRefreshExpiration());
+	}
 
+	private String generateToken(String username, TokenType tokenType, long expirationMs) {
 		Date now = new Date();
-		long expiration = jwtProperties.getRefreshExpiration() != null
-				? jwtProperties.getRefreshExpiration() : 604800000L; // 默认7天
-		Date expiryDate = new Date(now.getTime() + expiration);
-
+		Date expiryDate = new Date(now.getTime() + expirationMs);
 		String jti = UUID.randomUUID().toString();
 
 		return Jwts.builder()
 				.id(jti)
-				.claims(claims)
+				.claim(JwtConstants.CLAIM_USERNAME, username)
+				.claim(JwtConstants.CLAIM_TOKEN_TYPE, tokenType.name())
 				.issuedAt(now)
 				.expiration(expiryDate)
 				.signWith(getSigningKey())
 				.compact();
+	}
+
+	/**
+	 * 解析 Token，返回 Claims
+	 * @param token Token
+	 * @return Claims
+	 */
+	public Claims parseToken(String token) {
+		return Jwts.parser()
+				.verifyWith(getSigningKey())
+				.build()
+				.parseSignedClaims(token)
+				.getPayload();
+	}
+
+	/**
+	 * 获取 JWT 密钥
+	 * @return JWT 密钥
+	 */
+	private SecretKey getSigningKey() {
+		byte[] keyBytes = jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8);
+		return Keys.hmacShaKeyFor(keyBytes);
 	}
 
 	/**
@@ -119,9 +105,7 @@ public class JwtUtil {
 	 * @return TTL（秒）
 	 */
 	public long getAccessTokenTtlSeconds() {
-		long expiration = jwtProperties.getAccessExpiration() != null
-				? jwtProperties.getAccessExpiration() : 900000L;
-		return expiration / 1000;
+		return jwtProperties.getAccessExpiration() / 1000;
 	}
 
 	/**
@@ -130,9 +114,7 @@ public class JwtUtil {
 	 * @return TTL（秒）
 	 */
 	public long getRefreshTokenTtlSeconds() {
-		long expiration = jwtProperties.getRefreshExpiration() != null
-				? jwtProperties.getRefreshExpiration() : 604800000L;
-		return expiration / 1000;
+		return jwtProperties.getRefreshExpiration() / 1000;
 	}
 }
 
