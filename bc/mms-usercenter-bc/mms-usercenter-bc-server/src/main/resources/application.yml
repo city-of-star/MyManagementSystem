@@ -7,6 +7,8 @@ spring:
     import:
       # 公共配置
       - optional:nacos:public-${spring.profiles.active}.yaml?refreshEnabled=true
+      # JWT 配置
+      - optional:nacos:jwt-${spring.profiles.active}.yaml?refreshEnabled=true
       # 服务专属配置
       - optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml?refreshEnabled=true
   cloud:

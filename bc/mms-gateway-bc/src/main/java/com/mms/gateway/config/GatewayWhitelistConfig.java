@@ -30,10 +30,11 @@ public class GatewayWhitelistConfig {
      */
     public GatewayWhitelistConfig() {
         // 初始化默认白名单
-        this.paths.add("/actuator/**");           // Spring Boot Actuator 端点
-        this.paths.add("/usercenter/auth/**");    // 认证相关接口
-        this.paths.add("/swagger-ui/**");         // Swagger UI
-        this.paths.add("/v3/api-docs/**");        // OpenAPI 文档
+        this.paths.add("/actuator/**");                // Spring Boot Actuator 端点
+        this.paths.add("/usercenter/auth/login");      // 登录
+        this.paths.add("/usercenter/auth/refresh");    // 刷新
+        this.paths.add("/swagger-ui/**");              // Swagger UI
+        this.paths.add("/v3/api-docs/**");             // OpenAPI 文档
     }
 
     /**
