@@ -1,5 +1,6 @@
 package com.mms.common.security.jwt;
 
+import com.mms.common.core.constants.gateway.GatewayConstants;
 import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import io.jsonwebtoken.Claims;
@@ -114,15 +115,43 @@ public class TokenValidator {
             throw new IllegalStateException("RedisTemplate未配置，无法使用黑名单功能");
         }
 
+        if (claims == null) {
+            return;
+        }
+
+        // 获取 jti、过期时间、token类型
         String jti = claims.getId();
         Date expiration = claims.getExpiration();
-
         if (!StringUtils.hasText(jti) || expiration == null) {
+            return;
+        }
+        TokenType tokenType = jwtUtil.extractTokenType(claims);
+
+        // 调用重载方法
+        addToBlacklist(jti, expiration.getTime(), tokenType);
+    }
+
+    /**
+     * 将Token加入黑名单（通过jti和过期时间）
+     * <p>
+     * 适用于网关已验证Token并透传jti和过期时间的场景
+     * </p>
+     *
+     * @param jti        Token的唯一标识
+     * @param expiration Token的过期时间戳（毫秒）
+     * @param tokenType  Token类型（ACCESS或REFRESH）
+     */
+    public void addToBlacklist(String jti, long expiration, TokenType tokenType) {
+        if (redisTemplate == null) {
+            throw new IllegalStateException("RedisTemplate未配置，无法使用黑名单功能");
+        }
+
+        if (!StringUtils.hasText(jti)) {
             return;
         }
 
         // 计算剩余有效时间
-        long ttl = expiration.getTime() - System.currentTimeMillis();
+        long ttl = expiration - System.currentTimeMillis();
         if (ttl <= 0) {
             // Token已过期，无需加入黑名单
             return;
@@ -130,7 +159,7 @@ public class TokenValidator {
 
         // 将Token加入黑名单，TTL设置为Token的剩余有效时间
         String key = JwtConstants.TOKEN_BLACKLIST_PREFIX + jti;
-        redisTemplate.opsForValue().set(key, claims.get(JwtConstants.CLAIM_TOKEN_TYPE), ttl, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set(key, tokenType != null ? tokenType.name() : "ACCESS", ttl, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -219,6 +248,29 @@ public class TokenValidator {
 
         String key = JwtConstants.REFRESH_TOKEN_PREFIX + username;
         redisTemplate.delete(key);
+    }
+
+    /**
+     * 从Authorization请求头中提取Bearer Token
+     * <p>
+     * 支持格式：Authorization: Bearer &lt;token&gt;
+     * </p>
+     *
+     * @param authHeader Authorization请求头的值
+     * @return 提取的Token字符串，如果格式不正确或为空则返回null
+     */
+    public static String extractTokenFromHeader(String authHeader) {
+        if (!StringUtils.hasText(authHeader)) {
+            return null;
+        }
+
+        String bearerPrefix = GatewayConstants.Headers.BEARER_PREFIX;
+        if (!authHeader.startsWith(bearerPrefix)) {
+            return null;
+        }
+
+        String token = authHeader.substring(bearerPrefix.length()).trim();
+        return StringUtils.hasText(token) ? token : null;
     }
 
     /**

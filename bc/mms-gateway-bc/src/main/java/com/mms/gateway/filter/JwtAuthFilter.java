@@ -6,7 +6,7 @@ import com.mms.common.security.jwt.JwtUtil;
 import com.mms.common.security.jwt.TokenType;
 import com.mms.common.security.jwt.TokenValidator;
 import com.mms.gateway.config.GatewayWhitelistConfig;
-import com.mms.gateway.constants.GatewayConstants;
+import com.mms.common.core.constants.gateway.GatewayConstants;
 import com.mms.gateway.utils.GatewayResponseUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -66,13 +67,12 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
         // 读取 Authorization 头部
         String authHeader = request.getHeaders().getFirst(GatewayConstants.Headers.AUTHORIZATION);
-        // 检查 Authorization 头是否存在且格式正确
-        if (!StringUtils.hasText(authHeader) || !authHeader.startsWith(GatewayConstants.Headers.BEARER_PREFIX)) {
+        // 提取 JWT Token
+        String token = TokenValidator.extractTokenFromHeader(authHeader);
+        // 检查 Token 是否提取成功
+        if (!StringUtils.hasText(token)) {
             return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "请求未携带认证信息，请检查Authorization请求头是否存在");
         }
-
-        // 提取 JWT Token
-        String token = authHeader.substring(GatewayConstants.Headers.BEARER_PREFIX.length()).trim();
         
         // 解析并验证Token（验证类型必须是ACCESS，并检查黑名单）
         Claims claims;
@@ -87,6 +87,8 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         String username = Optional.ofNullable(claims.get(JwtConstants.CLAIM_USERNAME))
                 .map(Object::toString)
                 .orElse(null);
+        String jti = claims.getId();
+        Date expiration = claims.getExpiration();
 
         // 将用户信息透传到下游服务
         ServerHttpRequest mutatedRequest = request.mutate()
@@ -94,6 +96,14 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
                     if (StringUtils.hasText(username)) {
                         // 将用户名添加到请求头，供下游服务使用
                         httpHeaders.set(GatewayConstants.Headers.USER_NAME, username);
+                    }
+                    if (StringUtils.hasText(jti)) {
+                        // 将 Token Jti 添加到请求头，供下游服务使用（用于黑名单）
+                        httpHeaders.set(GatewayConstants.Headers.TOKEN_JTI, jti);
+                    }
+                    if (expiration != null) {
+                        // 将 Token 过期时间添加到请求头，供下游服务使用（用于黑名单TTL计算）
+                        httpHeaders.set(GatewayConstants.Headers.TOKEN_EXP, String.valueOf(expiration.getTime()));
                     }
                 })
                 .build();

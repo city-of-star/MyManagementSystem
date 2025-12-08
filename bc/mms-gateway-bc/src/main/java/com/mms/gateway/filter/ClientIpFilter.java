@@ -1,6 +1,6 @@
 package com.mms.gateway.filter;
 
-import com.mms.gateway.constants.GatewayConstants;
+import com.mms.common.core.constants.gateway.GatewayConstants;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;

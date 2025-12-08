@@ -1,4 +1,4 @@
-package com.mms.gateway.constants;
+package com.mms.common.core.constants.gateway;
 
 import org.springframework.http.HttpHeaders;
 
@@ -31,6 +31,16 @@ public class GatewayConstants {
          * 用户名请求头（透传到下游服务）
          */
         public static final String USER_NAME = "X-User-Name";
+
+        /**
+         * Token Jti请求头（透传到下游服务）
+         */
+        public static final String TOKEN_JTI = "X-Token-Jti";
+
+        /**
+         * Token过期时间请求头（透传到下游服务，时间戳毫秒数）
+         */
+        public static final String TOKEN_EXP = "X-Token-Exp";
 
         /**
          * 客户端IP请求头（透传到下游服务）

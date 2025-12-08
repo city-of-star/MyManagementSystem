@@ -24,6 +24,11 @@ public class UserContext {
     private String username;
 
     /**
+     * Token Jti
+     */
+    private String tokenJti;
+
+    /**
      * 客户端IP地址
      */
     private String clientIp;

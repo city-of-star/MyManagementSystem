@@ -141,11 +141,16 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void logout(String accessToken, LogoutDto dto) {
-        // 解析并验证Access Token
-        Claims accessClaims = tokenValidator.parseAndValidate(accessToken, TokenType.ACCESS);
-        // 将Access Token加入黑名单
-        tokenValidator.addToBlacklist(accessClaims);
+    public void logout(String accessTokenJti, String accessTokenExp, LogoutDto dto) {
+        // 将Access Token加入黑名单（使用网关透传的jti和过期时间）
+        if (StringUtils.hasText(accessTokenJti) && StringUtils.hasText(accessTokenExp)) {
+            try {
+                long expirationTime = Long.parseLong(accessTokenExp);
+                tokenValidator.addToBlacklist(accessTokenJti, expirationTime, TokenType.ACCESS);
+            } catch (NumberFormatException e) {
+                // 过期时间格式错误，忽略Access Token黑名单操作
+            }
+        }
 
         // 解析并验证Refresh Token
         Claims refreshClaims = tokenValidator.parseAndValidate(dto.getRefreshToken(), TokenType.REFRESH);

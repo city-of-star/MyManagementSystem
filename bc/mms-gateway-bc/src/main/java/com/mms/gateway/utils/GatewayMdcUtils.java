@@ -1,6 +1,6 @@
 package com.mms.gateway.utils;
 
-import com.mms.gateway.constants.GatewayConstants;
+import com.mms.common.core.constants.gateway.GatewayConstants;
 import org.slf4j.MDC;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;

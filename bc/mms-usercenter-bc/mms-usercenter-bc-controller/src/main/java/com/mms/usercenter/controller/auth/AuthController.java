@@ -1,5 +1,6 @@
 package com.mms.usercenter.controller.auth;
 
+import com.mms.common.core.constants.gateway.GatewayConstants;
 import com.mms.common.core.response.Response;
 import com.mms.usercenter.common.auth.dto.LoginDto;
 import com.mms.usercenter.common.auth.dto.LogoutDto;
@@ -49,14 +50,11 @@ public class AuthController {
     @Operation(summary = "用户登出", description = "登出并让【Access Token】和【Refresh Token 失效】")
     @PostMapping("/logout")
     public Response<Void> logout(
-            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestHeader(value = GatewayConstants.Headers.TOKEN_JTI, required = false) String accessTokenJti,
+            @RequestHeader(value = GatewayConstants.Headers.TOKEN_EXP, required = false) String accessTokenExp,
             @RequestBody @Valid LogoutDto dto) {
-        // 从Authorization头中提取Access Token
-        String accessToken = null;
-        if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
-            accessToken = authHeader.substring(7).trim();
-        }
-        authService.logout(accessToken, dto);
+        // 从网关透传的请求头获取Access Token信息（网关已验证）
+        authService.logout(accessTokenJti, accessTokenExp, dto);
         return Response.success();
     }
 }
