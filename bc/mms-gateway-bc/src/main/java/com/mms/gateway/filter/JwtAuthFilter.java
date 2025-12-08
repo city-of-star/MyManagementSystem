@@ -66,7 +66,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         }
 
         // 读取 Authorization 头部
-        String authHeader = request.getHeaders().getFirst(GatewayConstants.Headers.AUTHORIZATION);
+        String authHeader = request.getHeaders().getFirst(JwtConstants.Headers.AUTHORIZATION);
         // 提取 JWT Token
         String token = TokenValidator.extractTokenFromHeader(authHeader);
         // 检查 Token 是否提取成功
@@ -84,7 +84,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "身份验证已失效，请重新登录");
         }
 
-        String username = Optional.ofNullable(claims.get(JwtConstants.CLAIM_USERNAME))
+        String username = Optional.ofNullable(claims.get(JwtConstants.Claims.USERNAME))
                 .map(Object::toString)
                 .orElse(null);
         String jti = claims.getId();

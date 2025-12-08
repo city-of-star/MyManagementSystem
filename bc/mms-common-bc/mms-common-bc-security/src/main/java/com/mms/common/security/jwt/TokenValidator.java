@@ -1,6 +1,5 @@
 package com.mms.common.security.jwt;
 
-import com.mms.common.core.constants.gateway.GatewayConstants;
 import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import io.jsonwebtoken.Claims;
@@ -101,7 +100,7 @@ public class TokenValidator {
         if (!StringUtils.hasText(jti) || redisTemplate == null) {
             return false;
         }
-        String key = JwtConstants.TOKEN_BLACKLIST_PREFIX + jti;
+        String key = JwtConstants.CacheKeys.TOKEN_BLACKLIST_PREFIX + jti;
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
@@ -158,7 +157,7 @@ public class TokenValidator {
         }
 
         // 将Token加入黑名单，TTL设置为Token的剩余有效时间
-        String key = JwtConstants.TOKEN_BLACKLIST_PREFIX + jti;
+        String key = JwtConstants.CacheKeys.TOKEN_BLACKLIST_PREFIX + jti;
         redisTemplate.opsForValue().set(key, tokenType != null ? tokenType.name() : "ACCESS", ttl, TimeUnit.MILLISECONDS);
     }
 
@@ -196,7 +195,7 @@ public class TokenValidator {
 
         // 存储Refresh Token，key格式：mms:auth:refresh:{username}
         // value存储refresh token的jti，用于后续验证
-        String key = JwtConstants.REFRESH_TOKEN_PREFIX + username;
+        String key = JwtConstants.CacheKeys.REFRESH_TOKEN_PREFIX + username;
         String jti = refreshClaims.getId();
         redisTemplate.opsForValue().set(key, jti != null ? jti : refreshToken, ttl, TimeUnit.MILLISECONDS);
     }
@@ -212,7 +211,7 @@ public class TokenValidator {
             return null;
         }
 
-        String key = JwtConstants.REFRESH_TOKEN_PREFIX + username;
+        String key = JwtConstants.CacheKeys.REFRESH_TOKEN_PREFIX + username;
         Object value = redisTemplate.opsForValue().get(key);
         return value != null ? value.toString() : null;
     }
@@ -246,7 +245,7 @@ public class TokenValidator {
             return;
         }
 
-        String key = JwtConstants.REFRESH_TOKEN_PREFIX + username;
+        String key = JwtConstants.CacheKeys.REFRESH_TOKEN_PREFIX + username;
         redisTemplate.delete(key);
     }
 
@@ -264,11 +263,11 @@ public class TokenValidator {
             return null;
         }
 
-        if (!authHeader.startsWith(GatewayConstants.Headers.BEARER_PREFIX)) {
+        if (!authHeader.startsWith(JwtConstants.Headers.BEARER_PREFIX)) {
             return null;
         }
 
-        String token = authHeader.substring(GatewayConstants.Headers.BEARER_PREFIX.length()).trim();
+        String token = authHeader.substring(JwtConstants.Headers.BEARER_PREFIX.length()).trim();
         return StringUtils.hasText(token) ? token : null;
     }
 

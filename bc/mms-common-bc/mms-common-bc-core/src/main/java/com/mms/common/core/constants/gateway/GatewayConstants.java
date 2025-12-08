@@ -1,7 +1,5 @@
 package com.mms.common.core.constants.gateway;
 
-import org.springframework.http.HttpHeaders;
-
 /**
  * 实现功能【网关常量类】
  * <p>
@@ -14,14 +12,9 @@ import org.springframework.http.HttpHeaders;
 public class GatewayConstants {
 
     /**
-     * 请求头常量
+     * 请求头常量（网关透传/链路相关）
      */
     public static class Headers {
-        /**
-         * Authorization 请求头
-         */
-        public static final String AUTHORIZATION = HttpHeaders.AUTHORIZATION;
-
         /**
          * TraceId 请求头
          */
@@ -46,11 +39,6 @@ public class GatewayConstants {
          * 客户端IP请求头（透传到下游服务）
          */
         public static final String CLIENT_IP = "X-Client-Ip";
-
-        /**
-         * Bearer Token 前缀
-         */
-        public static final String BEARER_PREFIX = "Bearer ";
     }
 
     /**

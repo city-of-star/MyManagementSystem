@@ -51,8 +51,8 @@ public class JwtUtil {
 
 		return Jwts.builder()
 				.id(jti)
-				.claim(JwtConstants.CLAIM_USERNAME, username)
-				.claim(JwtConstants.CLAIM_TOKEN_TYPE, tokenType.name())
+				.claim(JwtConstants.Claims.USERNAME, username)
+				.claim(JwtConstants.Claims.TOKEN_TYPE, tokenType.name())
 				.issuedAt(now)
 				.expiration(expiryDate)
 				.signWith(getSigningKey())
@@ -88,7 +88,7 @@ public class JwtUtil {
 	 * @return Token类型，如果不存在则返回null
 	 */
 	public TokenType extractTokenType(Claims claims) {
-		Object tokenTypeObj = claims.get(JwtConstants.CLAIM_TOKEN_TYPE);
+		Object tokenTypeObj = claims.get(JwtConstants.Claims.TOKEN_TYPE);
 		if (tokenTypeObj == null) {
 			return null;
 		}

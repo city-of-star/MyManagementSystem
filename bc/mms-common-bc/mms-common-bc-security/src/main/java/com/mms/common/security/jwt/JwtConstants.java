@@ -1,5 +1,7 @@
 package com.mms.common.security.jwt;
 
+import org.springframework.http.HttpHeaders;
+
 /**
  * 实现功能【JWT常量类】
  * <p>
@@ -12,24 +14,49 @@ package com.mms.common.security.jwt;
 public class JwtConstants {
 
     /**
-     * JWT Claims中的用户名键
+     * 请求头常量
      */
-    public static final String CLAIM_USERNAME = "username";
+    public static final class Headers {
+        /**
+         * Authorization 请求头
+         */
+        public static final String AUTHORIZATION = HttpHeaders.AUTHORIZATION;
+
+        /**
+         * Bearer Token 前缀
+         */
+        public static final String BEARER_PREFIX = "Bearer ";
+    }
 
     /**
-     * JWT Claims中的Token类型键
+     * JWT Claims键名常量
      */
-    public static final String CLAIM_TOKEN_TYPE = "tokenType";
+    public static final class Claims {
+        /**
+         * JWT Claims中的用户名键
+         */
+        public static final String USERNAME = "username";
+
+        /**
+         * JWT Claims中的Token类型键
+         */
+        public static final String TOKEN_TYPE = "tokenType";
+    }
 
     /**
-     * Redis中Token黑名单的key前缀
+     * 缓存（Redis）Key前缀常量
      */
-    public static final String TOKEN_BLACKLIST_PREFIX = "mms:auth:blacklist:";
+    public static final class CacheKeys {
+        /**
+         * Redis中Token黑名单的key前缀
+         */
+        public static final String TOKEN_BLACKLIST_PREFIX = "mms:auth:blacklist:";
 
-    /**
-     * Redis中Refresh Token存储的key前缀
-     */
-    public static final String REFRESH_TOKEN_PREFIX = "mms:auth:refresh:";
+        /**
+         * Redis中Refresh Token存储的key前缀
+         */
+        public static final String REFRESH_TOKEN_PREFIX = "mms:auth:refresh:";
+    }
 
     /**
      * 私有构造函数，防止实例化

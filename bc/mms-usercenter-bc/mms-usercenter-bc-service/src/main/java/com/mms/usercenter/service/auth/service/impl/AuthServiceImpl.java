@@ -118,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
         Claims refreshClaims = tokenValidator.parseAndValidate(dto.getRefreshToken(), TokenType.REFRESH);
 
         // 提取用户名
-        String username = Optional.ofNullable(refreshClaims.get(JwtConstants.CLAIM_USERNAME))
+        String username = Optional.ofNullable(refreshClaims.get(JwtConstants.Claims.USERNAME))
                 .map(Object::toString)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_TOKEN, "Token中缺少用户名信息"));
 
@@ -159,7 +159,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 从Token中获取用户名，如果存在则从Redis删除对应的Refresh Token
         // 实现单点登录控制，确保旧Refresh Token立即失效
-        Optional.ofNullable(refreshClaims.get(JwtConstants.CLAIM_USERNAME))
+        Optional.ofNullable(refreshClaims.get(JwtConstants.Claims.USERNAME))
                 .map(Object::toString)
                 .ifPresent(username -> tokenValidator.removeRefreshToken(username));
     }
