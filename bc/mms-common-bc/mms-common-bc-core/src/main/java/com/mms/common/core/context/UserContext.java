@@ -29,6 +29,11 @@ public class UserContext {
     private String tokenJti;
 
     /**
+     * Token 过期时间
+     */
+    private String expiration;
+
+    /**
      * 客户端IP地址
      */
     private String clientIp;

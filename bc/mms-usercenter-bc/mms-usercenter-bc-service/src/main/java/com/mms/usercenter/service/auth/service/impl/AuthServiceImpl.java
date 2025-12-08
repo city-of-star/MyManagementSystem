@@ -141,8 +141,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void logout(String accessTokenJti, String accessTokenExp, LogoutDto dto) {
-        // 将Access Token加入黑名单（使用网关透传的jti和过期时间）
+    public void logout(LogoutDto dto) {
+        // 从请求上下文获取 Access Token 信息（网关已验证并透传）
+        String accessTokenJti = UserContextUtils.getTokenJti();
+        String accessTokenExp = UserContextUtils.getTokenExp();
+
+        // 将Access Token加入黑名单
         if (StringUtils.hasText(accessTokenJti) && StringUtils.hasText(accessTokenExp)) {
             try {
                 long expirationTime = Long.parseLong(accessTokenExp);

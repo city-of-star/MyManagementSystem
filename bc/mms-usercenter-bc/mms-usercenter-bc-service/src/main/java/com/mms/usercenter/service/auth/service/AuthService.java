@@ -32,9 +32,7 @@ public interface AuthService {
 
     /**
      * 用户登出
-     * @param accessTokenJti Access Token的唯一标识（网关已验证并透传）
-     * @param accessTokenExp Access Token的过期时间戳（毫秒，网关已验证并透传）
      * @param dto 刷新令牌
      */
-    void logout(String accessTokenJti, String accessTokenExp, LogoutDto dto);
+    void logout(LogoutDto dto);
 }

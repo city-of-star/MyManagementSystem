@@ -54,17 +54,14 @@ public class UserContextUtils {
         String username = request.getHeader(GatewayConstants.Headers.USER_NAME);
         String tokenJti = request.getHeader(GatewayConstants.Headers.TOKEN_JTI);
         String clientIp = request.getHeader(GatewayConstants.Headers.CLIENT_IP);
-
-        // 如果用户名和IP都为空，返回null
-        if (!StringUtils.hasText(username) && !StringUtils.hasText(clientIp)) {
-            return null;
-        }
+        String expiration = request.getHeader(GatewayConstants.Headers.TOKEN_EXP);
 
         // 创建 userContext 实体
         UserContext userContext = new UserContext();
         userContext.setUsername(username);
         userContext.setTokenJti(tokenJti);
         userContext.setClientIp(clientIp);
+        userContext.setExpiration(expiration);
 
         return userContext;
     }
@@ -107,6 +104,16 @@ public class UserContextUtils {
     public static String getTokenJti() {
         UserContext context = getUserContext();
         return context != null ? context.getTokenJti() : null;
+    }
+
+    /**
+     * 获取当前登录 Token 过期时间（自动从请求线程获取）
+     *
+     * @return Token 过期时间，如果不存在则返回null
+     */
+    public static String getTokenExp() {
+        UserContext context = getUserContext();
+        return context != null ? context.getExpiration() : null;
     }
 
     /**

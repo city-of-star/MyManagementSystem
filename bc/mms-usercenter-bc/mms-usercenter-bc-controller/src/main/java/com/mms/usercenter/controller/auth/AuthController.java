@@ -1,6 +1,5 @@
 package com.mms.usercenter.controller.auth;
 
-import com.mms.common.core.constants.gateway.GatewayConstants;
 import com.mms.common.core.response.Response;
 import com.mms.usercenter.common.auth.dto.LoginDto;
 import com.mms.usercenter.common.auth.dto.LogoutDto;
@@ -11,10 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,12 +46,8 @@ public class AuthController {
 
     @Operation(summary = "用户登出", description = "登出并让【Access Token】和【Refresh Token 失效】")
     @PostMapping("/logout")
-    public Response<Void> logout(
-            @RequestHeader(value = GatewayConstants.Headers.TOKEN_JTI, required = false) String accessTokenJti,
-            @RequestHeader(value = GatewayConstants.Headers.TOKEN_EXP, required = false) String accessTokenExp,
-            @RequestBody @Valid LogoutDto dto) {
-        // 从网关透传的请求头获取Access Token信息（网关已验证）
-        authService.logout(accessTokenJti, accessTokenExp, dto);
+    public Response<Void> logout(@RequestBody @Valid LogoutDto dto) {
+        authService.logout(dto);
         return Response.success();
     }
 }
