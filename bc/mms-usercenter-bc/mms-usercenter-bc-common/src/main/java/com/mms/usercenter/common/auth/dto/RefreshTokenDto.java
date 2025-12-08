@@ -14,11 +14,10 @@ import lombok.Data;
  * @date 2025-12-05 09:43:33
  */
 @Data
-@Schema(description = "刷新Token请求参数")
 public class RefreshTokenDto {
 
+    @NotBlank(message = "刷新令牌不能为空")
     @Schema(description = "刷新令牌", requiredMode = Schema.RequiredMode.REQUIRED,
             example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
-    @NotBlank(message = "刷新令牌不能为空")
     private String refreshToken;
 }

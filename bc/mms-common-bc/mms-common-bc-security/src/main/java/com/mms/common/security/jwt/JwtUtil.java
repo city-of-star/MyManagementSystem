@@ -33,37 +33,12 @@ public class JwtUtil {
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
 
-	public String generateToken(String username) {
-		Map<String, Object> claims = new HashMap<>();
-		claims.put("username", username);
-
-		Date now = new Date();
-		long expiration = jwtProperties.getExpiration() != null ? jwtProperties.getExpiration() : 3600000L;
-		Date expiryDate = new Date(now.getTime() + expiration);
-
-		return Jwts.builder()
-				.claims(claims)
-				.issuedAt(now)
-				.expiration(expiryDate)
-				.signWith(getSigningKey())
-				.compact();
-	}
-
 	public Claims parseToken(String token) {
 		return Jwts.parser()
 				.verifyWith(getSigningKey())
 				.build()
 				.parseSignedClaims(token)
 				.getPayload();
-	}
-
-	public boolean validateToken(String token) {
-		try {
-			Claims claims = parseToken(token);
-			return claims.getExpiration().after(new Date());
-		} catch (Exception e) {
-			return false;
-		}
 	}
 
 	/**

@@ -27,6 +27,11 @@ public class JwtConstants {
     public static final String TOKEN_BLACKLIST_PREFIX = "mms:auth:blacklist:";
 
     /**
+     * Redis中Refresh Token存储的key前缀
+     */
+    public static final String REFRESH_TOKEN_PREFIX = "mms:auth:refresh:";
+
+    /**
      * 私有构造函数，防止实例化
      */
     private JwtConstants() {

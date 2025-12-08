@@ -34,19 +34,19 @@ public class AuthController {
     @Resource
     private AuthService authService;
 
-    @Operation(summary = "用户登录", description = "通过用户名和密码进行登录，返回Access Token和Refresh Token")
+    @Operation(summary = "用户登录", description = "通过用户名和密码进行登录，返回【Access Token】和【Refresh Token】")
     @PostMapping("/login")
     public Response<LoginVo> login(@RequestBody @Valid LoginDto dto) {
         return Response.success(authService.login(dto));
     }
 
-    @Operation(summary = "刷新Token", description = "使用Refresh Token刷新Access Token和Refresh Token")
+    @Operation(summary = "刷新Token", description = "使用【Refresh Token】刷新【Access Token】和【Refresh Token】")
     @PostMapping("/refresh")
     public Response<LoginVo> refreshToken(@RequestBody @Valid RefreshTokenDto dto) {
         return Response.success(authService.refreshToken(dto));
     }
 
-    @Operation(summary = "用户登出", description = "登出并让Access Token和Refresh Token失效")
+    @Operation(summary = "用户登出", description = "登出并让【Access Token】和【Refresh Token 失效】")
     @PostMapping("/logout")
     public Response<Void> logout(
             @RequestHeader(value = "Authorization", required = false) String authHeader,

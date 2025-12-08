@@ -14,10 +14,25 @@
     <description>公共安全组件（JWT等）</description>
 
     <dependencies>
+
+        <!-- 依赖 mms-common-bc-core 模块 -->
+        <dependency>
+            <groupId>com.mms</groupId>
+            <artifactId>mms-common-bc-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Spring Boot 自动装配（作为库使用） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- JJWT -->
@@ -35,6 +50,13 @@
             <artifactId>jjwt-jackson</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Redis 依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>
