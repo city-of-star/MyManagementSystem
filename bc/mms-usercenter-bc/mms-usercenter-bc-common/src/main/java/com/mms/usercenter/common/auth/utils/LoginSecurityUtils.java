@@ -1,6 +1,6 @@
 package com.mms.usercenter.common.auth.utils;
 
-import com.mms.usercenter.common.auth.config.LoginSecurityProperties;
+import com.mms.usercenter.common.auth.properties.LoginSecurityProperties;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
