@@ -1,4 +1,4 @@
-package com.mms.usercenter.service.common.mapper;
+package com.mms.usercenter.service.auth.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mms.usercenter.common.auth.entity.SysUserEntity;
@@ -25,3 +25,4 @@ public interface SysUserMapper extends BaseMapper<SysUserEntity> {
      */
     SysUserEntity selectByUsername(@Param("username") String username);
 }
+

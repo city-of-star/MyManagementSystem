@@ -13,9 +13,9 @@ import com.mms.usercenter.common.auth.dto.LogoutDto;
 import com.mms.usercenter.common.auth.dto.RefreshTokenDto;
 import com.mms.usercenter.common.auth.entity.SysUserEntity;
 import com.mms.usercenter.common.auth.vo.LoginVo;
-import com.mms.usercenter.service.auth.config.LoginSecurityConfig;
-import com.mms.usercenter.service.auth.utils.LoginSecurityUtils;
-import com.mms.usercenter.service.common.mapper.SysUserMapper;
+import com.mms.usercenter.common.auth.config.LoginSecurityProperties;
+import com.mms.usercenter.common.auth.utils.LoginSecurityUtils;
+import com.mms.usercenter.service.auth.mapper.SysUserMapper;
 import com.mms.usercenter.service.auth.service.AuthService;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
@@ -51,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
     private LoginSecurityUtils loginSecurityUtils;
 
     @Resource
-    private LoginSecurityConfig securityConfig;
+    private LoginSecurityProperties securityProperties;
 
     @Override
     public LoginVo login(LoginDto dto) {
@@ -179,17 +179,17 @@ public class AuthServiceImpl implements AuthService {
         int attempts = loginSecurityUtils.getLoginAttempts(username);
 
         // 如果达到最大尝试次数，锁定账号
-        if (attempts >= securityConfig.getMaxAttempts()) {
+        if (attempts >= securityProperties.getMaxAttempts()) {
 
             // 锁定账号
             loginSecurityUtils.lockAccount(username);
 
             throw new BusinessException(ErrorCode.ACCOUNT_LOCKED,
-                    String.format("登录失败次数过多，账号已被锁定 %d 分钟", securityConfig.getLockTime()));
+                    String.format("登录失败次数过多，账号已被锁定 %d 分钟", securityProperties.getLockTime()));
         }
 
         // 获取剩余尝试次数
-        int remainingAttempts = securityConfig.getMaxAttempts() - attempts;
+        int remainingAttempts = securityProperties.getMaxAttempts() - attempts;
 
         // 提示剩余尝试次数
         throw new BusinessException(ErrorCode.LOGIN_FAILED,

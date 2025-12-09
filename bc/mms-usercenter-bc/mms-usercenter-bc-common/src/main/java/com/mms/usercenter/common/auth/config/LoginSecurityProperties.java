@@ -1,11 +1,11 @@
-package com.mms.usercenter.service.auth.config;
+package com.mms.usercenter.common.auth.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * 实现功能【登录安全配置】
+ * 实现功能【登录安全配置属性】
  * <p>
  *
  * <p>
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "login.security")
-public class LoginSecurityConfig {
+public class LoginSecurityProperties {
     /**
      * 最大登录失败次数
      */
@@ -37,3 +37,4 @@ public class LoginSecurityConfig {
      */
     private String lockKeyPrefix = "account_lock:";
 }
+
