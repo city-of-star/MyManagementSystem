@@ -21,7 +21,3 @@ spring:
       discovery:
         namespace: ${spring.profiles.active}
         group: DEFAULT_GROUP
-
-# 日志路径配置
-logback:
-  path: logs/base
