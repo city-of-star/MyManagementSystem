@@ -13,7 +13,7 @@
     <!-- 父项目信息 -->
     <groupId>com.mms</groupId>
     <artifactId>mms-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>MMS Management System Parent</name>
     <description>管理系统父项目，统一管理所有子模块</description>
@@ -193,6 +193,7 @@
     <!-- 构建配置 -->
     <build>
         <resources>
+            <!-- 开启资源过滤，允许在资源文件中使用 Maven 属性 -->
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
