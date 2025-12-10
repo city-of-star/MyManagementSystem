@@ -19,7 +19,9 @@
     <dependencies>
 
         <!-- 引入 common 模块聚合包，包含 common 下的所有子模块 -->
-        <!-- 网关服务排除 web-mvc 模块，避免引入 Spring MVC 依赖（网关使用 WebFlux） -->
+        <!-- 网关服务排除 web-mvc 和 database 模块 -->
+        <!-- web-mvc: 避免引入 Spring MVC 依赖（网关使用 WebFlux） -->
+        <!-- database: 避免引入 MyBatis-Plus 和 DataSource 自动配置（网关不需要数据库） -->
         <dependency>
             <groupId>com.mms</groupId>
             <artifactId>mms-common-bc-all</artifactId>
@@ -28,6 +30,10 @@
                     <groupId>com.mms</groupId>
                     <artifactId>mms-common-bc-web-mvc</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.mms</groupId>
+                    <artifactId>mms-common-bc-database</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -35,6 +41,12 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+
+        <!-- Spring Cloud LoadBalancer -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
         <!-- Spring Boot Actuator -->
@@ -55,12 +67,6 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
-        <!-- Spring Security -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
         <!-- Nacos 配置 & 注册中心 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -69,12 +75,6 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
-
-        <!-- Spring Cloud LoadBalancer -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
     </dependencies>

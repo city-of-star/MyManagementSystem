@@ -108,7 +108,7 @@ public class AuthServiceImpl implements AuthService {
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
-            throw new ServerException();
+            throw new ServerException("登录失败", e);
         }
     }
 

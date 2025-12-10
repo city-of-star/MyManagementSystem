@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ServerException.class)
     public Response<?> handleServerException(ServerException e) {
-        log.error("服务器异常: 【{}】", e.getMessage());
+        log.error("服务器异常: 【{}】", e.getMessage(), e);
         return Response.error(ErrorCode.SYSTEM_ERROR.getCode(), ErrorCode.SYSTEM_ERROR.getMessage());
     }
 

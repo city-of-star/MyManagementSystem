@@ -32,7 +32,7 @@
     <!-- 根据用户名查询用户（用于登录） -->
     <select id="selectByUsername" resultMap="BaseResultMap">
         SELECT
-            id, password, status, locked
+            id, username, password, real_name, status, locked, last_login_time, last_login_ip
         FROM sys_user
         WHERE username = #{username}
           AND deleted = 0

@@ -33,8 +33,10 @@ public class GatewayWhitelistConfig {
         this.paths.add("/actuator/**");                // Spring Boot Actuator 端点
         this.paths.add("/usercenter/auth/login");      // 登录
         this.paths.add("/usercenter/auth/refresh");    // 刷新
-        this.paths.add("/swagger-ui/**");              // Swagger UI
+        this.paths.add("/doc.html");                   // Knife4j 主页面
         this.paths.add("/v3/api-docs/**");             // OpenAPI 文档
+        this.paths.add("/webjars/**");                 // Knife4j 静态资源
+        this.paths.add("/swagger-resources/**");       // Swagger 资源
     }
 
     /**

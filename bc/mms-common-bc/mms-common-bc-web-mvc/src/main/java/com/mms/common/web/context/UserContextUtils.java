@@ -3,7 +3,6 @@ package com.mms.common.web.context;
 import com.mms.common.core.constants.gateway.GatewayConstants;
 import com.mms.common.core.context.UserContext;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
