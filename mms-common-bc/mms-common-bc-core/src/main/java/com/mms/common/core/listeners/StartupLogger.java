@@ -1,7 +1,9 @@
 package com.mms.common.core.listeners;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -37,8 +39,14 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
     @Value("${info.app.version:unknown}")
     private String appVersion;
 
-    @Value("${info.build.time:unknown}")
+    @Value("${info.app.build-time:unknown}")
     private String buildTime;
+
+    @Autowired(required = false)
+    private BuildProperties buildProperties;
+
+    @Value("${server.servlet.context-path:}")
+    private String contextPath;
 
     @Value("${spring.cloud.nacos.server-addr:unknown}")
     private String nacosServerAddr;
@@ -75,9 +83,13 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
         printBannerIfPresent();
 
         // 拼接baseUrl
-        String base = swaggerBaseUrl == null || swaggerBaseUrl.isBlank()
-                ? "http://localhost:" + port
-                : stripTrailingSlash(swaggerBaseUrl);
+        String base;
+        if (swaggerBaseUrl == null || swaggerBaseUrl.isBlank()) {
+            String ctx = normalizeContextPath(contextPath);
+            base = "http://localhost:" + port + ctx;
+        } else {
+            base = stripTrailingSlash(swaggerBaseUrl);
+        }
 
         // swagger文档的地址
         String swaggerUrl = base + ensureLeadingSlash(swaggerUiPath);
@@ -85,10 +97,10 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
         // 打印启动完成与文档地址及基础环境信息
         System.out.println("\n==== 应用启动信息 ====");
         System.out.println("应用名: " + applicationName);
-//        System.out.println("版本: " + appVersion);
-//        System.out.println("构建时间: " + buildTime);
         System.out.println("环境: " + activeProfile);
         System.out.println("端口: " + port);
+        System.out.println("版本: " + resolveVersion());
+        System.out.println("构建时间: " + resolveBuildTime());
         System.out.println("日志目录: " + logPath);
         System.out.println("Nacos: " + nacosServerAddr + " | namespace=" + nacosNamespace + " | group=" + nacosGroup);
         System.out.println("Swagger 文档地址: " + swaggerUrl);
@@ -119,8 +131,30 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
         return url != null && url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
     }
 
+    private String normalizeContextPath(String ctx) {
+        if (ctx == null || ctx.isBlank()) {
+            return "";
+        }
+        String withLeading = ensureLeadingSlash(ctx);
+        return stripTrailingSlash(withLeading);
+    }
+
     private String ensureLeadingSlash(String path) {
         return path != null && path.startsWith("/") ? path : "/" + path;
+    }
+
+    private String resolveVersion() {
+        if (buildProperties != null && buildProperties.getVersion() != null && !buildProperties.getVersion().isBlank()) {
+            return buildProperties.getVersion();
+        }
+        return appVersion;
+    }
+
+    private String resolveBuildTime() {
+        if (buildProperties != null && buildProperties.getTime() != null) {
+            return buildProperties.getTime().toString();
+        }
+        return buildTime;
     }
 }
 
