@@ -13,11 +13,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 实现功能【应用启动成功日志记录】
  * <p>
- * 应用启动完成后打印成功信息与 Knife4j 文档地址
+ * 应用启动完成后打印应用基本信息与相应的 Knife4j 文档地址
  * 网关本身不暴露 Knife4j，自动跳过
  * <p>
  *
@@ -151,10 +155,32 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
     }
 
     private String resolveBuildTime() {
+        String timeStr = null;
+
         if (buildProperties != null && buildProperties.getTime() != null) {
-            return buildProperties.getTime().toString();
+            timeStr = buildProperties.getTime().toString();
         }
-        return buildTime;
+
+        if (timeStr != null) {
+            try {
+                // 解析 ISO 8601 格式的时间（如 2025-12-10T11:28:13.377Z）
+                Instant instant = Instant.parse(timeStr);
+
+                // 转换为本地时区（默认使用系统时区，这里是北京时间 CST = UTC+8）
+                ZoneId zoneId = ZoneId.systemDefault();
+                ZonedDateTime localTime = instant.atZone(zoneId);
+
+                // 格式化为可读性更强的时间格式
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                return formatter.format(localTime);
+
+            } catch (Exception e) {
+                // 如果解析失败，返回原始字符串
+                return timeStr;
+            }
+        }
+
+        return "unknown";
     }
 }
 
