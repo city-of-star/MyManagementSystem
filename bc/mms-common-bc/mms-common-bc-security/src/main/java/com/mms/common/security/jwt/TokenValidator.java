@@ -21,27 +21,27 @@ import java.util.concurrent.TimeUnit;
  */
 public class TokenValidator {
 
-    private final JwtUtil jwtUtil;
+    private final JwtUtils jwtUtils;
     private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 构造函数
      *
-     * @param jwtUtil JWT工具类
+     * @param jwtUtils JWT工具类
      */
-    public TokenValidator(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
+    public TokenValidator(JwtUtils jwtUtils) {
+        this.jwtUtils = jwtUtils;
         this.redisTemplate = null;
     }
 
     /**
      * 构造函数（带Redis支持）
      *
-     * @param jwtUtil       JWT工具类
+     * @param jwtUtils       JWT工具类
      * @param redisTemplate Redis模板（用于黑名单检查，可选）
      */
-    public TokenValidator(JwtUtil jwtUtil, RedisTemplate<String, Object> redisTemplate) {
-        this.jwtUtil = jwtUtil;
+    public TokenValidator(JwtUtils jwtUtils, RedisTemplate<String, Object> redisTemplate) {
+        this.jwtUtils = jwtUtils;
         this.redisTemplate = redisTemplate;
     }
 
@@ -60,7 +60,7 @@ public class TokenValidator {
 
         try {
             // 解析Token
-            Claims claims = jwtUtil.parseToken(token);
+            Claims claims = jwtUtils.parseToken(token);
 
             // 验证Token是否过期
             Date expiration = claims.getExpiration();
@@ -70,7 +70,7 @@ public class TokenValidator {
 
             // 验证Token类型
             if (expectedType != null) {
-                TokenType realType = jwtUtil.extractTokenType(claims);
+                TokenType realType = jwtUtils.extractTokenType(claims);
                 if (realType != expectedType) {
                     throw new BusinessException(ErrorCode.INVALID_TOKEN, "Token类型不匹配");
                 }
@@ -124,7 +124,7 @@ public class TokenValidator {
         if (!StringUtils.hasText(jti) || expiration == null) {
             return;
         }
-        TokenType tokenType = jwtUtil.extractTokenType(claims);
+        TokenType tokenType = jwtUtils.extractTokenType(claims);
 
         // 调用重载方法
         addToBlacklist(jti, expiration.getTime(), tokenType);
@@ -174,7 +174,7 @@ public class TokenValidator {
         }
 
         // 解析 Token，获取 refreshClaims
-        Claims refreshClaims = jwtUtil.parseToken(refreshToken);
+        Claims refreshClaims = jwtUtils.parseToken(refreshToken);
 
         if (!StringUtils.hasText(username) || !StringUtils.hasText(refreshToken) || refreshClaims == null) {
             return;

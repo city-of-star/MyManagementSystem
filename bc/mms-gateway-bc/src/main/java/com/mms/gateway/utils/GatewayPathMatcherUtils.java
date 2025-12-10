@@ -15,7 +15,7 @@ import java.util.List;
  * @author li.hongyu
  * @date 2025-12-01 15:38:28
  */
-public class GatewayPathMatcher {
+public class GatewayPathMatcherUtils {
 
     /**
      * 路径模式解析器（线程安全）
@@ -64,7 +64,7 @@ public class GatewayPathMatcher {
     /**
      * 私有构造函数，防止实例化
      */
-    private GatewayPathMatcher() {
+    private GatewayPathMatcherUtils() {
         throw new UnsupportedOperationException("工具类不允许实例化");
     }
 }

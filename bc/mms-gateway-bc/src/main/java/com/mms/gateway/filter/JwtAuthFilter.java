@@ -2,7 +2,7 @@ package com.mms.gateway.filter;
 
 import com.mms.common.core.exceptions.BusinessException;
 import com.mms.common.security.jwt.JwtConstants;
-import com.mms.common.security.jwt.JwtUtil;
+import com.mms.common.security.jwt.JwtUtils;
 import com.mms.common.security.jwt.TokenType;
 import com.mms.common.security.jwt.TokenValidator;
 import com.mms.gateway.config.GatewayWhitelistConfig;
@@ -45,7 +45,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
     // JWT 工具类
     @Resource
-    private JwtUtil jwtUtil;
+    private JwtUtils jwtUtils;
 
     // Token验证器
     @Resource

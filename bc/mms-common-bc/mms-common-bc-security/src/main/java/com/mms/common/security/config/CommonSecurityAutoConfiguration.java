@@ -1,7 +1,7 @@
 package com.mms.common.security.config;
 
 import com.mms.common.security.jwt.JwtProperties;
-import com.mms.common.security.jwt.JwtUtil;
+import com.mms.common.security.jwt.JwtUtils;
 import com.mms.common.security.jwt.TokenValidator;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +31,8 @@ public class CommonSecurityAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "jwt", name = "secret")
-	public JwtUtil jwtUtil(JwtProperties jwtProperties) {
-		return new JwtUtil(jwtProperties);
+	public JwtUtils jwtUtil(JwtProperties jwtProperties) {
+		return new JwtUtils(jwtProperties);
 	}
 
 	/**
@@ -42,13 +42,13 @@ public class CommonSecurityAutoConfiguration {
 	 */
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnBean(JwtUtil.class)
-	public TokenValidator tokenValidator(JwtUtil jwtUtil, 
-	                                     @Autowired(required = false) RedisTemplate<String, Object> redisTemplate) {
+	@ConditionalOnBean(JwtUtils.class)
+	public TokenValidator tokenValidator(JwtUtils jwtUtils,
+										 @Autowired(required = false) RedisTemplate<String, Object> redisTemplate) {
 		if (redisTemplate != null) {
-			return new TokenValidator(jwtUtil, redisTemplate);
+			return new TokenValidator(jwtUtils, redisTemplate);
 		}
-		return new TokenValidator(jwtUtil);
+		return new TokenValidator(jwtUtils);
 	}
 }
 

@@ -20,7 +20,7 @@ import java.util.UUID;
  * @date 2025-12-04 15:46:51
  */
 @AllArgsConstructor
-public class JwtUtil {
+public class JwtUtils {
 
 	private final JwtProperties jwtProperties;
 

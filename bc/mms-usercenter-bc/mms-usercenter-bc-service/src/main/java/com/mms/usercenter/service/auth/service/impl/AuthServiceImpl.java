@@ -4,7 +4,7 @@ import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import com.mms.common.core.exceptions.ServerException;
 import com.mms.common.security.jwt.JwtConstants;
-import com.mms.common.security.jwt.JwtUtil;
+import com.mms.common.security.jwt.JwtUtils;
 import com.mms.common.security.jwt.TokenType;
 import com.mms.common.security.jwt.TokenValidator;
 import com.mms.common.web.context.UserContextUtils;
@@ -42,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
     private SysUserMapper sysUserMapper;
 
     @Resource
-    private JwtUtil jwtUtil;
+    private JwtUtils jwtUtils;
 
     @Resource
     private TokenValidator tokenValidator;
@@ -97,8 +97,8 @@ public class AuthServiceImpl implements AuthService {
             sysUserMapper.updateById(user);
 
             // 生成双 Token
-            String accessToken = jwtUtil.generateAccessToken(dto.getUsername());
-            String refreshToken = jwtUtil.generateRefreshToken(dto.getUsername());
+            String accessToken = jwtUtils.generateAccessToken(dto.getUsername());
+            String refreshToken = jwtUtils.generateRefreshToken(dto.getUsername());
 
             // 将Refresh Token存储到Redis（实现单点登录控制）
             tokenValidator.storeRefreshToken(dto.getUsername(), refreshToken);
@@ -131,8 +131,8 @@ public class AuthServiceImpl implements AuthService {
         tokenValidator.addToBlacklist(refreshClaims);
 
         // 生成新的双Token
-        String newAccessToken = jwtUtil.generateAccessToken(username);
-        String newRefreshToken = jwtUtil.generateRefreshToken(username);
+        String newAccessToken = jwtUtils.generateAccessToken(username);
+        String newRefreshToken = jwtUtils.generateRefreshToken(username);
 
         // 将新的Refresh Token存储到Redis（替换旧的）
         tokenValidator.storeRefreshToken(username, newRefreshToken);
@@ -215,8 +215,8 @@ public class AuthServiceImpl implements AuthService {
         LoginVo loginVo = new LoginVo();
         loginVo.setAccessToken(accessToken);
         loginVo.setRefreshToken(refreshToken);
-        loginVo.setAccessTokenExpiresIn(jwtUtil.getAccessTokenTtlSeconds());
-        loginVo.setRefreshTokenExpiresIn(jwtUtil.getRefreshTokenTtlSeconds());
+        loginVo.setAccessTokenExpiresIn(jwtUtils.getAccessTokenTtlSeconds());
+        loginVo.setRefreshTokenExpiresIn(jwtUtils.getRefreshTokenTtlSeconds());
         return loginVo;
     }
 
