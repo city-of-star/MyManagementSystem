@@ -4,9 +4,11 @@ import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import com.mms.common.core.exceptions.ServerException;
 import com.mms.common.core.response.Response;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
@@ -15,14 +17,16 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Set;
 
 /**
  * 实现功能【全局异常捕获处理器】
  * <p>
- *     仅适用于Spring MVC服务（业务服务），不适用于Spring Cloud Gateway（WebFlux）
+ * 仅适用于Spring MVC服务（业务服务），不适用于Spring Cloud Gateway（WebFlux）
  * <p/>
  *
  * @author li.hongyu
@@ -39,11 +43,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BusinessException.class)
     public Response<?> handleBusinessException(BusinessException e) {
-        String message = e.getMessage();
-        Integer code = e.getCode();
-        
-        log.warn("业务异常: 【{}】", message);
-        return Response.fail(code, message);
+        log.warn("业务异常: 【{}】", e.getMessage());
+        return Response.fail(e.getCode(), e.getMessage());
     }
 
     /**
@@ -52,7 +53,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ServerException.class)
     public Response<?> handleServerException(ServerException e) {
-        log.error("服务器异常: 【{}】", e.getMessage(), e);
+        log.error("服务器异常: 【{}】", getCurrentRequestUrl(), e);
         return Response.error(ErrorCode.SYSTEM_ERROR.getCode(), ErrorCode.SYSTEM_ERROR.getMessage());
     }
 
@@ -95,22 +96,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Response<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        log.warn("请求参数解析异常: 【{}】", e.getMessage());
+        log.warn("请求参数解析异常: 【{}】", getCurrentRequestUrl(), e);
         return Response.error(ErrorCode.PARAM_INVALID.getCode(), ErrorCode.PARAM_INVALID.getMessage());
-    }
-
-    /**
-     * 处理接口不存在异常(HTTP 404)
-     * 开发环境提供更友好的提示
-     */
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public Response<?> handleNotFound(NoHandlerFoundException e) {
-        String requestUrl = e.getRequestURL();
-        String message = String.format("接口不存在: %s，请检查请求路径是否正确", requestUrl);
-
-        log.warn("接口不存在异常: 【{}】", requestUrl);
-        return Response.error(HttpStatus.NOT_FOUND.value(), message);
     }
 
     /**
@@ -125,8 +112,23 @@ public class GlobalExceptionHandler {
         String supportedMethodsStr = supportedMethods != null ? String.join(", ", supportedMethods) : "未知";
         String message = String.format("请求方法 %s 不被支持，支持的方法: %s", method, supportedMethodsStr);
 
-        log.warn("请求方法不匹配异常: 【{}】，支持的方法: 【{}】", method, supportedMethodsStr);
-        return Response.error(HttpStatus.METHOD_NOT_ALLOWED.value(), message);
+        log.warn("请求方法不匹配异常: 【请求方法: {}，支持的方法: {}】", method, supportedMethodsStr);
+        return Response.error(ErrorCode.METHOD_NOT_ALLOWED.getCode(), message);
+    }
+
+    /**
+     * 处理资源不存在异常(HTTP 404)
+     * 注意：需要配置 spring.mvc.throw-exception-if-no-handler-found=true 才能生效
+     */
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoResourceFoundException.class)
+    public Response<?> handleNoResourceFoundException(NoResourceFoundException e) {
+        String method = e.getHttpMethod().name();
+        String path = e.getResourcePath();
+        String message = String.format("接口不存在: %s %s", method, path);
+        
+        log.warn("接口不存在: 【{} {}】", method, path);
+        return Response.error(ErrorCode.NOT_FOUND.getCode(), message);
     }
 
     /**
@@ -137,6 +139,40 @@ public class GlobalExceptionHandler {
     public Response<?> handleAllUncaughtException(Exception e) {
         log.error("未知异常: 【{}】", e.getMessage(), e);
         return Response.error(ErrorCode.SYSTEM_ERROR.getCode(), ErrorCode.SYSTEM_ERROR.getMessage());
+    }
+
+    /**
+     * 获取当前请求的完整 URL
+     * @return 格式化的请求URL字符串
+     */
+    private String getCurrentRequestUrl() {
+        try {
+            // 从RequestContextHolder中获取当前请求
+            ServletRequestAttributes attributes = (ServletRequestAttributes)
+                    RequestContextHolder.getRequestAttributes();
+
+            if (attributes == null) {
+                return "未知接口";
+            }
+
+            HttpServletRequest request = attributes.getRequest();
+            String method = request.getMethod();
+            String path = request.getRequestURI();
+            String queryString = request.getQueryString();
+
+            StringBuilder urlBuilder = new StringBuilder();
+            urlBuilder.append(method).append(" ").append(path);
+
+            if (StringUtils.isNotBlank(queryString)) {
+                urlBuilder.append("?").append(queryString);
+            }
+
+            return urlBuilder.toString();
+        } catch (Exception e) {
+            // 捕获异常避免影响主流程
+            log.warn("获取当前请求URL失败", e);
+            return "未知接口";
+        }
     }
 }
 

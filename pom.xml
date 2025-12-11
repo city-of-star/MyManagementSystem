@@ -102,11 +102,6 @@
             </dependency>
             <dependency>
                 <groupId>com.mms</groupId>
-                <artifactId>mms-common-bc-web-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mms</groupId>
                 <artifactId>mms-common-bc-web-mvc</artifactId>
                 <version>${project.version}</version>
             </dependency>
