@@ -1,4 +1,4 @@
-package com.mms.common.security.jwt;
+package com.mms.common.security.constants;
 
 import org.springframework.http.HttpHeaders;
 

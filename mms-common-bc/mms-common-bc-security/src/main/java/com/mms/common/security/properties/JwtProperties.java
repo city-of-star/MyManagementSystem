@@ -1,4 +1,4 @@
-package com.mms.common.security.jwt;
+package com.mms.common.security.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

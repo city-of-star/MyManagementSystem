@@ -1,10 +1,10 @@
 package com.mms.gateway.filter;
 
 import com.mms.common.core.exceptions.BusinessException;
-import com.mms.common.security.jwt.JwtConstants;
-import com.mms.common.security.jwt.JwtUtils;
-import com.mms.common.security.jwt.TokenType;
-import com.mms.common.security.jwt.TokenValidator;
+import com.mms.common.security.constants.JwtConstants;
+import com.mms.common.security.utils.JwtUtils;
+import com.mms.common.security.enums.TokenType;
+import com.mms.common.security.utils.TokenValidatorUtils;
 import com.mms.gateway.config.GatewayWhitelistConfig;
 import com.mms.common.core.constants.gateway.GatewayConstants;
 import com.mms.gateway.utils.GatewayResponseUtils;
@@ -43,13 +43,9 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     // 日志记录器
     private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
 
-    // JWT 工具类
-    @Resource
-    private JwtUtils jwtUtils;
-
     // Token验证器
     @Resource
-    private TokenValidator tokenValidator;
+    private TokenValidatorUtils tokenValidatorUtils;
 
     // 白名单配置
     @Resource
@@ -68,7 +64,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         // 读取 Authorization 头部
         String authHeader = request.getHeaders().getFirst(JwtConstants.Headers.AUTHORIZATION);
         // 提取 JWT Token
-        String token = TokenValidator.extractTokenFromHeader(authHeader);
+        String token = TokenValidatorUtils.extractTokenFromHeader(authHeader);
         // 检查 Token 是否提取成功
         if (!StringUtils.hasText(token)) {
             return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "请求未携带认证信息，请检查Authorization请求头是否存在");
@@ -77,7 +73,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         // 解析并验证Token（验证类型必须是ACCESS，并检查黑名单）
         Claims claims;
         try {
-            claims = tokenValidator.parseAndValidate(token, TokenType.ACCESS);
+            claims = tokenValidatorUtils.parseAndValidate(token, TokenType.ACCESS);
         } catch (BusinessException e) {
             return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, e.getMessage());
         } catch (Exception e) {

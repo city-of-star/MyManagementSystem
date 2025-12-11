@@ -3,10 +3,12 @@ package com.mms.usercenter.service.auth.service.impl;
 import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import com.mms.common.core.exceptions.ServerException;
-import com.mms.common.security.jwt.JwtConstants;
-import com.mms.common.security.jwt.JwtUtils;
-import com.mms.common.security.jwt.TokenType;
-import com.mms.common.security.jwt.TokenValidator;
+import com.mms.common.security.constants.JwtConstants;
+import com.mms.common.security.utils.RefreshTokenUtils;
+import com.mms.common.security.utils.TokenBlacklistUtils;
+import com.mms.common.security.utils.JwtUtils;
+import com.mms.common.security.enums.TokenType;
+import com.mms.common.security.utils.TokenValidatorUtils;
 import com.mms.common.web.context.UserContextUtils;
 import com.mms.usercenter.common.auth.dto.LoginDto;
 import com.mms.usercenter.common.auth.dto.LogoutDto;
@@ -45,7 +47,13 @@ public class AuthServiceImpl implements AuthService {
     private JwtUtils jwtUtils;
 
     @Resource
-    private TokenValidator tokenValidator;
+    private TokenValidatorUtils tokenValidatorUtils;
+
+    @Resource
+    private TokenBlacklistUtils tokenBlacklistUtils;
+
+    @Resource
+    private RefreshTokenUtils refreshTokenUtils;
 
     @Resource
     private LoginSecurityUtils loginSecurityUtils;
@@ -101,7 +109,8 @@ public class AuthServiceImpl implements AuthService {
             String refreshToken = jwtUtils.generateRefreshToken(dto.getUsername());
 
             // 将Refresh Token存储到Redis（实现单点登录控制）
-            tokenValidator.storeRefreshToken(dto.getUsername(), refreshToken);
+            Claims refreshClaims = jwtUtils.parseToken(refreshToken);
+            refreshTokenUtils.storeRefreshToken(dto.getUsername(), refreshToken, refreshClaims);
 
             // 构建 LoginVo
             return buildLoginVo(accessToken, refreshToken);
@@ -115,7 +124,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginVo refreshToken(RefreshTokenDto dto) {
         // 解析并验证Refresh Token
-        Claims refreshClaims = tokenValidator.parseAndValidate(dto.getRefreshToken(), TokenType.REFRESH);
+        Claims refreshClaims = tokenValidatorUtils.parseAndValidate(dto.getRefreshToken(), TokenType.REFRESH);
 
         // 提取用户名
         String username = Optional.ofNullable(refreshClaims.get(JwtConstants.Claims.USERNAME))
@@ -123,19 +132,20 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_TOKEN, "Token中缺少用户名信息"));
 
         // 验证Refresh Token是否在Redis中存在且有效（实现单点登录控制）
-        if (!tokenValidator.isRefreshTokenValid(username, refreshClaims)) {
+        if (!refreshTokenUtils.isRefreshTokenValid(username, refreshClaims)) {
             throw new BusinessException(ErrorCode.INVALID_TOKEN, "Refresh Token已失效，请重新登录");
         }
 
         // 将旧的Refresh Token加入黑名单
-        tokenValidator.addToBlacklist(refreshClaims);
+        tokenBlacklistUtils.addToBlacklist(refreshClaims);
 
         // 生成新的双Token
         String newAccessToken = jwtUtils.generateAccessToken(username);
         String newRefreshToken = jwtUtils.generateRefreshToken(username);
 
         // 将新的Refresh Token存储到Redis（替换旧的）
-        tokenValidator.storeRefreshToken(username, newRefreshToken);
+        Claims newRefreshClaims = jwtUtils.parseToken(newRefreshToken);
+        refreshTokenUtils.storeRefreshToken(username, newRefreshToken, newRefreshClaims);
 
         return buildLoginVo(newAccessToken, newRefreshToken);
     }
@@ -150,22 +160,22 @@ public class AuthServiceImpl implements AuthService {
         if (StringUtils.hasText(accessTokenJti) && StringUtils.hasText(accessTokenExp)) {
             try {
                 long expirationTime = Long.parseLong(accessTokenExp);
-                tokenValidator.addToBlacklist(accessTokenJti, expirationTime, TokenType.ACCESS);
+                tokenBlacklistUtils.addToBlacklist(accessTokenJti, expirationTime, TokenType.ACCESS);
             } catch (NumberFormatException e) {
                 // 过期时间格式错误，忽略Access Token黑名单操作
             }
         }
 
         // 解析并验证Refresh Token
-        Claims refreshClaims = tokenValidator.parseAndValidate(dto.getRefreshToken(), TokenType.REFRESH);
+        Claims refreshClaims = tokenValidatorUtils.parseAndValidate(dto.getRefreshToken(), TokenType.REFRESH);
         // 将Refresh Token加入黑名单
-        tokenValidator.addToBlacklist(refreshClaims);
+        tokenBlacklistUtils.addToBlacklist(refreshClaims);
 
         // 从Token中获取用户名，如果存在则从Redis删除对应的Refresh Token
         // 实现单点登录控制，确保旧Refresh Token立即失效
         Optional.ofNullable(refreshClaims.get(JwtConstants.Claims.USERNAME))
                 .map(Object::toString)
-                .ifPresent(username -> tokenValidator.removeRefreshToken(username));
+                .ifPresent(username -> refreshTokenUtils.removeRefreshToken(username));
     }
 
     /**
