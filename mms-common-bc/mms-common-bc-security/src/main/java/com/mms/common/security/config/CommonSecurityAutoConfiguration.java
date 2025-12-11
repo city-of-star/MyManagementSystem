@@ -1,9 +1,10 @@
 package com.mms.common.security.config;
 
 import com.mms.common.security.properties.JwtProperties;
+import com.mms.common.security.utils.JwtUtils;
+import com.mms.common.security.utils.ReactiveTokenValidatorUtils;
 import com.mms.common.security.utils.RefreshTokenUtils;
 import com.mms.common.security.utils.TokenBlacklistUtils;
-import com.mms.common.security.utils.JwtUtils;
 import com.mms.common.security.utils.TokenValidatorUtils;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 
 /**
  * 实现功能【JWT 自动装配配置】
@@ -42,23 +44,36 @@ public class CommonSecurityAutoConfiguration {
 	}
 
 	/**
-	 * 创建 TokenBlacklistUtils Bean
-	 * 只有当有 RedisTemplate 的时候才创建
+	 * 创建 ReactiveTokenValidatorUtils Bean
+	 * 仅当 JwtUtils、ReactiveStringRedisTemplate 存在时创建
 	 */
 	@Bean
 	@ConditionalOnMissingBean
+	@ConditionalOnBean({JwtUtils.class, ReactiveStringRedisTemplate.class})
+	public ReactiveTokenValidatorUtils reactiveTokenValidatorUtils(
+			JwtUtils jwtUtils,
+			ReactiveStringRedisTemplate reactiveStringRedisTemplate) {
+		return new ReactiveTokenValidatorUtils(jwtUtils, reactiveStringRedisTemplate);
+	}
+
+	/**
+	 * 创建 TokenBlacklistUtils Bean
+	 * 仅在非Reactive环境下（存在 RedisTemplate 且不存在 ReactiveStringRedisTemplate）创建
+	 */
+	@Bean
 	@ConditionalOnBean(RedisTemplate.class)
+	@ConditionalOnMissingBean(ReactiveStringRedisTemplate.class)
 	public TokenBlacklistUtils tokenBlacklistUtils(RedisTemplate<String, Object> redisTemplate) {
 		return new TokenBlacklistUtils(redisTemplate);
 	}
 
 	/**
 	 * 创建 RefreshTokenUtils Bean
-	 * 只有当有 RedisTemplate 的时候才创建
+	 * 仅在非Reactive环境下（存在 RedisTemplate 且不存在 ReactiveStringRedisTemplate）创建
 	 */
 	@Bean
-	@ConditionalOnMissingBean
 	@ConditionalOnBean(RedisTemplate.class)
+	@ConditionalOnMissingBean(ReactiveStringRedisTemplate.class)
 	public RefreshTokenUtils refreshTokenUtils(RedisTemplate<String, Object> redisTemplate) {
 		return new RefreshTokenUtils(redisTemplate);
 	}

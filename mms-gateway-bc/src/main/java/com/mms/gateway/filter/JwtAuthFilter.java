@@ -2,13 +2,11 @@ package com.mms.gateway.filter;
 
 import com.mms.common.core.exceptions.BusinessException;
 import com.mms.common.security.constants.JwtConstants;
-import com.mms.common.security.utils.JwtUtils;
 import com.mms.common.security.enums.TokenType;
-import com.mms.common.security.utils.TokenValidatorUtils;
+import com.mms.common.security.utils.ReactiveTokenValidatorUtils;
 import com.mms.gateway.config.GatewayWhitelistConfig;
 import com.mms.common.core.constants.gateway.GatewayConstants;
 import com.mms.gateway.utils.GatewayResponseUtils;
-import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,13 +41,13 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     // 日志记录器
     private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
 
-    // Token验证器
-    @Resource
-    private TokenValidatorUtils tokenValidatorUtils;
-
     // 白名单配置
     @Resource
     private GatewayWhitelistConfig whitelistConfig;
+
+    // Reactive Token验证器
+    @Resource
+    private ReactiveTokenValidatorUtils reactiveTokenValidatorUtils;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -64,48 +62,46 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         // 读取 Authorization 头部
         String authHeader = request.getHeaders().getFirst(JwtConstants.Headers.AUTHORIZATION);
         // 提取 JWT Token
-        String token = TokenValidatorUtils.extractTokenFromHeader(authHeader);
+        String token = reactiveTokenValidatorUtils.extractTokenFromHeader(authHeader);
         // 检查 Token 是否提取成功
         if (!StringUtils.hasText(token)) {
             return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "请求未携带认证信息，请检查Authorization请求头是否存在");
         }
         
         // 解析并验证Token（验证类型必须是ACCESS，并检查黑名单）
-        Claims claims;
-        try {
-            claims = tokenValidatorUtils.parseAndValidate(token, TokenType.ACCESS);
-        } catch (BusinessException e) {
-            return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, e.getMessage());
-        } catch (Exception e) {
-            return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "身份验证已失效，请重新登录");
-        }
+        return reactiveTokenValidatorUtils.parseAndValidate(token, TokenType.ACCESS)
+                .flatMap(claims -> {
+                    String username = Optional.ofNullable(claims.get(JwtConstants.Claims.USERNAME))
+                            .map(Object::toString)
+                            .orElse(null);
+                    String jti = claims.getId();
+                    Date expiration = claims.getExpiration();
 
-        String username = Optional.ofNullable(claims.get(JwtConstants.Claims.USERNAME))
-                .map(Object::toString)
-                .orElse(null);
-        String jti = claims.getId();
-        Date expiration = claims.getExpiration();
+                    // 将用户信息透传到下游服务
+                    ServerHttpRequest mutatedRequest = request.mutate()
+                            .headers(httpHeaders -> {
+                                if (StringUtils.hasText(username)) {
+                                    // 将用户名添加到请求头，供下游服务使用
+                                    httpHeaders.set(GatewayConstants.Headers.USER_NAME, username);
+                                }
+                                if (StringUtils.hasText(jti)) {
+                                    // 将 Token Jti 添加到请求头，供下游服务使用（用于黑名单）
+                                    httpHeaders.set(GatewayConstants.Headers.TOKEN_JTI, jti);
+                                }
+                                if (expiration != null) {
+                                    // 将 Token 过期时间添加到请求头，供下游服务使用（用于黑名单TTL计算）
+                                    httpHeaders.set(GatewayConstants.Headers.TOKEN_EXP, String.valueOf(expiration.getTime()));
+                                }
+                            })
+                            .build();
 
-        // 将用户信息透传到下游服务
-        ServerHttpRequest mutatedRequest = request.mutate()
-                .headers(httpHeaders -> {
-                    if (StringUtils.hasText(username)) {
-                        // 将用户名添加到请求头，供下游服务使用
-                        httpHeaders.set(GatewayConstants.Headers.USER_NAME, username);
-                    }
-                    if (StringUtils.hasText(jti)) {
-                        // 将 Token Jti 添加到请求头，供下游服务使用（用于黑名单）
-                        httpHeaders.set(GatewayConstants.Headers.TOKEN_JTI, jti);
-                    }
-                    if (expiration != null) {
-                        // 将 Token 过期时间添加到请求头，供下游服务使用（用于黑名单TTL计算）
-                        httpHeaders.set(GatewayConstants.Headers.TOKEN_EXP, String.valueOf(expiration.getTime()));
-                    }
+                    // 继续过滤器链
+                    return chain.filter(exchange.mutate().request(mutatedRequest).build());
                 })
-                .build();
-
-        // 继续过滤器链
-        return chain.filter(exchange.mutate().request(mutatedRequest).build());
+                .onErrorResume(BusinessException.class,
+                        e -> GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, e.getMessage()))
+                .onErrorResume(e ->
+                        GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "身份验证已失效，请重新登录"));
     }
 
     @Override

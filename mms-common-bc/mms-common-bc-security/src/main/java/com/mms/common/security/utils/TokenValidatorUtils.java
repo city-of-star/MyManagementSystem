@@ -14,6 +14,7 @@ import java.util.Date;
  * 实现功能【Token验证工具类】
  * <p>
  * 负责Token的解析、验证（签名、过期、类型）
+ * 仅适用于 WebMvc 场景，使用 同步Redis 会阻塞线程，不可用于网关
  * </p>
  *
  * @author li.hongyu

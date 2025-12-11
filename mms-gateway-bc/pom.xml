@@ -55,16 +55,10 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- Reactive Redis（Token 黑名单 / 限流 等待接入） -->
+        <!-- Reactive Redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
-        </dependency>
-
-        <!-- 同步 Redis（用于 Token 黑名单检查，与响应式 Redis 共存） -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
         <!-- Nacos 配置 & 注册中心 -->
