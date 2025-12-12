@@ -23,9 +23,9 @@ import java.time.LocalDateTime;
  * @date 2025-12-09 14:42:17
  */
 @Data
-@TableName("sys_post")
+@TableName("post")
 @Schema(description = "岗位实体")
-public class SysPostEntity implements Serializable {
+public class PostEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

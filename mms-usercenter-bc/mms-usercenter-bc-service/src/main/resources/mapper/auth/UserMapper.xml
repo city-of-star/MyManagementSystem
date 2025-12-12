@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.mms.usercenter.service.auth.mapper.SysUserMapper">
+<mapper namespace="com.mms.usercenter.service.auth.mapper.UserMapper">
 
     <!-- 结果映射（完整映射，用于其他查询） -->
-    <resultMap id="BaseResultMap" type="com.mms.usercenter.common.auth.entity.SysUserEntity">
+    <resultMap id="BaseResultMap" type="com.mms.usercenter.common.auth.entity.UserEntity">
         <id column="id" property="id"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
@@ -33,7 +33,7 @@
     <select id="selectByUsername" resultMap="BaseResultMap">
         SELECT
             id, username, password, real_name, status, locked, last_login_time, last_login_ip
-        FROM sys_user
+        FROM user
         WHERE username = #{username}
           AND deleted = 0
     </select>

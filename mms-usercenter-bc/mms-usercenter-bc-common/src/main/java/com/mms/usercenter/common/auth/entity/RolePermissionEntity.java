@@ -13,18 +13,18 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 实现功能【用户角色关联实体】
+ * 实现功能【角色权限关联实体】
  * <p>
  *
  * <p>
  *
  * @author li.hongyu
- * @date 2025-12-09 14:42:22
+ * @date 2025-12-09 14:42:27
  */
 @Data
-@TableName("sys_user_role")
-@Schema(description = "用户角色关联实体")
-public class SysUserRoleEntity implements Serializable {
+@TableName("role_permission")
+@Schema(description = "角色权限关联实体")
+public class RolePermissionEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -33,11 +33,11 @@ public class SysUserRoleEntity implements Serializable {
     @Schema(description = "关联ID")
     private Long id;
 
-    @Schema(description = "用户ID")
-    private Long userId;
-
     @Schema(description = "角色ID")
     private Long roleId;
+
+    @Schema(description = "权限ID")
+    private Long permissionId;
 
     @TableField(value = "create_by", fill = FieldFill.INSERT)
     @Schema(description = "创建人ID")

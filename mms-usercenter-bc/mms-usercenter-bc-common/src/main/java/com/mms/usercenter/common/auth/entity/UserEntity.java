@@ -24,9 +24,9 @@ import java.time.LocalDateTime;
  * @date 2025-11-07 09:41:03
  */
 @Data
-@TableName("sys_user")
+@TableName("user")
 @Schema(description = "用户实体")
-public class SysUserEntity implements Serializable {
+public class UserEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

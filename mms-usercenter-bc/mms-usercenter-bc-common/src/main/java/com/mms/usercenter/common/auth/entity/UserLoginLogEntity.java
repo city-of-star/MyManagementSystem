@@ -20,9 +20,9 @@ import java.time.LocalDateTime;
  * @date 2025-12-09 14:41:47
  */
 @Data
-@TableName("sys_user_login_log")
+@TableName("user_login_log")
 @Schema(description = "用户登录日志实体")
-public class SysUserLoginLogEntity implements Serializable {
+public class UserLoginLogEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

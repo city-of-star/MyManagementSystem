@@ -14,37 +14,58 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 实现功能【角色实体】
+ * 实现功能【权限实体】
  * <p>
  *
  * <p>
  *
  * @author li.hongyu
- * @date 2025-12-09 14:42:11
+ * @date 2025-12-09 14:42:17
  */
 @Data
-@TableName("sys_role")
-@Schema(description = "角色实体")
-public class SysRoleEntity implements Serializable {
+@TableName("permission")
+@Schema(description = "权限实体")
+public class PermissionEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.AUTO)
-    @Schema(description = "角色ID")
+    @Schema(description = "权限ID")
     private Long id;
 
-    @Schema(description = "角色编码")
-    private String roleCode;
+    @Schema(description = "父权限ID，0表示顶级权限")
+    private Long parentId;
 
-    @Schema(description = "角色名称")
-    private String roleName;
+    @Schema(description = "权限类型：menu-菜单，button-按钮，api-接口")
+    private String permissionType;
 
-    @Schema(description = "角色类型：system-系统角色，custom-自定义角色")
-    private String roleType;
+    @Schema(description = "权限名称")
+    private String permissionName;
+
+    @Schema(description = "权限编码（唯一标识）")
+    private String permissionCode;
+
+    @Schema(description = "路由路径（菜单类型使用）")
+    private String path;
+
+    @Schema(description = "组件路径（菜单类型使用）")
+    private String component;
+
+    @Schema(description = "图标（菜单类型使用）")
+    private String icon;
+
+    @Schema(description = "接口URL（接口类型使用）")
+    private String apiUrl;
+
+    @Schema(description = "接口请求方式：GET,POST,PUT,DELETE等（接口类型使用）")
+    private String apiMethod;
 
     @Schema(description = "排序号")
     private Integer sortOrder;
+
+    @Schema(description = "是否显示：0-隐藏，1-显示")
+    private Integer visible;
 
     @Schema(description = "状态：0-禁用，1-启用")
     private Integer status;

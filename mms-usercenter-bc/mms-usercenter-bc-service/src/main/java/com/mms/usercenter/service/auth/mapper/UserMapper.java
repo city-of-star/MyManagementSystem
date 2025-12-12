@@ -1,7 +1,7 @@
 package com.mms.usercenter.service.auth.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.mms.usercenter.common.auth.entity.SysUserEntity;
+import com.mms.usercenter.common.auth.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,7 +15,7 @@ import org.apache.ibatis.annotations.Param;
  * @date 2025-11-07 17:30:28
  */
 @Mapper
-public interface SysUserMapper extends BaseMapper<SysUserEntity> {
+public interface UserMapper extends BaseMapper<UserEntity> {
 
     /**
      * 根据用户名查询用户（用于登录）
@@ -23,6 +23,6 @@ public interface SysUserMapper extends BaseMapper<SysUserEntity> {
      * @param username 用户名
      * @return 用户实体
      */
-    SysUserEntity selectByUsername(@Param("username") String username);
+    UserEntity selectByUsername(@Param("username") String username);
 }
 

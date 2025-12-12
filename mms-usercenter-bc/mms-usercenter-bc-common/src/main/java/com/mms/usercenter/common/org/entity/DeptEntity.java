@@ -1,4 +1,4 @@
-package com.mms.usercenter.common.auth.entity;
+package com.mms.usercenter.common.org.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -14,58 +14,46 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 实现功能【权限实体】
+ * 实现功能【部门实体】
  * <p>
  *
  * <p>
  *
  * @author li.hongyu
- * @date 2025-12-09 14:42:17
+ * @date 2025-12-09 14:41:56
  */
 @Data
-@TableName("sys_permission")
-@Schema(description = "权限实体")
-public class SysPermissionEntity implements Serializable {
+@TableName("dept")
+@Schema(description = "部门实体")
+public class DeptEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.AUTO)
-    @Schema(description = "权限ID")
+    @Schema(description = "部门ID")
     private Long id;
 
-    @Schema(description = "父权限ID，0表示顶级权限")
+    @Schema(description = "父部门ID，0表示顶级部门")
     private Long parentId;
 
-    @Schema(description = "权限类型：menu-菜单，button-按钮，api-接口")
-    private String permissionType;
+    @Schema(description = "部门名称")
+    private String deptName;
 
-    @Schema(description = "权限名称")
-    private String permissionName;
+    @Schema(description = "部门编码")
+    private String deptCode;
 
-    @Schema(description = "权限编码（唯一标识）")
-    private String permissionCode;
+    @Schema(description = "负责人")
+    private String leader;
 
-    @Schema(description = "路由路径（菜单类型使用）")
-    private String path;
+    @Schema(description = "联系电话")
+    private String phone;
 
-    @Schema(description = "组件路径（菜单类型使用）")
-    private String component;
-
-    @Schema(description = "图标（菜单类型使用）")
-    private String icon;
-
-    @Schema(description = "接口URL（接口类型使用）")
-    private String apiUrl;
-
-    @Schema(description = "接口请求方式：GET,POST,PUT,DELETE等（接口类型使用）")
-    private String apiMethod;
+    @Schema(description = "邮箱")
+    private String email;
 
     @Schema(description = "排序号")
     private Integer sortOrder;
-
-    @Schema(description = "是否显示：0-隐藏，1-显示")
-    private Integer visible;
 
     @Schema(description = "状态：0-禁用，1-启用")
     private Integer status;
@@ -93,3 +81,4 @@ public class SysPermissionEntity implements Serializable {
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
 }
+

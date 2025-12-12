@@ -13,11 +13,11 @@ import com.mms.common.web.context.UserContextUtils;
 import com.mms.usercenter.common.auth.dto.LoginDto;
 import com.mms.usercenter.common.auth.dto.LogoutDto;
 import com.mms.usercenter.common.auth.dto.RefreshTokenDto;
-import com.mms.usercenter.common.auth.entity.SysUserEntity;
+import com.mms.usercenter.common.auth.entity.UserEntity;
 import com.mms.usercenter.common.auth.vo.LoginVo;
 import com.mms.usercenter.common.auth.properties.LoginSecurityProperties;
 import com.mms.usercenter.common.auth.utils.LoginSecurityUtils;
-import com.mms.usercenter.service.auth.mapper.SysUserMapper;
+import com.mms.usercenter.service.auth.mapper.UserMapper;
 import com.mms.usercenter.service.auth.service.AuthService;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
@@ -41,7 +41,7 @@ import java.util.Optional;
 public class AuthServiceImpl implements AuthService {
 
     @Resource
-    private SysUserMapper sysUserMapper;
+    private UserMapper userMapper;
 
     @Resource
     private JwtUtils jwtUtils;
@@ -71,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
             }
 
             // 查询用户
-            SysUserEntity user = sysUserMapper.selectByUsername(dto.getUsername());
+            UserEntity user = userMapper.selectByUsername(dto.getUsername());
 
             // 验证用户是否存在
             if (user == null) {
@@ -102,7 +102,7 @@ public class AuthServiceImpl implements AuthService {
             user.setLastLoginTime(LocalDateTime.now());
             String clientIp = UserContextUtils.getClientIp();
             user.setLastLoginIp(StringUtils.hasText(clientIp) ? clientIp : "unknown");
-            sysUserMapper.updateById(user);
+            userMapper.updateById(user);
 
             // 生成双 Token
             String accessToken = jwtUtils.generateAccessToken(dto.getUsername());
@@ -181,7 +181,7 @@ public class AuthServiceImpl implements AuthService {
     /**
      * 处理登录失败逻辑
      */
-    private void handleLoginFailure(String username, SysUserEntity user) {
+    private void handleLoginFailure(String username, UserEntity user) {
         // 增加失败次数
         loginSecurityUtils.incrementLoginAttempts(username);
 

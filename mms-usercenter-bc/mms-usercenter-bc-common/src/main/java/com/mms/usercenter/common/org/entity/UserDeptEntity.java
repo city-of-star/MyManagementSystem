@@ -1,4 +1,4 @@
-package com.mms.usercenter.common.auth.entity;
+package com.mms.usercenter.common.org.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -13,18 +13,18 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 实现功能【角色权限关联实体】
+ * 实现功能【用户部门关联实体】
  * <p>
  *
  * <p>
  *
  * @author li.hongyu
- * @date 2025-12-09 14:42:27
+ * @date 2025-12-09 14:42:31
  */
 @Data
-@TableName("sys_role_permission")
-@Schema(description = "角色权限关联实体")
-public class SysRolePermissionEntity implements Serializable {
+@TableName("user_dept")
+@Schema(description = "用户部门关联实体")
+public class UserDeptEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -33,11 +33,14 @@ public class SysRolePermissionEntity implements Serializable {
     @Schema(description = "关联ID")
     private Long id;
 
-    @Schema(description = "角色ID")
-    private Long roleId;
+    @Schema(description = "用户ID")
+    private Long userId;
 
-    @Schema(description = "权限ID")
-    private Long permissionId;
+    @Schema(description = "部门ID")
+    private Long deptId;
+
+    @Schema(description = "是否主部门：0-否，1-是")
+    private Integer isPrimary;
 
     @TableField(value = "create_by", fill = FieldFill.INSERT)
     @Schema(description = "创建人ID")
@@ -47,3 +50,5 @@ public class SysRolePermissionEntity implements Serializable {
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 }
+
+

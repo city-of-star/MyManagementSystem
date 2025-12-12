@@ -22,9 +22,9 @@ import java.time.LocalDateTime;
  * @date 2025-12-09 14:42:42
  */
 @Data
-@TableName("sys_user_post")
+@TableName("user_post")
 @Schema(description = "用户岗位关联实体")
-public class SysUserPostEntity implements Serializable {
+public class UserPostEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

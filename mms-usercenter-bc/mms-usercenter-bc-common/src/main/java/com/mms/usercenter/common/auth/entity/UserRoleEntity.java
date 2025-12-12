@@ -1,4 +1,4 @@
-package com.mms.usercenter.common.org.entity;
+package com.mms.usercenter.common.auth.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -13,18 +13,18 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 实现功能【用户部门关联实体】
+ * 实现功能【用户角色关联实体】
  * <p>
  *
  * <p>
  *
  * @author li.hongyu
- * @date 2025-12-09 14:42:31
+ * @date 2025-12-09 14:42:22
  */
 @Data
-@TableName("sys_user_dept")
-@Schema(description = "用户部门关联实体")
-public class SysUserDeptEntity implements Serializable {
+@TableName("user_role")
+@Schema(description = "用户角色关联实体")
+public class UserRoleEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -36,11 +36,8 @@ public class SysUserDeptEntity implements Serializable {
     @Schema(description = "用户ID")
     private Long userId;
 
-    @Schema(description = "部门ID")
-    private Long deptId;
-
-    @Schema(description = "是否主部门：0-否，1-是")
-    private Integer isPrimary;
+    @Schema(description = "角色ID")
+    private Long roleId;
 
     @TableField(value = "create_by", fill = FieldFill.INSERT)
     @Schema(description = "创建人ID")
@@ -50,5 +47,3 @@ public class SysUserDeptEntity implements Serializable {
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 }
-
-

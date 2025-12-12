@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.mms.usercenter.service.auth.mapper.SysRoleMapper">
+<mapper namespace="com.mms.usercenter.service.auth.mapper.RoleMapper">
 
     <!-- 结果映射（完整映射，用于其他查询） -->
-    <resultMap id="BaseResultMap" type="com.mms.usercenter.common.auth.entity.SysRoleEntity">
+    <resultMap id="BaseResultMap" type="com.mms.usercenter.common.auth.entity.RoleEntity">
         <id column="id" property="id"/>
         <result column="role_code" property="roleCode"/>
         <result column="role_name" property="roleName"/>

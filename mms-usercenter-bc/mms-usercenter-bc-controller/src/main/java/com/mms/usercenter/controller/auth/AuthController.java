@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 实现功能【用户登录注册服务 Controller】
+ * 实现功能【用户认证服务 Controller】
  * <p>
  *
  * <p>

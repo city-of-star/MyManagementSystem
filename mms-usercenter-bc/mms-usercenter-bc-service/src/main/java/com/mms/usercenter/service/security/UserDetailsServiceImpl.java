@@ -2,9 +2,9 @@ package com.mms.usercenter.service.security;
 
 import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
-import com.mms.usercenter.common.auth.entity.SysUserEntity;
+import com.mms.usercenter.common.auth.entity.UserEntity;
 import com.mms.usercenter.common.security.entity.SecurityUser;
-import com.mms.usercenter.service.auth.mapper.SysUserMapper;
+import com.mms.usercenter.service.auth.mapper.UserMapper;
 import jakarta.annotation.Resource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,12 +32,12 @@ import java.util.Set;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Resource
-    private SysUserMapper sysUserMapper;
+    private UserMapper userMapper;
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        SysUserEntity user = sysUserMapper.selectByUsername(username);
+        UserEntity user = userMapper.selectByUsername(username);
         if (user == null) {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND, "用户不存在");
         }

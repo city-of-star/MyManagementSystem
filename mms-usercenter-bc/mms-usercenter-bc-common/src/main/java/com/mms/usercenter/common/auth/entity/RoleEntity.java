@@ -1,4 +1,4 @@
-package com.mms.usercenter.common.org.entity;
+package com.mms.usercenter.common.auth.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -14,43 +14,34 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 实现功能【部门实体】
+ * 实现功能【角色实体】
  * <p>
  *
  * <p>
  *
  * @author li.hongyu
- * @date 2025-12-09 14:41:56
+ * @date 2025-12-09 14:42:11
  */
 @Data
-@TableName("sys_dept")
-@Schema(description = "部门实体")
-public class SysDeptEntity implements Serializable {
+@TableName("role")
+@Schema(description = "角色实体")
+public class RoleEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.AUTO)
-    @Schema(description = "部门ID")
+    @Schema(description = "角色ID")
     private Long id;
 
-    @Schema(description = "父部门ID，0表示顶级部门")
-    private Long parentId;
+    @Schema(description = "角色编码")
+    private String roleCode;
 
-    @Schema(description = "部门名称")
-    private String deptName;
+    @Schema(description = "角色名称")
+    private String roleName;
 
-    @Schema(description = "部门编码")
-    private String deptCode;
-
-    @Schema(description = "负责人")
-    private String leader;
-
-    @Schema(description = "联系电话")
-    private String phone;
-
-    @Schema(description = "邮箱")
-    private String email;
+    @Schema(description = "角色类型：system-系统角色，custom-自定义角色")
+    private String roleType;
 
     @Schema(description = "排序号")
     private Integer sortOrder;
@@ -81,4 +72,3 @@ public class SysDeptEntity implements Serializable {
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
 }
-

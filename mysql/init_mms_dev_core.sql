@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS test
 -- ==================== 用户中心服务相关表 ====================
 
 -- 1. 用户表
-CREATE TABLE IF NOT EXISTS `sys_user` (
+CREATE TABLE IF NOT EXISTS `user` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户ID',
     `username` varchar(64) NOT NULL COMMENT '用户名（登录账号）',
     `password` varchar(255) NOT NULL COMMENT '密码（加密后）',
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `sys_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户表';
 
 -- 2. 用户登录日志表
-CREATE TABLE IF NOT EXISTS `sys_user_login_log` (
+CREATE TABLE IF NOT EXISTS `user_login_log` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '日志ID',
     `user_id` bigint DEFAULT NULL COMMENT '用户ID',
     `username` varchar(64) DEFAULT NULL COMMENT '用户名',
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `sys_user_login_log` (
 -- ==================== 组织权限服务相关表 ====================
 
 -- 3. 部门表
-CREATE TABLE IF NOT EXISTS `sys_dept` (
+CREATE TABLE IF NOT EXISTS `dept` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '部门ID',
     `parent_id` bigint NOT NULL DEFAULT 0 COMMENT '父部门ID，0表示顶级部门',
     `dept_name` varchar(64) NOT NULL COMMENT '部门名称',
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `sys_dept` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='部门表';
 
 -- 4. 岗位表
-CREATE TABLE IF NOT EXISTS `sys_post` (
+CREATE TABLE IF NOT EXISTS `post` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '岗位ID',
     `post_code` varchar(64) NOT NULL COMMENT '岗位编码',
     `post_name` varchar(64) NOT NULL COMMENT '岗位名称',
@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS `sys_post` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='岗位表';
 
 -- 5. 角色表
-CREATE TABLE IF NOT EXISTS `sys_role` (
+CREATE TABLE IF NOT EXISTS `role` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '角色ID',
     `role_code` varchar(64) NOT NULL COMMENT '角色编码',
     `role_name` varchar(64) NOT NULL COMMENT '角色名称',
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS `sys_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色表';
 
 -- 6. 权限表（菜单/按钮/接口权限）
-CREATE TABLE IF NOT EXISTS `sys_permission` (
+CREATE TABLE IF NOT EXISTS `permission` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '权限ID',
     `parent_id` bigint NOT NULL DEFAULT 0 COMMENT '父权限ID，0表示顶级权限',
     `permission_type` varchar(32) NOT NULL COMMENT '权限类型：menu-菜单，button-按钮，api-接口',
@@ -172,7 +172,7 @@ CREATE TABLE IF NOT EXISTS `sys_permission` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='权限表';
 
 -- 7. 用户角色关联表
-CREATE TABLE IF NOT EXISTS `sys_user_role` (
+CREATE TABLE IF NOT EXISTS `user_role` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '关联ID',
     `user_id` bigint NOT NULL COMMENT '用户ID',
     `role_id` bigint NOT NULL COMMENT '角色ID',
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `sys_user_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户角色关联表';
 
 -- 8. 角色权限关联表
-CREATE TABLE IF NOT EXISTS `sys_role_permission` (
+CREATE TABLE IF NOT EXISTS `role_permission` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '关联ID',
     `role_id` bigint NOT NULL COMMENT '角色ID',
     `permission_id` bigint NOT NULL COMMENT '权限ID',
@@ -198,7 +198,7 @@ CREATE TABLE IF NOT EXISTS `sys_role_permission` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色权限关联表';
 
 -- 9. 用户部门关联表
-CREATE TABLE IF NOT EXISTS `sys_user_dept` (
+CREATE TABLE IF NOT EXISTS `user_dept` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '关联ID',
     `user_id` bigint NOT NULL COMMENT '用户ID',
     `dept_id` bigint NOT NULL COMMENT '部门ID',
@@ -213,7 +213,7 @@ CREATE TABLE IF NOT EXISTS `sys_user_dept` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户部门关联表';
 
 -- 10. 用户岗位关联表
-CREATE TABLE IF NOT EXISTS `sys_user_post` (
+CREATE TABLE IF NOT EXISTS `user_post` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '关联ID',
     `user_id` bigint NOT NULL COMMENT '用户ID',
     `post_id` bigint NOT NULL COMMENT '岗位ID',
@@ -230,20 +230,17 @@ CREATE TABLE IF NOT EXISTS `sys_user_post` (
 -- ==================== 初始化数据 ====================
 
 -- 初始化超级管理员用户（密码：admin123）
--- 注意：密码使用BCrypt加密，这里是示例密码"admin123"的加密结果
--- 实际使用时，应该通过代码生成BCrypt加密后的密码
--- BCrypt("admin123") = $2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iwK8pJ6C
-INSERT IGNORE INTO `sys_user` (`id`, `username`, `password`, `nickname`, `real_name`, `status`, `locked`, `deleted`, `create_time`, `update_time`) 
+INSERT IGNORE INTO `user` (`id`, `username`, `password`, `nickname`, `real_name`, `status`, `locked`, `deleted`, `create_time`, `update_time`)
 VALUES (1, 'admin', '$2a$10$cU5acgjEYlHA.2cql1DmiOVcTKexIR0iKpKAIda0gJyLdKxeE8Lt.', '超级管理员', '超级管理员', 1, 0, 0, NOW(), NOW());
 
 -- 初始化系统管理员角色
-INSERT IGNORE INTO `sys_role` (`id`, `role_code`, `role_name`, `role_type`, `status`, `deleted`, `create_time`, `update_time`)
+INSERT IGNORE INTO `role` (`id`, `role_code`, `role_name`, `role_type`, `status`, `deleted`, `create_time`, `update_time`)
 VALUES (1, 'admin', '超级管理员', 'system', 1, 0, NOW(), NOW());
 
 -- 初始化普通用户角色
-INSERT IGNORE INTO `sys_role` (`id`, `role_code`, `role_name`, `role_type`, `status`, `deleted`, `create_time`, `update_time`)
+INSERT IGNORE INTO `role` (`id`, `role_code`, `role_name`, `role_type`, `status`, `deleted`, `create_time`, `update_time`)
 VALUES (2, 'user', '普通用户', 'system', 1, 0, NOW(), NOW());
 
 -- 给超级管理员分配角色
-INSERT IGNORE INTO `sys_user_role` (`user_id`, `role_id`, `create_time`) 
+INSERT IGNORE INTO `user_role` (`user_id`, `role_id`, `create_time`)
 VALUES (1, 1, NOW());
