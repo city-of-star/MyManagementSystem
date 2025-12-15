@@ -37,4 +37,14 @@ public class UserContext {
      * 客户端IP地址
      */
     private String clientIp;
+
+    /**
+     * 用户代理（浏览器信息）
+     */
+    private String userAgent;
+
+    /**
+     * 登录地点
+     */
+    private String loginLocation;
 }

@@ -39,6 +39,16 @@ public class GatewayConstants {
          * 客户端IP请求头（透传到下游服务）
          */
         public static final String CLIENT_IP = "X-Client-Ip";
+
+        /**
+         * 用户代理请求头（透传到下游服务）
+         */
+        public static final String USER_AGENT = "X-User-Agent";
+
+        /**
+         * 登录地点请求头（透传到下游服务）
+         */
+        public static final String LOGIN_LOCATION = "X-Login-Location";
     }
 
     /**

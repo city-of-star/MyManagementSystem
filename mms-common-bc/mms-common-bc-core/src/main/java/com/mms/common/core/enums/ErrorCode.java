@@ -33,6 +33,8 @@ public enum ErrorCode {
     EMAIL_FORMAT_ERROR(1015, "邮箱格式不正确"),
     PHONE_FORMAT_ERROR(1016, "手机号格式不正确"),
     PWD_WEAK(1017, "密码强度不够"),
+    PWD_EMPTY(1018, "密码不能为空"),
+    PWD_INVALID(1019, "密码不合法"),
     
     // 用户状态错误 (1021-1030)
     ACCOUNT_DISABLED(1021, "账号已停用"),

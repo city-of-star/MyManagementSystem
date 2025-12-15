@@ -54,6 +54,8 @@ public class UserContextUtils {
         String tokenJti = request.getHeader(GatewayConstants.Headers.TOKEN_JTI);
         String clientIp = request.getHeader(GatewayConstants.Headers.CLIENT_IP);
         String expiration = request.getHeader(GatewayConstants.Headers.TOKEN_EXP);
+        String userAgent = request.getHeader(GatewayConstants.Headers.USER_AGENT);
+        String loginLocation = request.getHeader(GatewayConstants.Headers.LOGIN_LOCATION);
 
         // 创建 userContext 实体
         UserContext userContext = new UserContext();
@@ -61,6 +63,8 @@ public class UserContextUtils {
         userContext.setTokenJti(tokenJti);
         userContext.setClientIp(clientIp);
         userContext.setExpiration(expiration);
+        userContext.setUserAgent(userAgent);
+        userContext.setLoginLocation(loginLocation);
 
         return userContext;
     }
@@ -123,6 +127,26 @@ public class UserContextUtils {
     public static String getClientIp() {
         UserContext context = getUserContext();
         return context != null ? context.getClientIp() : null;
+    }
+
+    /**
+     * 获取当前请求的用户代理（自动从请求线程获取）
+     *
+     * @return 用户代理，如果不存在则返回null
+     */
+    public static String getUserAgent() {
+        UserContext context = getUserContext();
+        return context != null ? context.getUserAgent() : null;
+    }
+
+    /**
+     * 获取当前请求的登录地点（自动从请求线程获取）
+     *
+     * @return 登录地点，如果不存在则返回null
+     */
+    public static String getLoginLocation() {
+        UserContext context = getUserContext();
+        return context != null ? context.getLoginLocation() : null;
     }
 
     /**

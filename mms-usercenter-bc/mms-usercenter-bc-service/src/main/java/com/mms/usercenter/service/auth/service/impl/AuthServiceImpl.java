@@ -17,7 +17,9 @@ import com.mms.usercenter.common.auth.entity.UserEntity;
 import com.mms.usercenter.common.auth.vo.LoginVo;
 import com.mms.usercenter.common.auth.properties.LoginSecurityProperties;
 import com.mms.usercenter.common.auth.utils.LoginSecurityUtils;
+import com.mms.usercenter.common.auth.entity.UserLoginLogEntity;
 import com.mms.usercenter.service.auth.mapper.UserMapper;
+import com.mms.usercenter.service.auth.mapper.UserLoginLogMapper;
 import com.mms.usercenter.service.auth.service.AuthService;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
@@ -59,7 +61,10 @@ public class AuthServiceImpl implements AuthService {
     private LoginSecurityUtils loginSecurityUtils;
 
     @Resource
-    private LoginSecurityProperties securityProperties;
+    private LoginSecurityProperties loginSecurityProperties;
+
+    @Resource
+    private UserLoginLogMapper userLoginLogMapper;
 
     @Override
     public LoginVo login(LoginDto dto) {
@@ -75,23 +80,25 @@ public class AuthServiceImpl implements AuthService {
 
             // 验证用户是否存在
             if (user == null) {
-                handleLoginFailure(dto.getUsername(), null);
+                handleLoginFailure(dto.getUsername(), null, "用户不存在");
                 throw new BusinessException(ErrorCode.LOGIN_FAILED);
             }
 
             // 验证账号状态
             if (user.getStatus() == 0) {
+                recordLoginLog(user.getId(), user.getUsername(), 0, "账号已禁用");
                 throw new BusinessException(ErrorCode.ACCOUNT_DISABLED);
             }
 
             // 验证账号是否锁定
             if (user.getLocked() == 1) {
+                recordLoginLog(user.getId(), user.getUsername(), 0, "账号已锁定");
                 throw new BusinessException(ErrorCode.ACCOUNT_LOCKED);
             }
 
             // 验证密码
             if (!BCrypt.checkpw(dto.getPassword(), user.getPassword())) {
-                handleLoginFailure(dto.getUsername(), user);
+                handleLoginFailure(dto.getUsername(), user, "密码错误");
                 throw new BusinessException(ErrorCode.LOGIN_FAILED);
             }
 
@@ -111,6 +118,9 @@ public class AuthServiceImpl implements AuthService {
             // 将Refresh Token存储到Redis（实现单点登录控制）
             Claims refreshClaims = jwtUtils.parseToken(refreshToken);
             refreshTokenUtils.storeRefreshToken(dto.getUsername(), refreshToken, refreshClaims);
+
+            // 记录登录成功日志
+            recordLoginLog(user.getId(), user.getUsername(), 1, "登录成功");
 
             // 构建 LoginVo
             return buildLoginVo(accessToken, refreshToken);
@@ -181,7 +191,11 @@ public class AuthServiceImpl implements AuthService {
     /**
      * 处理登录失败逻辑
      */
-    private void handleLoginFailure(String username, UserEntity user) {
+    private void handleLoginFailure(String username, UserEntity user, String failureReason) {
+        // 记录登录失败日志
+        Long userId = user != null ? user.getId() : null;
+        recordLoginLog(userId, username, 0, failureReason);
+
         // 增加失败次数
         loginSecurityUtils.incrementLoginAttempts(username);
 
@@ -189,17 +203,17 @@ public class AuthServiceImpl implements AuthService {
         int attempts = loginSecurityUtils.getLoginAttempts(username);
 
         // 如果达到最大尝试次数，锁定账号
-        if (attempts >= securityProperties.getMaxAttempts()) {
+        if (attempts >= loginSecurityProperties.getMaxAttempts()) {
 
             // 锁定账号
             loginSecurityUtils.lockAccount(username);
 
             throw new BusinessException(ErrorCode.ACCOUNT_LOCKED,
-                    String.format("登录失败次数过多，账号已被锁定 %d 分钟", securityProperties.getLockTime()));
+                    String.format("登录失败次数过多，账号已被锁定 %d 分钟", loginSecurityProperties.getLockTime()));
         }
 
         // 获取剩余尝试次数
-        int remainingAttempts = securityProperties.getMaxAttempts() - attempts;
+        int remainingAttempts = loginSecurityProperties.getMaxAttempts() - attempts;
 
         // 提示剩余尝试次数
         throw new BusinessException(ErrorCode.LOGIN_FAILED,
@@ -230,5 +244,35 @@ public class AuthServiceImpl implements AuthService {
         return loginVo;
     }
 
+    /**
+     * 记录登录日志
+     *
+     * @param userId      用户ID（可能为null，如用户不存在时）
+     * @param username    用户名
+     * @param loginStatus 登录状态：0-失败，1-成功
+     * @param message     登录消息（失败原因等）
+     */
+    private void recordLoginLog(Long userId, String username, Integer loginStatus, String message) {
+        try {
+            String clientIp = UserContextUtils.getClientIp();
+            String userAgent = UserContextUtils.getUserAgent();
+            String loginLocation = UserContextUtils.getLoginLocation();
 
+            UserLoginLogEntity logEntity = new UserLoginLogEntity();
+            logEntity.setUserId(userId);
+            logEntity.setUsername(username);
+            logEntity.setLoginType("password"); // 密码登录
+            logEntity.setLoginIp(StringUtils.hasText(clientIp) ? clientIp : "unknown");
+            logEntity.setLoginLocation(StringUtils.hasText(loginLocation) ? loginLocation : "unknown");
+            logEntity.setUserAgent(StringUtils.hasText(userAgent) ? userAgent : "unknown");
+            logEntity.setLoginStatus(loginStatus);
+            logEntity.setLoginMessage(message);
+            logEntity.setLoginTime(LocalDateTime.now());
+
+            userLoginLogMapper.insert(logEntity);
+        } catch (Exception e) {
+            // 记录日志失败不应该影响登录流程，只记录异常
+            // 可以使用日志框架记录，这里暂时忽略
+        }
+    }
 }
