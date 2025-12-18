@@ -53,7 +53,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ServerException.class)
     public Response<?> handleServerException(ServerException e) {
-        log.error("服务器异常: 【{}】", getCurrentRequestUrl(), e);
+        String message = e.getMessage() == null ? "" : e.getMessage();
+        log.error("服务器异常: 【{}】", message , e);
         return Response.error(ErrorCode.SYSTEM_ERROR.getCode(), ErrorCode.SYSTEM_ERROR.getMessage());
     }
 
@@ -96,7 +97,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Response<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        log.warn("请求参数解析异常: 【{}】", getCurrentRequestUrl(), e);
+        String message = e.getMessage() != null ? e.getMessage() : "请求参数解析异常";
+        log.warn("请求参数解析异常: 【{}】", message);
         return Response.error(ErrorCode.PARAM_INVALID.getCode(), ErrorCode.PARAM_INVALID.getMessage());
     }
 
@@ -139,40 +141,6 @@ public class GlobalExceptionHandler {
     public Response<?> handleAllUncaughtException(Exception e) {
         log.error("未知异常: 【{}】", e.getMessage(), e);
         return Response.error(ErrorCode.SYSTEM_ERROR.getCode(), ErrorCode.SYSTEM_ERROR.getMessage());
-    }
-
-    /**
-     * 获取当前请求的完整 URL
-     * @return 格式化的请求URL字符串
-     */
-    private String getCurrentRequestUrl() {
-        try {
-            // 从RequestContextHolder中获取当前请求
-            ServletRequestAttributes attributes = (ServletRequestAttributes)
-                    RequestContextHolder.getRequestAttributes();
-
-            if (attributes == null) {
-                return "未知接口";
-            }
-
-            HttpServletRequest request = attributes.getRequest();
-            String method = request.getMethod();
-            String path = request.getRequestURI();
-            String queryString = request.getQueryString();
-
-            StringBuilder urlBuilder = new StringBuilder();
-            urlBuilder.append(method).append(" ").append(path);
-
-            if (StringUtils.isNotBlank(queryString)) {
-                urlBuilder.append("?").append(queryString);
-            }
-
-            return urlBuilder.toString();
-        } catch (Exception e) {
-            // 捕获异常避免影响主流程
-            log.warn("获取当前请求URL失败", e);
-            return "未知接口";
-        }
     }
 }
 
