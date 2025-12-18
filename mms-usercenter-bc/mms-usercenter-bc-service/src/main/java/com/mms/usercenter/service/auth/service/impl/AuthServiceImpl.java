@@ -69,19 +69,22 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginVo login(LoginDto dto) {
         try {
-            if (loginSecurityUtils.isAccountLocked(dto.getUsername())) {
-                long remainingTime = loginSecurityUtils.getLockRemainingTime(dto.getUsername());
-                throw new BusinessException(ErrorCode.ACCOUNT_LOCKED,
-                        String.format("账号已被锁定，请在 %d 分钟后重试", remainingTime / 60));
-            }
-
             // 查询用户
             UserEntity user = userMapper.selectByUsername(dto.getUsername());
 
             // 验证用户是否存在
             if (user == null) {
-                handleLoginFailure(dto.getUsername(), null, "用户不存在");
+                // 用户名不存在时，只记录日志，不增加失败次数（避免用户名枚举攻击）
+                recordLoginLog(null, dto.getUsername(), 0, "用户不存在");
                 throw new BusinessException(ErrorCode.LOGIN_FAILED);
+            }
+
+            // 检查账号是否被临时锁定（登录失败次数过多导致的锁定）
+            if (loginSecurityUtils.isAccountLocked(user.getUsername())) {
+                long remainingTime = loginSecurityUtils.getLockRemainingTime(user.getUsername());
+                recordLoginLog(user.getId(), user.getUsername(), 0, "账号已被临时锁定");
+                throw new BusinessException(ErrorCode.ACCOUNT_LOCKED,
+                        String.format("账号已被锁定，请在 %d 分钟后重试", remainingTime / 60));
             }
 
             // 验证账号状态
@@ -90,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
                 throw new BusinessException(ErrorCode.ACCOUNT_DISABLED);
             }
 
-            // 验证账号是否锁定
+            // 验证账号是否锁定（数据库中的锁定状态）
             if (user.getLocked() == 1) {
                 recordLoginLog(user.getId(), user.getUsername(), 0, "账号已锁定");
                 throw new BusinessException(ErrorCode.ACCOUNT_LOCKED);
@@ -221,7 +224,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     /**
-     * 解锁账号（管理员使用）
+     * 解除因密码输入错误次数过多导致的临时锁定账号（管理员使用）
      */
     public void unlockAccount(String username) {
 
