@@ -2,39 +2,85 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mms.usercenter.service.auth.mapper.UserMapper">
 
-    <!-- 结果映射（完整映射，用于其他查询） -->
-    <resultMap id="BaseResultMap" type="com.mms.usercenter.common.auth.entity.UserEntity">
-        <id column="id" property="id"/>
-        <result column="username" property="username"/>
-        <result column="password" property="password"/>
-        <result column="nickname" property="nickname"/>
-        <result column="real_name" property="realName"/>
-        <result column="avatar" property="avatar"/>
-        <result column="email" property="email"/>
-        <result column="phone" property="phone"/>
-        <result column="gender" property="gender"/>
-        <result column="birthday" property="birthday"/>
-        <result column="status" property="status"/>
-        <result column="locked" property="locked"/>
-        <result column="lock_time" property="lockTime"/>
-        <result column="lock_reason" property="lockReason"/>
-        <result column="last_login_time" property="lastLoginTime"/>
-        <result column="last_login_ip" property="lastLoginIp"/>
-        <result column="password_update_time" property="passwordUpdateTime"/>
-        <result column="remark" property="remark"/>
-        <result column="deleted" property="deleted"/>
-        <result column="create_by" property="createBy"/>
-        <result column="create_time" property="createTime"/>
-        <result column="update_by" property="updateBy"/>
-        <result column="update_time" property="updateTime"/>
-    </resultMap>
+    <!-- 用户实体完整字段列表（包含password和deleted） -->
+    <sql id="UserEntityColumns">
+        id, username, password, nickname, real_name, avatar, email, phone, gender, birthday,
+        status, locked, lock_time, lock_reason, last_login_time, last_login_ip,
+        password_update_time, remark, deleted, create_by, create_time, update_by, update_time
+    </sql>
 
-    <!-- 根据用户名查询用户（用于登录） -->
-    <select id="selectByUsername" resultMap="BaseResultMap">
+    <!-- 用户VO字段列表（不包含password和deleted） -->
+    <sql id="UserVoColumns">
+        id, username, nickname, real_name, avatar, email, phone, gender, birthday,
+        status, locked, lock_time, lock_reason, last_login_time, last_login_ip,
+        password_update_time, remark, create_by, create_time, update_by, update_time
+    </sql>
+
+    <!-- 分页查询用户列表 -->
+    <select id="getUserPage" resultType="com.mms.usercenter.common.auth.vo.UserVo">
         SELECT
-            id, username, password, real_name, status, locked, last_login_time, last_login_ip
+            <include refid="UserVoColumns"/>
+        FROM user
+        <where>
+            deleted = 0
+            <if test="dto.username != null and dto.username != ''">
+                AND username LIKE CONCAT('%', #{dto.username}, '%')
+            </if>
+            <if test="dto.nickname != null and dto.nickname != ''">
+                AND nickname LIKE CONCAT('%', #{dto.nickname}, '%')
+            </if>
+            <if test="dto.realName != null and dto.realName != ''">
+                AND real_name LIKE CONCAT('%', #{dto.realName}, '%')
+            </if>
+            <if test="dto.email != null and dto.email != ''">
+                AND email = #{dto.email}
+            </if>
+            <if test="dto.phone != null and dto.phone != ''">
+                AND phone = #{dto.phone}
+            </if>
+            <if test="dto.status != null">
+                AND status = #{dto.status}
+            </if>
+            <if test="dto.locked != null">
+                AND locked = #{dto.locked}
+            </if>
+            <if test="dto.gender != null">
+                AND gender = #{dto.gender}
+            </if>
+            <if test="dto.createTimeStart != null">
+                AND create_time >= #{dto.createTimeStart}
+            </if>
+            <if test="dto.createTimeEnd != null">
+                AND create_time &lt;= #{dto.createTimeEnd}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据用户名查询用户 -->
+    <select id="selectByUsername" resultType="com.mms.usercenter.common.auth.entity.UserEntity">
+        SELECT
+            <include refid="UserEntityColumns"/>
         FROM user
         WHERE username = #{username}
+          AND deleted = 0
+    </select>
+
+    <!-- 根据邮箱查询用户 -->
+    <select id="selectByEmail" resultType="com.mms.usercenter.common.auth.entity.UserEntity">
+        SELECT
+            <include refid="UserEntityColumns"/>
+        FROM user
+        WHERE email = #{email}
+          AND deleted = 0
+    </select>
+
+    <!-- 根据手机号查询用户 -->
+    <select id="selectByPhone" resultType="com.mms.usercenter.common.auth.entity.UserEntity">
+        SELECT
+            <include refid="UserEntityColumns"/>
+        FROM user
+        WHERE phone = #{phone}
           AND deleted = 0
     </select>
 

@@ -1,0 +1,64 @@
+package com.mms.usercenter.common.auth.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+
+import java.time.LocalDate;
+
+/**
+ * 实现功能【创建用户请求 DTO】
+ * <p>
+ * 用于创建新用户的请求参数
+ * </p>
+ *
+ * @author li.hongyu
+ * @date 2025-12-19 10:00:00
+ */
+@Data
+@Schema(description = "创建用户请求参数")
+public class UserCreateDto {
+
+    @NotBlank(message = "用户名不能为空")
+    @Size(min = 3, max = 64, message = "用户名长度必须在3-64个字符之间")
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "用户名只能包含字母、数字和下划线")
+    @Schema(description = "用户名（登录账号）", requiredMode = Schema.RequiredMode.REQUIRED, example = "testuser")
+    private String username;
+
+    @NotBlank(message = "密码不能为空")
+    @Size(min = 6, max = 20, message = "密码长度必须在6-20个字符之间")
+    @Schema(description = "密码", requiredMode = Schema.RequiredMode.REQUIRED, example = "123456")
+    private String password;
+
+    @Schema(description = "昵称", example = "测试用户")
+    private String nickname;
+
+    @Schema(description = "真实姓名", example = "张三")
+    private String realName;
+
+    @Schema(description = "头像URL", example = "https://example.com/avatar.jpg")
+    private String avatar;
+
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "邮箱格式不正确")
+    @Schema(description = "邮箱", example = "test@example.com")
+    private String email;
+
+    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
+    @Schema(description = "手机号", example = "13800138000")
+    private String phone;
+
+    @Schema(description = "性别：0-未知，1-男，2-女", example = "1")
+    private Integer gender;
+
+    @Schema(description = "生日", example = "1990-01-01")
+    private LocalDate birthday;
+
+    @Schema(description = "状态：0-禁用，1-启用，默认为1", example = "1")
+    private Integer status = 1;
+
+    @Schema(description = "备注", example = "测试用户备注")
+    private String remark;
+}
+
