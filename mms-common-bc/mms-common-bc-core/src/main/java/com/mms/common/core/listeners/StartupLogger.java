@@ -43,14 +43,8 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
     @Value("${info.app.version:unknown}")
     private String appVersion;
 
-    @Value("${info.app.build-time:unknown}")
-    private String buildTime;
-
     @Autowired(required = false)
     private BuildProperties buildProperties;
-
-    @Value("${server.servlet.context-path:}")
-    private String contextPath;
 
     @Value("${spring.cloud.nacos.server-addr:unknown}")
     private String nacosServerAddr;
@@ -65,10 +59,10 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
     private String logPath;
 
     /**
-     * 为不同环境预先配置域名。
+     * 网关地址（用于构建通过网关访问的 Swagger 地址）
      */
-    @Value("${swagger.base-url:}")
-    private String swaggerBaseUrl;
+    @Value("${swagger.gateway-url:http://localhost:5092}")
+    private String gatewayUrl;
 
     /**
      * Knife4j UI 入口路径，默认 /doc.html。
@@ -78,6 +72,7 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
+        // 应用就绪时打印核心信息与 Swagger 文档地址（网关入口）
         // 网关不暴露 Knife4j，直接跳过
         if ("gateway".equalsIgnoreCase(applicationName)) {
             return;
@@ -86,17 +81,10 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
         // 在应用完全就绪时输出自定义 banner（位于各服务资源目录的 banner.txt）
         printBannerIfPresent();
 
-        // 拼接baseUrl
-        String base;
-        if (swaggerBaseUrl == null || swaggerBaseUrl.isBlank()) {
-            String ctx = normalizeContextPath(contextPath);
-            base = "http://localhost:" + port + ctx;
-        } else {
-            base = stripTrailingSlash(swaggerBaseUrl);
-        }
-
-        // swagger文档的地址
-        String swaggerUrl = base + ensureLeadingSlash(swaggerUiPath);
+        // 构建通过网关访问的 Swagger 地址
+        String gatewayBase = stripTrailingSlash(gatewayUrl);
+        String servicePrefix = "/" + applicationName;
+        String gatewaySwaggerUrl = gatewayBase + servicePrefix + ensureLeadingSlash(swaggerUiPath);
 
         // 打印启动完成与文档地址及基础环境信息
         System.out.println("\n==== 应用启动信息 ====");
@@ -107,7 +95,7 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
         System.out.println("构建时间: " + resolveBuildTime());
         System.out.println("日志目录: " + logPath);
         System.out.println("Nacos: " + nacosServerAddr + " | namespace=" + nacosNamespace + " | group=" + nacosGroup);
-        System.out.println("Swagger 文档地址: " + swaggerUrl);
+        System.out.println("Swagger 文档地址: " + gatewaySwaggerUrl);
         System.out.println("==== 应用就绪 ====\n");
     }
 
@@ -135,18 +123,13 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
         return url != null && url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
     }
 
-    private String normalizeContextPath(String ctx) {
-        if (ctx == null || ctx.isBlank()) {
-            return "";
-        }
-        String withLeading = ensureLeadingSlash(ctx);
-        return stripTrailingSlash(withLeading);
-    }
-
     private String ensureLeadingSlash(String path) {
         return path != null && path.startsWith("/") ? path : "/" + path;
     }
 
+    /**
+     * 确定应用版本：优先使用 buildProperties 中的版本号，缺省回退到 info.app.version。
+     */
     private String resolveVersion() {
         if (buildProperties != null && buildProperties.getVersion() != null && !buildProperties.getVersion().isBlank()) {
             return buildProperties.getVersion();
@@ -154,6 +137,9 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
         return appVersion;
     }
 
+    /**
+     * 确定构建时间：优先使用 buildProperties 中的时间，无法获取时返回 unknown。
+     */
     private String resolveBuildTime() {
         String timeStr = null;
 
