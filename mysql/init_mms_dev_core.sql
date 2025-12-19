@@ -244,3 +244,47 @@ VALUES (2, 'user', '普通用户', 'system', 1, 0, NOW(), NOW());
 -- 给超级管理员分配角色
 INSERT IGNORE INTO `user_role` (`user_id`, `role_id`, `create_time`)
 VALUES (1, 1, NOW());
+
+-- 初始化权限数据
+INSERT IGNORE INTO `permission` (`id`, `parent_id`, `permission_type`, `permission_name`, `permission_code`,
+                                 `sort_order`, `visible`, `status`, `deleted`, `create_time`, `update_time`)
+VALUES
+    -- 用户管理
+    (1, 0, 'button', '用户-查看', 'user:view', 10, 1, 1, 0, NOW(), NOW()),
+    (2, 0, 'button', '用户-新增', 'user:create', 11, 1, 1, 0, NOW(), NOW()),
+    (3, 0, 'button', '用户-编辑', 'user:update', 12, 1, 1, 0, NOW(), NOW()),
+    (4, 0, 'button', '用户-删除', 'user:delete', 13, 1, 1, 0, NOW(), NOW()),
+    (5, 0, 'button', '用户-重置密码', 'user:reset-password', 14, 1, 1, 0, NOW(), NOW()),
+    (6, 0, 'button', '用户-解锁', 'user:unlock', 15, 1, 1, 0, NOW(), NOW()),
+
+    -- 角色管理
+    (7, 0, 'button', '角色-查看', 'role:view', 20, 1, 1, 0, NOW(), NOW()),
+    (8, 0, 'button', '角色-新增', 'role:create', 21, 1, 1, 0, NOW(), NOW()),
+    (9, 0, 'button', '角色-编辑', 'role:update', 22, 1, 1, 0, NOW(), NOW()),
+    (10, 0, 'button', '角色-删除', 'role:delete', 23, 1, 1, 0, NOW(), NOW()),
+    (11, 0, 'button', '角色-分配权限', 'role:assign', 24, 1, 1, 0, NOW(), NOW()),
+
+    -- 权限管理
+    (12, 0, 'button', '权限-查看', 'permission:view', 30, 1, 1, 0, NOW(), NOW()),
+    (13, 0, 'button', '权限-新增', 'permission:create', 31, 1, 1, 0, NOW(), NOW()),
+    (14, 0, 'button', '权限-编辑', 'permission:update', 32, 1, 1, 0, NOW(), NOW()),
+    (15, 0, 'button', '权限-删除', 'permission:delete', 33, 1, 1, 0, NOW(), NOW());
+
+-- 将所有初始化的权限授予超级管理员角色（role_id = 1）
+INSERT IGNORE INTO `role_permission` (`role_id`, `permission_id`, `create_time`)
+VALUES
+    (1, 1, NOW()),
+    (1, 2, NOW()),
+    (1, 3, NOW()),
+    (1, 4, NOW()),
+    (1, 5, NOW()),
+    (1, 6, NOW()),
+    (1, 7, NOW()),
+    (1, 8, NOW()),
+    (1, 9, NOW()),
+    (1, 10, NOW()),
+    (1, 11, NOW()),
+    (1, 12, NOW()),
+    (1, 13, NOW()),
+    (1, 14, NOW()),
+    (1, 15, NOW());

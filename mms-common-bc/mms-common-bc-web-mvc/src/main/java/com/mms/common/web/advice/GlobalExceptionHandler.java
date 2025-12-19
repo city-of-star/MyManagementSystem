@@ -4,11 +4,9 @@ import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import com.mms.common.core.exceptions.ServerException;
 import com.mms.common.core.response.Response;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
@@ -17,8 +15,6 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Set;
@@ -45,17 +41,6 @@ public class GlobalExceptionHandler {
     public Response<?> handleBusinessException(BusinessException e) {
         log.warn("业务异常: 【{}】", e.getMessage());
         return Response.fail(e.getCode(), e.getMessage());
-    }
-
-    /**
-     * 处理服务器异常(HTTP 500)
-     */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(ServerException.class)
-    public Response<?> handleServerException(ServerException e) {
-        String message = e.getMessage() == null ? "" : e.getMessage();
-        log.error("服务器异常: 【{}】", message , e);
-        return Response.error(ErrorCode.SYSTEM_ERROR.getCode(), ErrorCode.SYSTEM_ERROR.getMessage());
     }
 
     /**
@@ -103,6 +88,21 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 处理资源不存在异常(HTTP 404)
+     * 注意：需要配置 spring.mvc.throw-exception-if-no-handler-found=true 才能生效
+     */
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoResourceFoundException.class)
+    public Response<?> handleNoResourceFoundException(NoResourceFoundException e) {
+        String method = e.getHttpMethod().name();
+        String path = e.getResourcePath();
+        String message = String.format("接口不存在: %s %s", method, path);
+        
+        log.warn("接口不存在: 【{} {}】", method, path);
+        return Response.error(ErrorCode.NOT_FOUND.getCode(), message);
+    }
+
+    /**
      * 处理请求方法不匹配异常(HTTP 405)
      * 开发环境提供更友好的提示
      */
@@ -119,18 +119,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理资源不存在异常(HTTP 404)
-     * 注意：需要配置 spring.mvc.throw-exception-if-no-handler-found=true 才能生效
+     * 处理服务器异常(HTTP 500)
      */
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NoResourceFoundException.class)
-    public Response<?> handleNoResourceFoundException(NoResourceFoundException e) {
-        String method = e.getHttpMethod().name();
-        String path = e.getResourcePath();
-        String message = String.format("接口不存在: %s %s", method, path);
-        
-        log.warn("接口不存在: 【{} {}】", method, path);
-        return Response.error(ErrorCode.NOT_FOUND.getCode(), message);
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(ServerException.class)
+    public Response<?> handleServerException(ServerException e) {
+        String message = e.getMessage() == null ? "" : e.getMessage();
+        log.error("服务器异常: 【{}】", message , e);
+        return Response.error(ErrorCode.SYSTEM_ERROR.getCode(), ErrorCode.SYSTEM_ERROR.getMessage());
     }
 
     /**

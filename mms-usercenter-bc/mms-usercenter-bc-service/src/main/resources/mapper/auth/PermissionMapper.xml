@@ -2,28 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mms.usercenter.service.auth.mapper.PermissionMapper">
 
-    <!-- 结果映射（完整映射，用于其他查询） -->
-    <resultMap id="BaseResultMap" type="com.mms.usercenter.common.auth.entity.PermissionEntity">
-        <id column="id" property="id"/>
-        <result column="parent_id" property="parentId"/>
-        <result column="permission_type" property="permissionType"/>
-        <result column="permission_name" property="permissionName"/>
-        <result column="permission_code" property="permissionCode"/>
-        <result column="path" property="path"/>
-        <result column="component" property="component"/>
-        <result column="icon" property="icon"/>
-        <result column="api_url" property="apiUrl"/>
-        <result column="api_method" property="apiMethod"/>
-        <result column="sort_order" property="sortOrder"/>
-        <result column="visible" property="visible"/>
-        <result column="status" property="status"/>
-        <result column="remark" property="remark"/>
-        <result column="deleted" property="deleted"/>
-        <result column="create_by" property="createBy"/>
-        <result column="create_time" property="createTime"/>
-        <result column="update_by" property="updateBy"/>
-        <result column="update_time" property="updateTime"/>
-    </resultMap>
+    <!-- 根据用户ID查询权限编码集合（启用且未删除） -->
+    <select id="selectPermissionCodesByUserId" parameterType="long" resultType="java.lang.String">
+        SELECT DISTINCT p.permission_code
+        FROM user_role ur
+                 JOIN role r ON r.id = ur.role_id
+                 JOIN role_permission rp ON rp.role_id = r.id
+                 JOIN permission p ON p.id = rp.permission_id
+        WHERE ur.user_id = #{userId}
+          AND r.deleted = 0
+          AND (r.status = 1)
+          AND p.deleted = 0
+          AND (p.status = 1)
+    </select>
 
 </mapper>
 

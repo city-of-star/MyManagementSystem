@@ -1,6 +1,7 @@
 package com.mms.usercenter.controller.auth;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mms.common.core.annotations.RequiresPermission;
 import com.mms.common.core.response.Response;
 import com.mms.usercenter.common.auth.dto.*;
 import com.mms.usercenter.common.auth.vo.UserVo;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -29,6 +31,9 @@ public class UserController {
     private UserService userService;
 
     @Operation(summary = "分页查询用户列表", description = "根据条件分页查询用户列表")
+//    @PreAuthorize("hasAuthority(T(com.mms.usercenter.common.security.constants.PermissionConstants).USER_VIEW)")
+//    @PreAuthorize("hasAuthority('123')")
+    @RequiresPermission("123")
     @PostMapping("/page")
     public Response<Page<UserVo>> getUserPage(@RequestBody @Valid UserPageQueryDto dto) {
         return Response.success(userService.getUserPage(dto));

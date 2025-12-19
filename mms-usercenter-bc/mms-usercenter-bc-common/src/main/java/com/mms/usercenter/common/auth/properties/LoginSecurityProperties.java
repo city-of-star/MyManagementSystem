@@ -26,15 +26,5 @@ public class LoginSecurityProperties {
      * 锁定时间（分钟）
      */
     private int lockTime = 30;
-
-    /**
-     * 登录失败次数缓存前缀
-     */
-    private String attemptKeyPrefix = "login_attempts:";
-
-    /**
-     * 账号锁定缓存前缀
-     */
-    private String lockKeyPrefix = "account_lock:";
 }
 

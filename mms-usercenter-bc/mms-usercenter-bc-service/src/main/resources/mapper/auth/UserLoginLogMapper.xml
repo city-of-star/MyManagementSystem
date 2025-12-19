@@ -2,19 +2,5 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mms.usercenter.service.auth.mapper.UserLoginLogMapper">
 
-    <!-- 结果映射（完整映射，用于其他查询） -->
-    <resultMap id="BaseResultMap" type="com.mms.usercenter.common.auth.entity.UserLoginLogEntity">
-        <id column="id" property="id"/>
-        <result column="user_id" property="userId"/>
-        <result column="username" property="username"/>
-        <result column="login_type" property="loginType"/>
-        <result column="login_ip" property="loginIp"/>
-        <result column="login_location" property="loginLocation"/>
-        <result column="user_agent" property="userAgent"/>
-        <result column="login_status" property="loginStatus"/>
-        <result column="login_message" property="loginMessage"/>
-        <result column="login_time" property="loginTime"/>
-    </resultMap>
-
 </mapper>
 
