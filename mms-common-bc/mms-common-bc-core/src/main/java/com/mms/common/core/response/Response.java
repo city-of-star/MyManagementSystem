@@ -18,8 +18,6 @@ public class Response<T> {
     public static final String SUCCESS_MESSAGE = "success";
     // 成功状态码
     public static final int SUCCESS_CODE = 200;
-    // 业务失败基础码
-    public static final int BUSINESS_ERROR_BASE = 1000;
 
     @Schema(description = "响应状态码，200表示成功", example = "200")
     private Integer code;
@@ -52,7 +50,7 @@ public class Response<T> {
 
     // 业务失败
     public static <T> Response<T> fail(Integer code, String message) {
-        return new Response<>(BUSINESS_ERROR_BASE + code, message, null);
+        return new Response<>(code, message, null);
     }
 
     // 系统级错误

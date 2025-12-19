@@ -4,7 +4,6 @@ import com.mms.common.core.annotations.RequiresPermission;
 import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.security.core.Authentication;
@@ -40,7 +39,7 @@ public class PermissionCheckAspect {
      * 在执行标注了 @RequiresPermission 的方法前进行权限校验
      */
     @Before("@within(requiresPermission) || @annotation(requiresPermission)")
-    public void checkPermission(JoinPoint joinPoint, RequiresPermission requiresPermission) {
+    public void checkPermission(RequiresPermission requiresPermission) {
         if (requiresPermission == null) {
             // 类上标注时，方法上未标注，AOP 可能传入 null，这里直接返回交给其他切面处理
             return;
