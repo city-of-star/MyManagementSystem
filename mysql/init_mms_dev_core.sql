@@ -268,7 +268,14 @@ VALUES
     (12, 0, 'button', '权限-查看', 'permission:view', 30, 1, 1, 0, NOW(), NOW()),
     (13, 0, 'button', '权限-新增', 'permission:create', 31, 1, 1, 0, NOW(), NOW()),
     (14, 0, 'button', '权限-编辑', 'permission:update', 32, 1, 1, 0, NOW(), NOW()),
-    (15, 0, 'button', '权限-删除', 'permission:delete', 33, 1, 1, 0, NOW(), NOW());
+    (15, 0, 'button', '权限-删除', 'permission:delete', 33, 1, 1, 0, NOW(), NOW()),
+
+    -- 参数管理
+    (16, 0, 'button', '参数-查看', 'param:view', 40, 1, 1, 0, NOW(), NOW()),
+    (17, 0, 'button', '参数-新增', 'param:create', 41, 1, 1, 0, NOW(), NOW()),
+    (18, 0, 'button', '参数-编辑', 'param:update', 42, 1, 1, 0, NOW(), NOW()),
+    (19, 0, 'button', '参数-删除', 'param:delete', 43, 1, 1, 0, NOW(), NOW()),
+    (20, 0, 'button', '参数-刷新缓存', 'param:refresh-cache', 44, 1, 1, 0, NOW(), NOW());
 
 -- 将所有初始化的权限授予超级管理员角色（role_id = 1）
 INSERT IGNORE INTO `role_permission` (`role_id`, `permission_id`, `create_time`)
@@ -287,4 +294,9 @@ VALUES
     (1, 12, NOW()),
     (1, 13, NOW()),
     (1, 14, NOW()),
-    (1, 15, NOW());
+    (1, 15, NOW()),
+    (1, 16, NOW()),
+    (1, 17, NOW()),
+    (1, 18, NOW()),
+    (1, 19, NOW()),
+    (1, 20, NOW());

@@ -40,15 +40,12 @@ public final class PermissionConstants {
     public static final String PERMISSION_DELETE = "permission:delete";
 
     /**
-     * 组织/岗位管理
+     * 系统参数管理
      */
-    public static final String DEPT_VIEW = "dept:view";
-    public static final String DEPT_MANAGE = "dept:manage";
-    public static final String POST_VIEW = "post:view";
-    public static final String POST_MANAGE = "post:manage";
+    public static final String PARAM_VIEW = "param:view";
+    public static final String PARAM_CREATE = "param:create";
+    public static final String PARAM_UPDATE = "param:update";
+    public static final String PARAM_DELETE = "param:delete";
+    public static final String PARAM_REFRESH_CACHE = "param:refresh-cache";
 
-    /**
-     * 系统审计
-     */
-    public static final String AUDIT_VIEW = "audit:view";
 }

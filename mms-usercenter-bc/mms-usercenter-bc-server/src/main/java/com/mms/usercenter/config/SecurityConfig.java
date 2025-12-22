@@ -32,7 +32,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity  // 启用 Web 安全
-@EnableMethodSecurity(prePostEnabled = true) // 启用方法级安全（支持 @PreAuthorize/@PostAuthorize 等）
+@EnableMethodSecurity(prePostEnabled = true) // 启用方法级安全
 @AllArgsConstructor
 public class SecurityConfig {
 
