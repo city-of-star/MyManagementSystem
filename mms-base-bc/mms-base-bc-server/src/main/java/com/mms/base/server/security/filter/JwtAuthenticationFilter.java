@@ -2,6 +2,9 @@ package com.mms.base.server.security.filter;
 
 import com.mms.common.core.constants.gateway.GatewayConstants;
 import com.mms.common.core.constants.security.UserCenterCacheConstants;
+import com.mms.base.feign.usercenter.UsercenterAuthorityFeign;
+import com.mms.base.feign.usercenter.dto.UserAuthorityDto;
+import com.mms.common.core.response.Response;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,6 +40,7 @@ import java.util.stream.Collectors;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final UsercenterAuthorityFeign usercenterAuthorityFeign;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -57,6 +61,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         Set<String> roles = loadStringSet(UserCenterCacheConstants.UserAuthority.USER_ROLE_PREFIX + userId);
         Set<String> permissions = loadStringSet(UserCenterCacheConstants.UserAuthority.USER_PERMISSION_PREFIX + userId);
+
+        // 缓存缺失时回源用户中心
+        if (CollectionUtils.isEmpty(roles) && CollectionUtils.isEmpty(permissions)) {
+            Long userIdLong = parseUserId(userId);
+            if (userIdLong != null) {
+                Response<UserAuthorityDto> resp = usercenterAuthorityFeign.getUserAuthorities(userIdLong);
+                if (resp != null && Response.SUCCESS_CODE == resp.getCode() && resp.getData() != null) {
+                    roles = defaultSet(resp.getData().getRoles());
+                    permissions = defaultSet(resp.getData().getPermissions());
+                    cacheAuthorities(userId, roles, permissions);
+                }
+            }
+        }
 
         Set<GrantedAuthority> authorities = new HashSet<>();
         if (!CollectionUtils.isEmpty(roles)) {
@@ -103,6 +120,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return result;
         }
         return Collections.singleton(cached.toString());
+    }
+
+    private Long parseUserId(String userId) {
+        try {
+            return Long.parseLong(userId);
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    private Set<String> defaultSet(Set<String> set) {
+        return set == null ? Collections.emptySet() : set;
+    }
+
+    private void cacheAuthorities(String userId, Set<String> roles, Set<String> permissions) {
+        redisTemplate.opsForValue().set(
+                UserCenterCacheConstants.UserAuthority.USER_ROLE_PREFIX + userId,
+                defaultSet(roles),
+                UserCenterCacheConstants.UserAuthority.ROLE_PERMISSION_CACHE_TTL_MINUTES,
+                java.util.concurrent.TimeUnit.MINUTES
+        );
+        redisTemplate.opsForValue().set(
+                UserCenterCacheConstants.UserAuthority.USER_PERMISSION_PREFIX + userId,
+                defaultSet(permissions),
+                UserCenterCacheConstants.UserAuthority.ROLE_PERMISSION_CACHE_TTL_MINUTES,
+                java.util.concurrent.TimeUnit.MINUTES
+        );
     }
 }
 
