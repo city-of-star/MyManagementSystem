@@ -1,4 +1,4 @@
-package com.mms.usercenter.common.security.constants;
+package com.mms.common.core.constants.security;
 
 /**
  * 实现功能【用户中心 Redis 缓存相关常量】
@@ -48,6 +48,11 @@ public final class UserCenterCacheConstants {
          * 示例：mms:usercenter:perms:{userId}
          */
         public static final String USER_PERMISSION_PREFIX = "mms:usercenter:perms:";
+
+        /**
+         * Spring Security 角色前缀
+         */
+        public static final String ROLE_PREFIX = "ROLE_";
 
         /**
          * 角色、权限缓存默认过期时间（分钟）

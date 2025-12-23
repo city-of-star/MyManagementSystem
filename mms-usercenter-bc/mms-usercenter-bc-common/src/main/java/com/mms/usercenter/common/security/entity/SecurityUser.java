@@ -1,5 +1,6 @@
 package com.mms.usercenter.common.security.entity;
 
+import com.mms.common.core.constants.security.UserCenterCacheConstants;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,7 +48,7 @@ public class SecurityUser implements UserDetails, Serializable {
         Set<GrantedAuthority> authorities = new HashSet<>();
         if (roles != null) {
             authorities.addAll(roles.stream()
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                    .map(role -> new SimpleGrantedAuthority(UserCenterCacheConstants.UserAuthority.ROLE_PREFIX + role))
                     .toList());
         }
         if (permissions != null) {

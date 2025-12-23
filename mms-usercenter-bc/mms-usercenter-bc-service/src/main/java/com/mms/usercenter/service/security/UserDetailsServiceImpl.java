@@ -3,7 +3,7 @@ package com.mms.usercenter.service.security;
 import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import com.mms.usercenter.common.auth.entity.UserEntity;
-import com.mms.usercenter.common.security.constants.UserCenterCacheConstants;
+import com.mms.common.core.constants.security.UserCenterCacheConstants;
 import com.mms.usercenter.common.security.entity.SecurityUser;
 import com.mms.usercenter.service.auth.mapper.PermissionMapper;
 import com.mms.usercenter.service.auth.mapper.RoleMapper;

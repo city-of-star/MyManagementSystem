@@ -1,6 +1,7 @@
 package com.mms.base.server.security.filter;
 
 import com.mms.common.core.constants.gateway.GatewayConstants;
+import com.mms.common.core.constants.security.UserCenterCacheConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,9 +36,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String ROLE_BY_ID_KEY_PREFIX = "mms:usercenter:roles:";
-    private static final String PERM_BY_ID_KEY_PREFIX = "mms:usercenter:perms:";
-
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
@@ -57,13 +55,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        Set<String> roles = loadStringSet(ROLE_BY_ID_KEY_PREFIX + userId);
-        Set<String> permissions = loadStringSet(PERM_BY_ID_KEY_PREFIX + userId);
+        Set<String> roles = loadStringSet(UserCenterCacheConstants.UserAuthority.USER_ROLE_PREFIX + userId);
+        Set<String> permissions = loadStringSet(UserCenterCacheConstants.UserAuthority.USER_PERMISSION_PREFIX + userId);
 
         Set<GrantedAuthority> authorities = new HashSet<>();
         if (!CollectionUtils.isEmpty(roles)) {
             authorities.addAll(roles.stream()
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                    .map(role -> new SimpleGrantedAuthority(UserCenterCacheConstants.UserAuthority.ROLE_PREFIX + role))
                     .toList());
         }
         if (!CollectionUtils.isEmpty(permissions)) {

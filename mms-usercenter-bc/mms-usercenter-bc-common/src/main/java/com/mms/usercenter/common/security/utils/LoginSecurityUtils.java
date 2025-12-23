@@ -1,7 +1,7 @@
 package com.mms.usercenter.common.security.utils;
 
 import com.mms.usercenter.common.security.properties.LoginSecurityProperties;
-import com.mms.usercenter.common.security.constants.UserCenterCacheConstants;
+import com.mms.common.core.constants.security.UserCenterCacheConstants;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
