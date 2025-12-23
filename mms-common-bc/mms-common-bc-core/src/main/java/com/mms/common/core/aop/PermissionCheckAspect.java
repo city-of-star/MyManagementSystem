@@ -28,7 +28,7 @@ import java.util.Collection;
  * - 校验逻辑基于 authorities 中的权限字符串，与 UserDetailsServiceImpl / SecurityUser 保持一致
  *
  * @author li.hongyu
- * @date 2025-12-19
+ * @date 2025-12-19 10:35:26
  */
 @Slf4j
 @Aspect

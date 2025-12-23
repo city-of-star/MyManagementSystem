@@ -1,11 +1,10 @@
 package com.mms.base.server.security.filter;
 
+import com.mms.base.feign.usercenter.UserAuthorityFeign;
 import com.mms.common.core.constants.gateway.GatewayConstants;
-import com.mms.common.core.constants.security.UserCenterCacheConstants;
-import com.mms.base.feign.usercenter.UsercenterAuthorityFeign;
+import com.mms.common.core.constants.security.UserCenterConstants;
 import com.mms.base.feign.usercenter.dto.UserAuthorityDto;
 import com.mms.common.core.response.Response;
-import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,18 +29,22 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 下游服务（base）侧的认证填充过滤器
+ * 实现功能【下游服务认证填充过滤器】
  * <p>
  * - 网关已完成 JWT 校验，并透传 userId/username
  * - 这里根据 userId 从 Redis 读取角色/权限，组装 Authentication 填充到 SecurityContext
  * - 便于 PermissionCheckAspect 正常获取权限
+ * <p>
+ *
+ * @author li.hongyu
+ * @date 2025-12-23 20:05:32
  */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private final UsercenterAuthorityFeign usercenterAuthorityFeign;
+    private final UserAuthorityFeign userAuthorityFeign;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -60,14 +63,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        Set<String> roles = loadStringSet(UserCenterCacheConstants.UserAuthority.USER_ROLE_PREFIX + userId);
-        Set<String> permissions = loadStringSet(UserCenterCacheConstants.UserAuthority.USER_PERMISSION_PREFIX + userId);
+        Set<String> roles = loadStringSet(UserCenterConstants.UserAuthority.USER_ROLE_PREFIX + userId);
+        Set<String> permissions = loadStringSet(UserCenterConstants.UserAuthority.USER_PERMISSION_PREFIX + userId);
 
         // 缓存缺失时回源用户中心
         if (CollectionUtils.isEmpty(roles) && CollectionUtils.isEmpty(permissions)) {
             Long userIdLong = parseUserId(userId);
             if (userIdLong != null) {
-                Response<UserAuthorityDto> resp = usercenterAuthorityFeign.getUserAuthorities(userIdLong);
+                Response<UserAuthorityDto> resp = userAuthorityFeign.getUserAuthorities(userIdLong);
                 if (resp != null && Response.SUCCESS_CODE == resp.getCode() && resp.getData() != null) {
                     roles = defaultSet(resp.getData().getRoles());
                     permissions = defaultSet(resp.getData().getPermissions());
@@ -79,7 +82,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Set<GrantedAuthority> authorities = new HashSet<>();
         if (!CollectionUtils.isEmpty(roles)) {
             authorities.addAll(roles.stream()
-                    .map(role -> new SimpleGrantedAuthority(UserCenterCacheConstants.UserAuthority.ROLE_PREFIX + role))
+                    .map(role -> new SimpleGrantedAuthority(UserCenterConstants.UserAuthority.ROLE_PREFIX + role))
                     .toList());
         }
         if (!CollectionUtils.isEmpty(permissions)) {
@@ -137,15 +140,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void cacheAuthorities(String userId, Set<String> roles, Set<String> permissions) {
         redisTemplate.opsForValue().set(
-                UserCenterCacheConstants.UserAuthority.USER_ROLE_PREFIX + userId,
+                UserCenterConstants.UserAuthority.USER_ROLE_PREFIX + userId,
                 defaultSet(roles),
-                UserCenterCacheConstants.UserAuthority.ROLE_PERMISSION_CACHE_TTL_MINUTES,
+                UserCenterConstants.UserAuthority.ROLE_PERMISSION_CACHE_TTL_MINUTES,
                 java.util.concurrent.TimeUnit.MINUTES
         );
         redisTemplate.opsForValue().set(
-                UserCenterCacheConstants.UserAuthority.USER_PERMISSION_PREFIX + userId,
+                UserCenterConstants.UserAuthority.USER_PERMISSION_PREFIX + userId,
                 defaultSet(permissions),
-                UserCenterCacheConstants.UserAuthority.ROLE_PERMISSION_CACHE_TTL_MINUTES,
+                UserCenterConstants.UserAuthority.ROLE_PERMISSION_CACHE_TTL_MINUTES,
                 java.util.concurrent.TimeUnit.MINUTES
         );
     }

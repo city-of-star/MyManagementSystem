@@ -1,9 +1,13 @@
 package com.mms.common.security.utils;
 
+import com.mms.common.core.enums.ErrorCode;
+import com.mms.common.core.exceptions.BusinessException;
 import com.mms.common.security.constants.JwtConstants;
 import com.mms.common.security.enums.TokenType;
 import com.mms.common.security.properties.JwtProperties;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
@@ -71,11 +75,17 @@ public class JwtUtils {
 	 * @return Claims
 	 */
 	public Claims parseToken(String token) {
-		return Jwts.parser()
-				.verifyWith(getSigningKey())
-				.build()
-				.parseSignedClaims(token)
-				.getPayload();
+		try {
+			return Jwts.parser()
+					.verifyWith(getSigningKey())
+					.build()
+					.parseSignedClaims(token)
+					.getPayload();
+		} catch (ExpiredJwtException e) {
+			throw new BusinessException(ErrorCode.LOGIN_EXPIRED);
+		} catch (JwtException e) {
+			throw new BusinessException(ErrorCode.INVALID_TOKEN);
+		}
 	}
 
 	/**

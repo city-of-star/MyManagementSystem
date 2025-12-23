@@ -36,7 +36,7 @@ public class TokenValidatorUtils {
      */
     public Claims parseAndValidate(String token, TokenType expectedType) {
         if (!StringUtils.hasText(token)) {
-            throw new BusinessException(ErrorCode.INVALID_TOKEN, "Token不能为空");
+            throw new BusinessException(ErrorCode.INVALID_TOKEN);
         }
 
         try {
@@ -53,21 +53,21 @@ public class TokenValidatorUtils {
             if (expectedType != null) {
                 TokenType realType = jwtUtils.extractTokenType(claims);
                 if (realType != expectedType) {
-                    throw new BusinessException(ErrorCode.INVALID_TOKEN, "Token类型不匹配");
+                    throw new BusinessException(ErrorCode.INVALID_TOKEN);
                 }
             }
 
             // 检查Token是否在黑名单中
             String jti = claims.getId();
             if (StringUtils.hasText(jti) &&  tokenBlacklistUtils.isBlacklisted(jti)) {
-                throw new BusinessException(ErrorCode.LOGIN_EXPIRED, "Token已失效");
+                throw new BusinessException(ErrorCode.LOGIN_EXPIRED);
             }
 
             return claims;
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
-            throw new BusinessException(ErrorCode.INVALID_TOKEN, "Token解析失败");
+            throw new BusinessException(ErrorCode.INVALID_TOKEN);
         }
     }
 

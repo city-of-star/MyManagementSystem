@@ -36,7 +36,7 @@ public class ReactiveTokenValidatorUtils {
      */
     public Mono<Claims> parseAndValidate(String token, TokenType expectedType) {
         if (!StringUtils.hasText(token)) {
-            return Mono.error(new BusinessException(ErrorCode.INVALID_TOKEN, "Token不能为空"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_TOKEN));
         }
 
         final Claims claims;
@@ -45,7 +45,7 @@ public class ReactiveTokenValidatorUtils {
         } catch (BusinessException e) {
             return Mono.error(e);
         } catch (Exception e) {
-            return Mono.error(new BusinessException(ErrorCode.INVALID_TOKEN, "Token解析失败"));
+            return Mono.error(new BusinessException(ErrorCode.INVALID_TOKEN));
         }
 
         // 校验过期
@@ -58,7 +58,7 @@ public class ReactiveTokenValidatorUtils {
         if (expectedType != null) {
             TokenType realType = jwtUtils.extractTokenType(claims);
             if (realType != expectedType) {
-                return Mono.error(new BusinessException(ErrorCode.INVALID_TOKEN, "Token类型不匹配"));
+                return Mono.error(new BusinessException(ErrorCode.INVALID_TOKEN));
             }
         }
 
@@ -73,7 +73,7 @@ public class ReactiveTokenValidatorUtils {
                 .defaultIfEmpty(false)
                 .flatMap(exists -> {
                     if (Boolean.TRUE.equals(exists)) {
-                        return Mono.error(new BusinessException(ErrorCode.LOGIN_EXPIRED, "Token已失效"));
+                        return Mono.error(new BusinessException(ErrorCode.LOGIN_EXPIRED));
                     }
                     return Mono.just(claims);
                 });

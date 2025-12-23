@@ -2,7 +2,7 @@ package com.mms.usercenter.server.security.filter;
 
 import com.mms.common.core.constants.gateway.GatewayConstants;
 import com.mms.usercenter.common.security.entity.SecurityUser;
-import com.mms.usercenter.service.security.UserDetailsServiceImpl;
+import com.mms.usercenter.service.security.service.impl.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

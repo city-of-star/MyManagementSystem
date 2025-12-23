@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
  * </pre>
  *
  * @author li.hongyu
- * @date 2025-12-19
+ * @date 2025-12-19 14:46:39
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

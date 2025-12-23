@@ -6,8 +6,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "usercenter", path = "/usercenter/internal/authority")
-public interface UsercenterAuthorityFeign {
+@FeignClient(name = "usercenter", path = "/usercenter/authority")
+public interface UserAuthorityFeign {
 
     @GetMapping("/{userId}")
     Response<UserAuthorityDto> getUserAuthorities(@PathVariable("userId") Long userId);

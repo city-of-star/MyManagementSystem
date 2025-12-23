@@ -1,4 +1,4 @@
-package com.mms.usercenter.service.security;
+package com.mms.usercenter.service.security.service.impl;
 
 import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
@@ -6,6 +6,7 @@ import com.mms.usercenter.common.auth.entity.UserEntity;
 import com.mms.usercenter.common.security.entity.SecurityUser;
 import com.mms.usercenter.service.auth.mapper.UserMapper;
 import com.mms.usercenter.common.security.vo.UserAuthorityVo;
+import com.mms.usercenter.service.security.service.UserAuthorityService;
 import jakarta.annotation.Resource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

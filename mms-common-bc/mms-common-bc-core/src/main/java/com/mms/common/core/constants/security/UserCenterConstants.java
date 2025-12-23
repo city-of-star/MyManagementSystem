@@ -9,7 +9,7 @@ package com.mms.common.core.constants.security;
  * @author li.hongyu
  * @date 2025-12-19 16:55:20
  */
-public final class UserCenterCacheConstants {
+public final class UserCenterConstants {
 
     /**
      * 登录安全相关
@@ -63,7 +63,7 @@ public final class UserCenterCacheConstants {
         }
     }
 
-    private UserCenterCacheConstants() {
+    private UserCenterConstants() {
         throw new UnsupportedOperationException("常量类不允许实例化");
     }
 }
