@@ -6,16 +6,16 @@ USE `mms_dev_core`;
 
 -- ==================== test 表 ====================
 
-CREATE TABLE IF NOT EXISTS test
+CREATE TABLE IF NOT EXISTS `test`
 (
-    id          bigint auto_increment comment '主键'
+    `id`          bigint auto_increment comment '主键'
         primary key,
-    title       varchar(512) not null default '' comment '测试标题',
-    content     text comment '测试内容',
-    create_time datetime     not null default CURRENT_TIMESTAMP comment '创建时间',
-    update_time datetime     not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
-    INDEX idx_title (title),
-    INDEX idx_create_time (create_time)
+    `title`       varchar(512) not null default '' comment '测试标题',
+    `content`     text comment '测试内容',
+    `create_time` datetime     not null default CURRENT_TIMESTAMP comment '创建时间',
+    `update_time` datetime     not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间',
+    INDEX `idx_title` (`title`),
+    INDEX `idx_create_time` (`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='测试表-用于测试服务基础功能';
 
 -- ==================== 用户中心服务相关表 ====================
@@ -227,6 +227,75 @@ CREATE TABLE IF NOT EXISTS `user_post` (
     KEY `idx_is_primary` (`is_primary`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户岗位关联表';
 
+-- 11. 系统配置表（用于系统配置，单个键值对）
+CREATE TABLE IF NOT EXISTS `config` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '配置ID',
+    `config_key` varchar(128) NOT NULL COMMENT '配置键（唯一标识）',
+    `config_value` text COMMENT '配置值',
+    `config_type` varchar(32) NOT NULL DEFAULT 'string' COMMENT '配置类型：string-字符串，number-数字，boolean-布尔值，json-JSON对象',
+    `config_name` varchar(128) NOT NULL COMMENT '配置名称/描述',
+    `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
+    `editable` tinyint NOT NULL DEFAULT 1 COMMENT '是否可编辑：0-否（系统配置），1-是（用户配置）',
+    `remark` varchar(512) DEFAULT NULL COMMENT '备注',
+    `deleted` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
+    `create_by` bigint DEFAULT NULL COMMENT '创建人ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_by` bigint DEFAULT NULL COMMENT '更新人ID',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_config_key` (`config_key`),
+    KEY `idx_status` (`status`),
+    KEY `idx_deleted` (`deleted`),
+    KEY `idx_config_type` (`config_type`),
+    KEY `idx_status_deleted` (`status`, `deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='系统配置表';
+
+-- 12. 数据字典类型表（字典分类）
+CREATE TABLE IF NOT EXISTS `dict_type` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '字典类型ID',
+    `dict_type_code` varchar(64) NOT NULL COMMENT '字典类型编码（唯一标识）',
+    `dict_type_name` varchar(128) NOT NULL COMMENT '字典类型名称',
+    `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
+    `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序号',
+    `remark` varchar(512) DEFAULT NULL COMMENT '备注',
+    `deleted` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
+    `create_by` bigint DEFAULT NULL COMMENT '创建人ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_by` bigint DEFAULT NULL COMMENT '更新人ID',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_dict_type_code` (`dict_type_code`),
+    KEY `idx_status` (`status`),
+    KEY `idx_deleted` (`deleted`),
+    KEY `idx_status_deleted` (`status`, `deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='数据字典类型表（字典分类）';
+
+-- 13. 数据字典数据表（字典键值对，用于下拉框等）
+CREATE TABLE IF NOT EXISTS `dict_data` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '字典数据ID',
+    `dict_type_id` bigint NOT NULL COMMENT '字典类型ID',
+    `dict_label` varchar(128) NOT NULL COMMENT '字典标签（显示文本）',
+    `dict_value` varchar(128) NOT NULL COMMENT '字典值（实际值）',
+    `dict_sort` int NOT NULL DEFAULT 0 COMMENT '排序号',
+    `css_class` varchar(128) DEFAULT NULL COMMENT 'CSS类名（用于样式）',
+    `list_class` varchar(128) DEFAULT NULL COMMENT '列表样式（success/info/warning/danger等）',
+    `is_default` tinyint NOT NULL DEFAULT 0 COMMENT '是否默认值：0-否，1-是',
+    `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
+    `remark` varchar(512) DEFAULT NULL COMMENT '备注',
+    `deleted` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
+    `create_by` bigint DEFAULT NULL COMMENT '创建人ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_by` bigint DEFAULT NULL COMMENT '更新人ID',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_dict_type_id` (`dict_type_id`),
+    KEY `idx_dict_value` (`dict_value`),
+    KEY `idx_status` (`status`),
+    KEY `idx_deleted` (`deleted`),
+    KEY `idx_dict_type_status_deleted` (`dict_type_id`, `status`, `deleted`),
+    CONSTRAINT `fk_dict_data_type` FOREIGN KEY (`dict_type_id`) REFERENCES `dict_type` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='数据字典数据表（字典键值对）';
+
 -- ==================== 初始化数据 ====================
 
 -- 初始化超级管理员用户（密码：admin123）
@@ -245,42 +314,53 @@ VALUES (2, 'user', '普通用户', 'system', 1, 0, NOW(), NOW());
 INSERT IGNORE INTO `user_role` (`user_id`, `role_id`, `create_time`)
 VALUES (1, 1, NOW());
 
--- 初始化权限数据
+-- 初始化权限数据（菜单 + 按钮）
+-- 权限ID从1开始顺序递增，保持连续性和可维护性
 INSERT IGNORE INTO `permission` (`id`, `parent_id`, `permission_type`, `permission_name`, `permission_code`,
-                                 `sort_order`, `visible`, `status`, `deleted`, `create_time`, `update_time`)
+                                 `path`, `component`, `icon`, `sort_order`, `visible`, `status`, `deleted`, `create_time`, `update_time`)
 VALUES
-    -- 用户管理
-    (1, 0, 'button', '用户-查看', 'user:view', 10, 1, 1, 0, NOW(), NOW()),
-    (2, 0, 'button', '用户-新增', 'user:create', 11, 1, 1, 0, NOW(), NOW()),
-    (3, 0, 'button', '用户-编辑', 'user:update', 12, 1, 1, 0, NOW(), NOW()),
-    (4, 0, 'button', '用户-删除', 'user:delete', 13, 1, 1, 0, NOW(), NOW()),
-    (5, 0, 'button', '用户-重置密码', 'user:reset-password', 14, 1, 1, 0, NOW(), NOW()),
-    (6, 0, 'button', '用户-解锁', 'user:unlock', 15, 1, 1, 0, NOW(), NOW()),
+    -- 系统管理（父菜单）
+    (1, 0, 'menu', '系统管理', 'system:manage', '/system', 'Layout', 'system', 1, 1, 1, 0, NOW(), NOW()),
 
-    -- 角色管理
-    (7, 0, 'button', '角色-查看', 'role:view', 20, 1, 1, 0, NOW(), NOW()),
-    (8, 0, 'button', '角色-新增', 'role:create', 21, 1, 1, 0, NOW(), NOW()),
-    (9, 0, 'button', '角色-编辑', 'role:update', 22, 1, 1, 0, NOW(), NOW()),
-    (10, 0, 'button', '角色-删除', 'role:delete', 23, 1, 1, 0, NOW(), NOW()),
-    (11, 0, 'button', '角色-分配权限', 'role:assign', 24, 1, 1, 0, NOW(), NOW()),
+    -- 用户管理（菜单 + 按钮）
+    (2, 1, 'menu', '用户管理', 'system:user:manage', '/system/userPage', 'system/user/UserPage', 'user', 10, 1, 1, 0, NOW(), NOW()),
+    (3, 2, 'button', '用户-查看', 'user:view', NULL, NULL, NULL, 10, 1, 1, 0, NOW(), NOW()),
+    (4, 2, 'button', '用户-新增', 'user:create', NULL, NULL, NULL, 11, 1, 1, 0, NOW(), NOW()),
+    (5, 2, 'button', '用户-编辑', 'user:update', NULL, NULL, NULL, 12, 1, 1, 0, NOW(), NOW()),
+    (6, 2, 'button', '用户-删除', 'user:delete', NULL, NULL, NULL, 13, 1, 1, 0, NOW(), NOW()),
+    (7, 2, 'button', '用户-重置密码', 'user:reset-password', NULL, NULL, NULL, 14, 1, 1, 0, NOW(), NOW()),
+    (8, 2, 'button', '用户-解锁', 'user:unlock', NULL, NULL, NULL, 15, 1, 1, 0, NOW(), NOW()),
 
-    -- 权限管理
-    (12, 0, 'button', '权限-查看', 'permission:view', 30, 1, 1, 0, NOW(), NOW()),
-    (13, 0, 'button', '权限-新增', 'permission:create', 31, 1, 1, 0, NOW(), NOW()),
-    (14, 0, 'button', '权限-编辑', 'permission:update', 32, 1, 1, 0, NOW(), NOW()),
-    (15, 0, 'button', '权限-删除', 'permission:delete', 33, 1, 1, 0, NOW(), NOW()),
+    -- 角色管理（菜单 + 按钮）
+    (9, 1, 'menu', '角色管理', 'system:role:manage', '/system/rolePage', 'system/role/RolePage', 'peoples', 20, 1, 1, 0, NOW(), NOW()),
+    (10, 9, 'button', '角色-查看', 'role:view', NULL, NULL, NULL, 20, 1, 1, 0, NOW(), NOW()),
+    (11, 9, 'button', '角色-新增', 'role:create', NULL, NULL, NULL, 21, 1, 1, 0, NOW(), NOW()),
+    (12, 9, 'button', '角色-编辑', 'role:update', NULL, NULL, NULL, 22, 1, 1, 0, NOW(), NOW()),
+    (13, 9, 'button', '角色-删除', 'role:delete', NULL, NULL, NULL, 23, 1, 1, 0, NOW(), NOW()),
+    (14, 9, 'button', '角色-分配权限', 'role:assign', NULL, NULL, NULL, 24, 1, 1, 0, NOW(), NOW()),
 
-    -- 参数管理
-    (16, 0, 'button', '参数-查看', 'param:view', 40, 1, 1, 0, NOW(), NOW()),
-    (17, 0, 'button', '参数-新增', 'param:create', 41, 1, 1, 0, NOW(), NOW()),
-    (18, 0, 'button', '参数-编辑', 'param:update', 42, 1, 1, 0, NOW(), NOW()),
-    (19, 0, 'button', '参数-删除', 'param:delete', 43, 1, 1, 0, NOW(), NOW()),
-    (20, 0, 'button', '参数-刷新缓存', 'param:refresh-cache', 44, 1, 1, 0, NOW(), NOW());
+    -- 菜单管理（菜单 + 按钮）
+    (15, 1, 'menu', '菜单管理', 'system:menu:manage', '/system/menuPage', 'system/menu/MenuPage', 'tree-table', 30, 1, 1, 0, NOW(), NOW()),
+    (16, 15, 'button', '权限-查看', 'permission:view', NULL, NULL, NULL, 30, 1, 1, 0, NOW(), NOW()),
+    (17, 15, 'button', '权限-新增', 'permission:create', NULL, NULL, NULL, 31, 1, 1, 0, NOW(), NOW()),
+    (18, 15, 'button', '权限-编辑', 'permission:update', NULL, NULL, NULL, 32, 1, 1, 0, NOW(), NOW()),
+    (19, 15, 'button', '权限-删除', 'permission:delete', NULL, NULL, NULL, 33, 1, 1, 0, NOW(), NOW()),
+
+    -- 参数管理（菜单 + 按钮）
+    (20, 1, 'menu', '参数管理', 'system:param:manage', '/system/paramPage', 'system/param/ParamPage', 'swagger', 40, 1, 1, 0, NOW(), NOW()),
+    (21, 20, 'button', '参数-查看', 'param:view', NULL, NULL, NULL, 40, 1, 1, 0, NOW(), NOW()),
+    (22, 20, 'button', '参数-新增', 'param:create', NULL, NULL, NULL, 41, 1, 1, 0, NOW(), NOW()),
+    (23, 20, 'button', '参数-编辑', 'param:update', NULL, NULL, NULL, 42, 1, 1, 0, NOW(), NOW()),
+    (24, 20, 'button', '参数-删除', 'param:delete', NULL, NULL, NULL, 43, 1, 1, 0, NOW(), NOW()),
+    (25, 20, 'button', '参数-刷新缓存', 'param:refresh-cache', NULL, NULL, NULL, 44, 1, 1, 0, NOW(), NOW());
 
 -- 将所有初始化的权限授予超级管理员角色（role_id = 1）
+-- 权限ID已改为从1开始的顺序ID（1-25）
 INSERT IGNORE INTO `role_permission` (`role_id`, `permission_id`, `create_time`)
 VALUES
+    -- 系统管理菜单
     (1, 1, NOW()),
+    -- 用户管理菜单及按钮（ID: 2-8）
     (1, 2, NOW()),
     (1, 3, NOW()),
     (1, 4, NOW()),
@@ -288,15 +368,97 @@ VALUES
     (1, 6, NOW()),
     (1, 7, NOW()),
     (1, 8, NOW()),
+    -- 角色管理菜单及按钮（ID: 9-14）
     (1, 9, NOW()),
     (1, 10, NOW()),
     (1, 11, NOW()),
     (1, 12, NOW()),
     (1, 13, NOW()),
     (1, 14, NOW()),
+    -- 菜单管理菜单及按钮（ID: 15-19）
     (1, 15, NOW()),
     (1, 16, NOW()),
     (1, 17, NOW()),
     (1, 18, NOW()),
     (1, 19, NOW()),
-    (1, 20, NOW());
+    -- 参数管理菜单及按钮（ID: 20-25）
+    (1, 20, NOW()),
+    (1, 21, NOW()),
+    (1, 22, NOW()),
+    (1, 23, NOW()),
+    (1, 24, NOW()),
+    (1, 25, NOW());
+
+-- 初始化部门数据
+INSERT IGNORE INTO `dept` (`id`, `parent_id`, `dept_name`, `dept_code`, `leader`, `phone`, `email`, `sort_order`, `status`, `remark`, `deleted`, `create_time`, `update_time`)
+VALUES
+    (1, 0, '总公司', 'ROOT', '系统管理员', NULL, NULL, 1, 1, '根部门', 0, NOW(), NOW()),
+    (2, 1, '技术部', 'TECH', '技术总监', NULL, NULL, 10, 1, '技术部门', 0, NOW(), NOW()),
+    (3, 1, '产品部', 'PRODUCT', '产品总监', NULL, NULL, 20, 1, '产品部门', 0, NOW(), NOW()),
+    (4, 1, '运营部', 'OPERATION', '运营总监', NULL, NULL, 30, 1, '运营部门', 0, NOW(), NOW()),
+    (5, 2, '前端组', 'FRONTEND', '前端组长', NULL, NULL, 11, 1, '前端开发组', 0, NOW(), NOW()),
+    (6, 2, '后端组', 'BACKEND', '后端组长', NULL, NULL, 12, 1, '后端开发组', 0, NOW(), NOW());
+
+-- 初始化岗位数据
+INSERT IGNORE INTO `post` (`id`, `post_code`, `post_name`, `post_level`, `sort_order`, `status`, `remark`, `deleted`, `create_time`, `update_time`)
+VALUES
+    (1, 'CEO', '首席执行官', 'P1', 1, 1, '公司最高管理者', 0, NOW(), NOW()),
+    (2, 'CTO', '首席技术官', 'P2', 2, 1, '技术负责人', 0, NOW(), NOW()),
+    (3, 'PM', '产品经理', 'P3', 3, 1, '产品管理', 0, NOW(), NOW()),
+    (4, 'DEV', '开发工程师', 'P4', 4, 1, '软件开发', 0, NOW(), NOW()),
+    (5, 'TEST', '测试工程师', 'P4', 5, 1, '软件测试', 0, NOW(), NOW()),
+    (6, 'OP', '运营专员', 'P4', 6, 1, '运营工作', 0, NOW(), NOW());
+
+-- 给超级管理员分配部门（主部门：技术部）
+INSERT IGNORE INTO `user_dept` (`user_id`, `dept_id`, `is_primary`, `create_time`)
+VALUES (1, 2, 1, NOW());
+
+-- 给超级管理员分配岗位（主岗位：CTO）
+INSERT IGNORE INTO `user_post` (`user_id`, `post_id`, `is_primary`, `create_time`)
+VALUES (1, 2, 1, NOW());
+
+-- 初始化系统配置数据
+INSERT IGNORE INTO `config` (`config_key`, `config_value`, `config_type`, `config_name`, `status`, `editable`, `remark`, `deleted`, `create_time`, `update_time`)
+VALUES
+    ('system.name', 'MyManagementSystem', 'string', '系统名称', 1, 0, '系统名称配置', 0, NOW(), NOW()),
+    ('system.version', '1.0.0', 'string', '系统版本', 1, 0, '系统版本号', 0, NOW(), NOW()),
+    ('system.copyright', '© 2025 MyManagementSystem', 'string', '版权信息', 1, 1, '系统版权信息', 0, NOW(), NOW()),
+    ('login.password.minLength', '6', 'number', '密码最小长度', 1, 1, '用户密码最小长度要求', 0, NOW(), NOW()),
+    ('login.password.maxLength', '20', 'number', '密码最大长度', 1, 1, '用户密码最大长度要求', 0, NOW(), NOW()),
+    ('file.upload.maxSize', '10485760', 'number', '文件上传最大大小（字节）', 1, 1, '单个文件上传的最大大小，默认10MB', 0, NOW(), NOW()),
+    ('file.upload.allowedTypes', 'jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx', 'string', '允许上传的文件类型', 1, 1, '允许上传的文件扩展名，用逗号分隔', 0, NOW(), NOW()),
+    ('cache.permission.ttl', '30', 'number', '权限缓存过期时间（分钟）', 1, 1, '用户权限信息在缓存中的过期时间', 0, NOW(), NOW());
+
+-- 初始化数据字典类型
+INSERT IGNORE INTO `dict_type` (`id`, `dict_type_code`, `dict_type_name`, `status`, `sort_order`, `remark`, `deleted`, `create_time`, `update_time`)
+VALUES
+    (1, 'user_status', '用户状态', 1, 1, '用户账号状态', 0, NOW(), NOW()),
+    (2, 'user_gender', '用户性别', 1, 2, '用户性别选项', 0, NOW(), NOW()),
+    (3, 'role_type', '角色类型', 1, 3, '角色类型分类', 0, NOW(), NOW()),
+    (4, 'permission_type', '权限类型', 1, 4, '权限类型分类', 0, NOW(), NOW()),
+    (5, 'common_status', '通用状态', 1, 5, '通用的启用/禁用状态', 0, NOW(), NOW()),
+    (6, 'yes_no', '是否', 1, 6, '是否选项', 0, NOW(), NOW());
+
+-- 初始化数据字典数据
+INSERT IGNORE INTO `dict_data` (`dict_type_id`, `dict_label`, `dict_value`, `dict_sort`, `list_class`, `is_default`, `status`, `remark`, `deleted`, `create_time`, `update_time`)
+VALUES
+    -- 用户状态
+    (1, '启用', '1', 1, 'success', 1, 1, '用户账号启用', 0, NOW(), NOW()),
+    (1, '禁用', '0', 2, 'danger', 0, 1, '用户账号禁用', 0, NOW(), NOW()),
+    -- 用户性别
+    (2, '未知', '0', 1, 'info', 1, 1, '性别未知', 0, NOW(), NOW()),
+    (2, '男', '1', 2, 'primary', 0, 1, '男性', 0, NOW(), NOW()),
+    (2, '女', '2', 3, 'warning', 0, 1, '女性', 0, NOW(), NOW()),
+    -- 角色类型
+    (3, '系统角色', 'system', 1, 'danger', 0, 1, '系统内置角色，不可删除', 0, NOW(), NOW()),
+    (3, '自定义角色', 'custom', 2, 'success', 1, 1, '用户自定义角色', 0, NOW(), NOW()),
+    -- 权限类型
+    (4, '菜单', 'menu', 1, 'primary', 0, 1, '菜单权限', 0, NOW(), NOW()),
+    (4, '按钮', 'button', 2, 'success', 0, 1, '按钮权限', 0, NOW(), NOW()),
+    (4, '接口', 'api', 3, 'warning', 0, 1, '接口权限', 0, NOW(), NOW()),
+    -- 通用状态
+    (5, '启用', '1', 1, 'success', 1, 1, '启用状态', 0, NOW(), NOW()),
+    (5, '禁用', '0', 2, 'danger', 0, 1, '禁用状态', 0, NOW(), NOW()),
+    -- 是否
+    (6, '是', '1', 1, 'success', 0, 1, '是', 0, NOW(), NOW()),
+    (6, '否', '0', 2, 'info', 1, 1, '否', 0, NOW(), NOW());
