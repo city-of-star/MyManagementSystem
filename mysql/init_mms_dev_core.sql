@@ -315,7 +315,6 @@ INSERT IGNORE INTO `user_role` (`user_id`, `role_id`, `create_time`)
 VALUES (1, 1, NOW());
 
 -- 初始化权限数据（菜单 + 按钮）
--- 权限ID从1开始顺序递增，保持连续性和可维护性
 INSERT IGNORE INTO `permission` (`id`, `parent_id`, `permission_type`, `permission_name`, `permission_code`,
                                  `path`, `component`, `icon`, `sort_order`, `visible`, `status`, `deleted`, `create_time`, `update_time`)
 VALUES
@@ -346,16 +345,21 @@ VALUES
     (18, 15, 'button', '权限-编辑', 'permission:update', NULL, NULL, NULL, 32, 1, 1, 0, NOW(), NOW()),
     (19, 15, 'button', '权限-删除', 'permission:delete', NULL, NULL, NULL, 33, 1, 1, 0, NOW(), NOW()),
 
-    -- 参数管理（菜单 + 按钮）
-    (20, 1, 'menu', '参数管理', 'system:param:manage', '/system/paramPage', 'system/param/ParamPage', 'swagger', 40, 1, 1, 0, NOW(), NOW()),
-    (21, 20, 'button', '参数-查看', 'param:view', NULL, NULL, NULL, 40, 1, 1, 0, NOW(), NOW()),
-    (22, 20, 'button', '参数-新增', 'param:create', NULL, NULL, NULL, 41, 1, 1, 0, NOW(), NOW()),
-    (23, 20, 'button', '参数-编辑', 'param:update', NULL, NULL, NULL, 42, 1, 1, 0, NOW(), NOW()),
-    (24, 20, 'button', '参数-删除', 'param:delete', NULL, NULL, NULL, 43, 1, 1, 0, NOW(), NOW()),
-    (25, 20, 'button', '参数-刷新缓存', 'param:refresh-cache', NULL, NULL, NULL, 44, 1, 1, 0, NOW(), NOW());
+    -- 系统配置管理（菜单 + 按钮）
+    (20, 1, 'menu', '系统配置管理', 'system:config:manage', '/system/configPage', 'system/config/ConfigPage', 'setting', 50, 1, 1, 0, NOW(), NOW()),
+    (21, 20, 'button', '配置-查看', 'config:view', NULL, NULL, NULL, 50, 1, 1, 0, NOW(), NOW()),
+    (22, 20, 'button', '配置-新增', 'config:create', NULL, NULL, NULL, 51, 1, 1, 0, NOW(), NOW()),
+    (23, 20, 'button', '配置-编辑', 'config:update', NULL, NULL, NULL, 52, 1, 1, 0, NOW(), NOW()),
+    (24, 20, 'button', '配置-删除', 'config:delete', NULL, NULL, NULL, 53, 1, 1, 0, NOW(), NOW()),
+
+    -- 数据字典管理（菜单 + 按钮）
+    (25, 1, 'menu', '数据字典管理', 'system:dict:manage', '/system/dictPage', 'system/dict/DictPage', 'dict', 60, 1, 1, 0, NOW(), NOW()),
+    (26, 25, 'button', '字典-查看', 'dict:view', NULL, NULL, NULL, 60, 1, 1, 0, NOW(), NOW()),
+    (27, 25, 'button', '字典-新增', 'dict:create', NULL, NULL, NULL, 61, 1, 1, 0, NOW(), NOW()),
+    (28, 25, 'button', '字典-编辑', 'dict:update', NULL, NULL, NULL, 62, 1, 1, 0, NOW(), NOW()),
+    (29, 25, 'button', '字典-删除', 'dict:delete', NULL, NULL, NULL, 63, 1, 1, 0, NOW(), NOW());
 
 -- 将所有初始化的权限授予超级管理员角色（role_id = 1）
--- 权限ID已改为从1开始的顺序ID（1-25）
 INSERT IGNORE INTO `role_permission` (`role_id`, `permission_id`, `create_time`)
 VALUES
     -- 系统管理菜单
@@ -381,13 +385,18 @@ VALUES
     (1, 17, NOW()),
     (1, 18, NOW()),
     (1, 19, NOW()),
-    -- 参数管理菜单及按钮（ID: 20-25）
+    -- 系统配置管理菜单及按钮（ID: 20-24）
     (1, 20, NOW()),
     (1, 21, NOW()),
     (1, 22, NOW()),
     (1, 23, NOW()),
     (1, 24, NOW()),
-    (1, 25, NOW());
+    -- 数据字典管理菜单及按钮（ID: 25-29）
+    (1, 25, NOW()),
+    (1, 26, NOW()),
+    (1, 27, NOW()),
+    (1, 28, NOW()),
+    (1, 29, NOW());
 
 -- 初始化部门数据
 INSERT IGNORE INTO `dept` (`id`, `parent_id`, `dept_name`, `dept_code`, `leader`, `phone`, `email`, `sort_order`, `status`, `remark`, `deleted`, `create_time`, `update_time`)

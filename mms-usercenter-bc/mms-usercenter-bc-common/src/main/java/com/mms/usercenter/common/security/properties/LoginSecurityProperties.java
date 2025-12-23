@@ -1,4 +1,4 @@
-package com.mms.usercenter.common.auth.properties;
+package com.mms.usercenter.common.security.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

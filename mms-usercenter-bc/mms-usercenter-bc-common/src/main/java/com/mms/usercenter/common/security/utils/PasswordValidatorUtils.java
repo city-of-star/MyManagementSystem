@@ -1,4 +1,4 @@
-package com.mms.usercenter.common.auth.utils;
+package com.mms.usercenter.common.security.utils;
 
 import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
