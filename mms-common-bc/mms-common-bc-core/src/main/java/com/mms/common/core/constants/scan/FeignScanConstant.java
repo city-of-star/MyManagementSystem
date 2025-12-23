@@ -14,10 +14,10 @@ public class FeignScanConstant {
     /**
      * Base 服务的 Feign 客户端扫描路径
      */
-    public static final String BASE_FEIGN_SCAN = "com.mms.base.feign.test";
+    public static final String BASE_FEIGN_SCAN = "com.mms.base.feign";
 
     /**
      * UserCenter 服务的 Feign 客户端扫描路径
      */
-    public static final String USERCENTER_FEIGN_SCAN = "com.mms.usercenter.feign.test";
+    public static final String USERCENTER_FEIGN_SCAN = "com.mms.usercenter.feign";
 }

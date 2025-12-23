@@ -5,6 +5,7 @@ import com.mms.common.core.constants.security.UserCenterCacheConstants;
 import com.mms.base.feign.usercenter.UsercenterAuthorityFeign;
 import com.mms.base.feign.usercenter.dto.UserAuthorityDto;
 import com.mms.common.core.response.Response;
+import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
