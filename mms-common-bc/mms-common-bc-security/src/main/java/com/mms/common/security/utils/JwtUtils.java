@@ -30,30 +30,33 @@ public class JwtUtils {
 	/**
 	 * 生成Access Token
 	 *
+	 * @param userId   用户ID
 	 * @param username 用户名
 	 * @return Access Token
 	 */
-	public String generateAccessToken(String username) {
-		return generateToken(username, TokenType.ACCESS, jwtProperties.getAccessExpiration());
+	public String generateAccessToken(Long userId, String username) {
+		return generateToken(userId, username, TokenType.ACCESS, jwtProperties.getAccessExpiration());
 	}
 
 	/**
 	 * 生成Refresh Token
 	 *
+	 * @param userId   用户ID
 	 * @param username 用户名
 	 * @return Refresh Token
 	 */
-	public String generateRefreshToken(String username) {
-		return generateToken(username, TokenType.REFRESH, jwtProperties.getRefreshExpiration());
+	public String generateRefreshToken(Long userId, String username) {
+		return generateToken(userId, username, TokenType.REFRESH, jwtProperties.getRefreshExpiration());
 	}
 
-	private String generateToken(String username, TokenType tokenType, long expirationMs) {
+	private String generateToken(Long userId, String username, TokenType tokenType, long expirationMs) {
 		Date now = new Date();
 		Date expiryDate = new Date(now.getTime() + expirationMs);
 		String jti = UUID.randomUUID().toString();
 
 		return Jwts.builder()
 				.id(jti)
+				.claim(JwtConstants.Claims.USER_ID, userId)
 				.claim(JwtConstants.Claims.USERNAME, username)
 				.claim(JwtConstants.Claims.TOKEN_TYPE, tokenType.name())
 				.issuedAt(now)

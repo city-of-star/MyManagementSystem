@@ -1,4 +1,4 @@
-package com.mms.usercenter.security.filter;
+package com.mms.usercenter.server.security.filter;
 
 import com.mms.common.core.constants.gateway.GatewayConstants;
 import com.mms.usercenter.common.security.entity.SecurityUser;

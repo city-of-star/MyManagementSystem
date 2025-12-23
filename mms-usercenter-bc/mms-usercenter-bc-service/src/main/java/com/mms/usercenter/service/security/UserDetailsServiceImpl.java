@@ -112,7 +112,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .collect(Collectors.toSet());
 
         // 写入缓存
-        cacheSet(cacheKey, roleCodes);
+        cacheSet(roleCodes, cacheKey);
         return roleCodes;
     }
 
@@ -150,7 +150,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .collect(Collectors.toSet());
 
         // 写入缓存
-        cacheSet(cacheKey, permissionCodes);
+        cacheSet(permissionCodes, cacheKey);
         return permissionCodes;
     }
 
@@ -181,27 +181,31 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     /**
      * 缓存一个字符串集合
      */
-    private void cacheSet(String key, Set<String> values) {
+    private void cacheSet(Set<String> values, String... keys) {
         if (values == null) {
             values = Collections.emptySet();
         }
-        redisTemplate.opsForValue().set(
-                key,
-                values,
-                UserCenterCacheConstants.UserAuthority.ROLE_PERMISSION_CACHE_TTL_MINUTES,
-                TimeUnit.MINUTES
-        );
+        for (String key : keys) {
+            redisTemplate.opsForValue().set(
+                    key,
+                    values,
+                    UserCenterCacheConstants.UserAuthority.ROLE_PERMISSION_CACHE_TTL_MINUTES,
+                    TimeUnit.MINUTES
+            );
+        }
     }
 
     /**
      * 缓存空集合，避免缓存穿透
      */
-    private void cacheEmptySet(String key) {
-        redisTemplate.opsForValue().set(
-                key,
-                new HashSet<>(),
-                UserCenterCacheConstants.UserAuthority.ROLE_PERMISSION_CACHE_TTL_MINUTES,
-                TimeUnit.MINUTES
-        );
+    private void cacheEmptySet(String... keys) {
+        for (String key : keys) {
+            redisTemplate.opsForValue().set(
+                    key,
+                    new HashSet<>(),
+                    UserCenterCacheConstants.UserAuthority.ROLE_PERMISSION_CACHE_TTL_MINUTES,
+                    TimeUnit.MINUTES
+            );
+        }
     }
 }

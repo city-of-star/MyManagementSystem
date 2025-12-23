@@ -18,11 +18,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserContext {
 
+     /**
+     * 用户ID
+     */
+    private Long userId;
+
     /**
      * 用户名
      */
     private String username;
-
+   
     /**
      * Token Jti
      */

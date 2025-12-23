@@ -74,6 +74,9 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
                     String username = Optional.ofNullable(claims.get(JwtConstants.Claims.USERNAME))
                             .map(Object::toString)
                             .orElse(null);
+                    String userId = Optional.ofNullable(claims.get(JwtConstants.Claims.USER_ID))
+                            .map(Object::toString)
+                            .orElse(null);
                     String jti = claims.getId();
                     Date expiration = claims.getExpiration();
 
@@ -83,6 +86,10 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
                                 if (StringUtils.hasText(username)) {
                                     // 将用户名添加到请求头，供下游服务使用
                                     httpHeaders.set(GatewayConstants.Headers.USER_NAME, username);
+                                }
+                                if (StringUtils.hasText(userId)) {
+                                    // 将用户ID添加到请求头，供下游服务使用
+                                    httpHeaders.set(GatewayConstants.Headers.USER_ID, userId);
                                 }
                                 if (StringUtils.hasText(jti)) {
                                     // 将 Token Jti 添加到请求头，供下游服务使用（用于黑名单）

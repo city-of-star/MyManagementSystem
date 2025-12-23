@@ -38,6 +38,11 @@ public class JwtConstants {
         public static final String USERNAME = "username";
 
         /**
+         * JWT Claims中的用户ID键
+         */
+        public static final String USER_ID = "userId";
+
+        /**
          * JWT Claims中的Token类型键
          */
         public static final String TOKEN_TYPE = "tokenType";

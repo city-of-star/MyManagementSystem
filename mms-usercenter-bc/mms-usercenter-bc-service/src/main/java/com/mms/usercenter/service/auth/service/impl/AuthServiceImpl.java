@@ -115,8 +115,8 @@ public class AuthServiceImpl implements AuthService {
             userMapper.updateById(user);
 
             // 生成双 Token
-            String accessToken = jwtUtils.generateAccessToken(dto.getUsername());
-            String refreshToken = jwtUtils.generateRefreshToken(dto.getUsername());
+            String accessToken = jwtUtils.generateAccessToken(user.getId(), dto.getUsername());
+            String refreshToken = jwtUtils.generateRefreshToken(user.getId(), dto.getUsername());
 
             // 将Refresh Token存储到Redis（实现单点登录控制）
             Claims refreshClaims = jwtUtils.parseToken(refreshToken);
@@ -139,10 +139,15 @@ public class AuthServiceImpl implements AuthService {
         // 解析并验证Refresh Token
         Claims refreshClaims = tokenValidatorUtils.parseAndValidate(dto.getRefreshToken(), TokenType.REFRESH);
 
-        // 提取用户名
+        // 提取用户名、用户ID
         String username = Optional.ofNullable(refreshClaims.get(JwtConstants.Claims.USERNAME))
                 .map(Object::toString)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_TOKEN, "Token中缺少用户名信息"));
+        Long userId = Optional.ofNullable(refreshClaims.get(JwtConstants.Claims.USER_ID))
+                .map(Object::toString)
+                .filter(StringUtils::hasText)
+                .map(Long::valueOf)
+                .orElse(null);
 
         // 验证Refresh Token是否在Redis中存在且有效（实现单点登录控制）
         if (!refreshTokenUtils.isRefreshTokenValid(username, refreshClaims)) {
@@ -153,8 +158,8 @@ public class AuthServiceImpl implements AuthService {
         tokenBlacklistUtils.addToBlacklist(refreshClaims);
 
         // 生成新的双Token
-        String newAccessToken = jwtUtils.generateAccessToken(username);
-        String newRefreshToken = jwtUtils.generateRefreshToken(username);
+        String newAccessToken = jwtUtils.generateAccessToken(userId, username);
+        String newRefreshToken = jwtUtils.generateRefreshToken(userId, username);
 
         // 将新的Refresh Token存储到Redis（替换旧的）
         Claims newRefreshClaims = jwtUtils.parseToken(newRefreshToken);

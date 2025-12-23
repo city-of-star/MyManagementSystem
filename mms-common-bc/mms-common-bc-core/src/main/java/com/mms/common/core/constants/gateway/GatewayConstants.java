@@ -26,6 +26,11 @@ public class GatewayConstants {
         public static final String USER_NAME = "X-User-Name";
 
         /**
+         * 用户ID请求头（透传到下游服务）
+         */
+        public static final String USER_ID = "X-User-Id";
+
+        /**
          * Token Jti请求头（透传到下游服务）
          */
         public static final String TOKEN_JTI = "X-Token-Jti";

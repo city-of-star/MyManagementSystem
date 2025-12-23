@@ -51,6 +51,7 @@ public class UserContextUtils {
         }
 
         String username = request.getHeader(GatewayConstants.Headers.USER_NAME);
+        String userId = request.getHeader(GatewayConstants.Headers.USER_ID);
         String tokenJti = request.getHeader(GatewayConstants.Headers.TOKEN_JTI);
         String clientIp = request.getHeader(GatewayConstants.Headers.CLIENT_IP);
         String expiration = request.getHeader(GatewayConstants.Headers.TOKEN_EXP);
@@ -60,6 +61,13 @@ public class UserContextUtils {
         // 创建 userContext 实体
         UserContext userContext = new UserContext();
         userContext.setUsername(username);
+        if (userId != null && !userId.isBlank()) {
+            try {
+                userContext.setUserId(Long.valueOf(userId));
+            } catch (NumberFormatException ignored) {
+                // 忽略格式错误的 userId
+            }
+        }
         userContext.setTokenJti(tokenJti);
         userContext.setClientIp(clientIp);
         userContext.setExpiration(expiration);
@@ -97,6 +105,16 @@ public class UserContextUtils {
     public static String getUsername() {
         UserContext context = getUserContext();
         return context != null ? context.getUsername() : null;
+    }
+
+    /**
+     * 获取当前登录用户ID（自动从请求线程获取）
+     *
+     * @return 用户ID，如果不存在则返回null
+     */
+    public static Long getUserId() {
+        UserContext context = getUserContext();
+        return context != null ? context.getUserId() : null;
     }
 
     /**

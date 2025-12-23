@@ -1,0 +1,110 @@
+package com.mms.base.server.security.filter;
+
+import com.mms.common.core.constants.gateway.GatewayConstants;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/**
+ * 下游服务（base）侧的认证填充过滤器
+ * <p>
+ * - 网关已完成 JWT 校验，并透传 userId/username
+ * - 这里根据 userId 从 Redis 读取角色/权限，组装 Authentication 填充到 SecurityContext
+ * - 便于 PermissionCheckAspect 正常获取权限
+ */
+@Component
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final String ROLE_BY_ID_KEY_PREFIX = "mms:usercenter:roles:";
+    private static final String PERM_BY_ID_KEY_PREFIX = "mms:usercenter:perms:";
+
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String userId = request.getHeader(GatewayConstants.Headers.USER_ID);
+        String username = request.getHeader(GatewayConstants.Headers.USER_NAME);
+        if (!StringUtils.hasText(userId)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        Set<String> roles = loadStringSet(ROLE_BY_ID_KEY_PREFIX + userId);
+        Set<String> permissions = loadStringSet(PERM_BY_ID_KEY_PREFIX + userId);
+
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        if (!CollectionUtils.isEmpty(roles)) {
+            authorities.addAll(roles.stream()
+                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                    .toList());
+        }
+        if (!CollectionUtils.isEmpty(permissions)) {
+            authorities.addAll(permissions.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toSet()));
+        }
+
+        String principal = StringUtils.hasText(username) ? username : userId;
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(principal, null, authorities);
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        filterChain.doFilter(request, response);
+    }
+
+    /**
+     * 从 Redis 读取对象并转换为字符串集合，兼容 Set/List/单值
+     */
+    private Set<String> loadStringSet(String key) {
+        Object cached = redisTemplate.opsForValue().get(key);
+        if (cached == null) {
+            return Collections.emptySet();
+        }
+        if (cached instanceof Set<?> set) {
+            return set.stream()
+                    .filter(Objects::nonNull)
+                    .map(Object::toString)
+                    .collect(Collectors.toSet());
+        }
+        if (cached instanceof Iterable<?> iterable) {
+            Set<String> result = new HashSet<>();
+            for (Object item : iterable) {
+                if (item != null) {
+                    result.add(item.toString());
+                }
+            }
+            return result;
+        }
+        return Collections.singleton(cached.toString());
+    }
+}
+

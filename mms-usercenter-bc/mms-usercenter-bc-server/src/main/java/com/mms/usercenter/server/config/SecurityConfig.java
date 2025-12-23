@@ -1,6 +1,6 @@
-package com.mms.usercenter.config;
+package com.mms.usercenter.server.config;
 
-import com.mms.usercenter.security.filter.JwtAuthenticationFilter;
+import com.mms.usercenter.server.security.filter.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
