@@ -1,5 +1,6 @@
 package com.mms.common.core.listeners;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -21,13 +22,19 @@ import java.time.format.DateTimeFormatter;
 /**
  * 实现功能【应用启动成功日志记录】
  * <p>
- * 应用启动完成后打印应用基本信息与相应的 Knife4j 文档地址
- * 网关本身不暴露 Knife4j，自动跳过
+ * 应用启动完成后打印应用基本信息
+ * 统一支持网关服务和业务服务，根据应用名称自动识别服务类型
+ * <p>
+ * 设计说明：
+ * - 网关服务：不打印 Swagger 地址（网关通常不提供 Swagger）
+ * - 业务服务：打印通过网关访问的 Swagger 地址
+ * - 不打印路由配置和白名单配置（保持启动日志简洁，详细配置可通过 Actuator 端点查看）
  * <p>
  *
  * @author li.hongyu
  * @date 2025-12-10 16:12:56
  */
+@Slf4j
 @Component
 public class StartupLogger implements ApplicationListener<ApplicationReadyEvent> {
 
@@ -70,33 +77,37 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
     @Value("${swagger.ui-path:/doc.html}")
     private String swaggerUiPath;
 
+    /**
+     * 判断是否为网关服务
+     */
+    private boolean isGateway() {
+        return "gateway".equalsIgnoreCase(applicationName);
+    }
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        // 应用就绪时打印核心信息与 Swagger 文档地址（网关入口）
-        // 网关不暴露 Knife4j，直接跳过
-        if ("gateway".equalsIgnoreCase(applicationName)) {
-            return;
+        // 打印启动完成与基础环境信息
+        log.info("==================== {} 服务启动信息 ====================", applicationName);
+        log.info("环境: {}", activeProfile);
+        log.info("端口: {}", port);
+        log.info("版本: {}", resolveVersion());
+        log.info("构建时间: {}", resolveBuildTime());
+        log.info("日志目录: {}", logPath);
+        log.info("Nacos: {} | namespace={} | group={}", nacosServerAddr, nacosNamespace, nacosGroup);
+        
+        // 网关服务不打印 Swagger 地址
+        if (!isGateway()) {
+            // 构建 Swagger 地址
+            String gatewayBase = stripTrailingSlash(gatewayUrl);
+            String servicePrefix = "/" + applicationName;
+            String gatewaySwaggerUrl = gatewayBase + servicePrefix + ensureLeadingSlash(swaggerUiPath);
+            log.info("Swagger 文档地址: {}", gatewaySwaggerUrl);
         }
+        
+        log.info("==================== {} 服务启动成功 ====================\n", applicationName);
 
         // 在应用完全就绪时输出自定义 banner（位于各服务资源目录的 banner.txt）
         printBannerIfPresent();
-
-        // 构建通过网关访问的 Swagger 地址
-        String gatewayBase = stripTrailingSlash(gatewayUrl);
-        String servicePrefix = "/" + applicationName;
-        String gatewaySwaggerUrl = gatewayBase + servicePrefix + ensureLeadingSlash(swaggerUiPath);
-
-        // 打印启动完成与文档地址及基础环境信息
-        System.out.println("\n==== 应用启动信息 ====");
-        System.out.println("应用名: " + applicationName);
-        System.out.println("环境: " + activeProfile);
-        System.out.println("端口: " + port);
-        System.out.println("版本: " + resolveVersion());
-        System.out.println("构建时间: " + resolveBuildTime());
-        System.out.println("日志目录: " + logPath);
-        System.out.println("Nacos: " + nacosServerAddr + " | namespace=" + nacosNamespace + " | group=" + nacosGroup);
-        System.out.println("Swagger 文档地址: " + gatewaySwaggerUrl);
-        System.out.println("==== 应用就绪 ====\n");
     }
 
     /**

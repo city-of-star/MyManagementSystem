@@ -52,7 +52,7 @@
         <queueSize>1000</queueSize>
     </appender>
 
-    <!-- 日志级别交由外部 logging.level 管控（Nacos 或本地配置） -->
+    <!-- 日志级别交由外部 logging.level 管控（Nacos或本地配置） -->
     <!-- 根据环境变量决定是否使用异步日志：开发环境使用同步，生产环境使用异步 -->
     <springProfile name="!DEV">
         <!-- 生产/测试环境：使用异步日志提高性能 -->

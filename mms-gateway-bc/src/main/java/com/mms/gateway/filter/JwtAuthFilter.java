@@ -9,8 +9,7 @@ import com.mms.gateway.config.GatewayWhitelistConfig;
 import com.mms.common.core.constants.gateway.GatewayConstants;
 import com.mms.gateway.utils.GatewayResponseUtils;
 import jakarta.annotation.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -36,11 +35,9 @@ import java.util.Optional;
  * @author li.hongyu
  * @date 2025-11-10 15:36:17
  */
+@Slf4j
 @Component
 public class JwtAuthFilter implements GlobalFilter, Ordered {
-
-    // 日志记录器
-    private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
 
     // 白名单配置
     @Resource
@@ -69,6 +66,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             token = reactiveTokenValidatorUtils.extractTokenFromHeader(authHeader);
         } catch (BusinessException e) {
             // 认证头格式错误，直接返回错误响应
+            log.warn("JWT认证失败: {} - {}", path, e.getMessage());
             return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, e.getMessage());
         }
         
@@ -113,10 +111,16 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
                     // 继续过滤器链
                     return chain.filter(exchange.mutate().request(mutatedRequest).build());
                 })
-                .onErrorResume(BusinessException.class,
-                        e -> GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, e.getMessage()))
-                .onErrorResume(e ->
-                        GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, ErrorCode.LOGIN_EXPIRED.getMessage()));
+                .onErrorResume(BusinessException.class, e -> {
+                    // Token验证失败（业务异常：过期、无效、黑名单等）
+                    log.warn("JWT认证失败: {} - {}", path, e.getMessage());
+                    return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, e.getMessage());
+                })
+                .onErrorResume(e -> {
+                    // Token验证失败（系统异常）
+                    log.error("JWT认证异常: {} - {}", path, e.getMessage(), e);
+                    return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, ErrorCode.LOGIN_EXPIRED.getMessage());
+                });
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.mms.gateway.config;
 
 import com.mms.gateway.utils.GatewayPathMatcherUtils;
+import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @author li.hongyu
  * @date 2025-12-01 15:36:17
  */
+@Getter
 @Configuration
 @ConfigurationProperties(prefix = "gateway.whitelist")
 public class GatewayWhitelistConfig {
@@ -44,15 +46,6 @@ public class GatewayWhitelistConfig {
         this.paths.add("/base/v3/api-docs/**");        // Base 服务 OpenAPI 文档
         this.paths.add("/base/webjars/**");             // Base 服务 Knife4j 静态资源
         this.paths.add("/base/swagger-resources/**");   // Base 服务 Swagger 资源
-    }
-
-    /**
-     * 获取白名单路径列表
-     *
-     * @return 白名单路径列表
-     */
-    public List<String> getPaths() {
-        return paths;
     }
 
     /**

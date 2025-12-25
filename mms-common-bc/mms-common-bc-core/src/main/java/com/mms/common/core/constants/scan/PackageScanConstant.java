@@ -26,4 +26,9 @@ public class PackageScanConstant {
      */
     public static final String USERCENTER_PACKAGE_SCAN = "com.mms.usercenter";
 
+    /**
+     * Gateway 服务的包扫描路径
+     */
+    public static final String GATEWAY_PACKAGE_SCAN = "com.mms.gateway";
+
 }
