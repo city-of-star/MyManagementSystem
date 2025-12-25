@@ -62,12 +62,13 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/auth/login",           // 登录
                                 "/auth/refresh",         // 刷新
-                                "/actuator/**",          // Spring Boot Actuator 端点
                                 "/authority/**",         // 内部权限查询
+                                "/actuator/**",          // Spring Boot Actuator 端点
                                 "/doc.html",             // Knife4j 主页面
                                 "/v3/api-docs/**",       // OpenAPI 文档
                                 "/webjars/**",           // Knife4j 静态资源
-                                "/swagger-resources/**"  // Swagger 资源
+                                "/swagger-resources/**", // Swagger 资源
+                                "/favicon.ico"           // favicon 图标
                         ).permitAll()
                         
                         // 其他所有请求都需要认证

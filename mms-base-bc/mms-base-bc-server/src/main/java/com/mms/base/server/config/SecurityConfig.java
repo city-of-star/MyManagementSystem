@@ -38,11 +38,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/actuator/**",
-                                "/doc.html",
-                                "/v3/api-docs/**",
-                                "/webjars/**",
-                                "/swagger-resources/**"
+                                "/actuator/**",          // Spring Boot Actuator 端点
+                                "/doc.html",             // Knife4j 主页面
+                                "/v3/api-docs/**",       // OpenAPI 文档
+                                "/webjars/**",           // Knife4j 静态资源
+                                "/swagger-resources/**", // Swagger 资源
+                                "/favicon.ico"           // favicon 图标
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
