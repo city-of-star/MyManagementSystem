@@ -39,6 +39,7 @@ public class ReactiveTokenValidatorUtils {
             return Mono.error(new BusinessException(ErrorCode.INVALID_TOKEN));
         }
 
+        // 解析 Token
         final Claims claims;
         try {
             claims = jwtUtils.parseToken(token);
@@ -65,16 +66,19 @@ public class ReactiveTokenValidatorUtils {
         // 黑名单检查（Reactive Redis）
         String jti = claims.getId();
         if (!StringUtils.hasText(jti)) {
-            return Mono.just(claims);
+            return Mono.error(new BusinessException(ErrorCode.INVALID_TOKEN));
         }
-
+        
+        // 构建黑名单Redis key，检查Token是否在黑名单中
         String key = JwtConstants.CacheKeys.TOKEN_BLACKLIST_PREFIX + jti;
         return reactiveStringRedisTemplate.hasKey(key)
                 .defaultIfEmpty(false)
                 .flatMap(exists -> {
+                    // 如果Token在黑名单中，返回登录过期错误
                     if (Boolean.TRUE.equals(exists)) {
                         return Mono.error(new BusinessException(ErrorCode.LOGIN_EXPIRED));
                     }
+                    // Token不在黑名单中，验证通过
                     return Mono.just(claims);
                 });
     }
@@ -82,23 +86,28 @@ public class ReactiveTokenValidatorUtils {
     /**
      * 从Authorization请求头中提取Bearer Token（与同步版保持一致）
      * <p>
-     * 支持格式：Authorization: Bearer <token>
+     * 注意：此方法是纯字符串处理，无IO操作，执行时间极短，在响应式环境中调用是安全的。
      * </p>
      *
      * @param authHeader Authorization请求头的值
-     * @return 提取的Token字符串，如果格式不正确或为空则返回null
+     * @return 提取的Token字符串
+     * @throws BusinessException 如果认证头为空、格式不正确或Token为空
      */
     public String extractTokenFromHeader(String authHeader) {
         if (!StringUtils.hasText(authHeader)) {
-            return null;
+            throw new BusinessException(ErrorCode.INVALID_AUTH_HEADER);
         }
 
         if (!authHeader.startsWith(JwtConstants.Headers.BEARER_PREFIX)) {
-            return null;
+            throw new BusinessException(ErrorCode.INVALID_AUTH_HEADER);
         }
 
         String token = authHeader.substring(JwtConstants.Headers.BEARER_PREFIX.length()).trim();
-        return StringUtils.hasText(token) ? token : null;
+        if (!StringUtils.hasText(token)) {
+            throw new BusinessException(ErrorCode.INVALID_AUTH_HEADER);
+        }
+        
+        return token;
     }
 }
 

@@ -25,19 +25,19 @@ public class TraceFilter implements GlobalFilter, Ordered {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-		// 1) 从请求头读取 traceId；若不存在则生成新的 traceId
+		// 从请求头读取 traceId；若不存在则生成新的 traceId
 		String traceId = GatewayTraceUtils.getOrGenerateTraceId(exchange);
 
-		// 2) 写入 MDC，便于日志打印关联
+		// 写入 MDC，便于日志打印关联
 		GatewayMdcUtils.putTraceId(traceId);
 
-		// 3) 将 traceId 透传到下游服务（写入请求头）
+		// 将 traceId 透传到下游服务（写入请求头）
 		ServerHttpRequest mutated = exchange.getRequest()
 				.mutate()
 				.header(GatewayConstants.Headers.TRACE_ID, traceId) // 添加追踪 ID 到请求头
 				.build();
 
-		// 4) 继续过滤器链，并在完成后清理 MDC
+		// 继续过滤器链，并在完成后清理 MDC
 		return chain.filter(exchange.mutate().request(mutated).build())
 				.doFinally(signalType -> GatewayMdcUtils.removeTraceId()); // 清理 MDC，避免线程复用污染
 	}

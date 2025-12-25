@@ -1,11 +1,8 @@
-server:
-  port: 5092
-
 spring:
   application:
     name: gateway
   profiles:
-    active: DEV
+    active: DEV  # 开发的时候写死 DEV 就行，在服务器上运行的时候可以指定环境（DEV：本地环境 || PROD：生产环境 || TEST：测试环境）
   config:
     import:
       # 公共配置

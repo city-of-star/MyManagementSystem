@@ -20,7 +20,7 @@ public class JwtConstants {
         /**
          * Authorization 请求头
          */
-        public static final String AUTHORIZATION = HttpHeaders.AUTHORIZATION;
+        public static final String AUTHORIZATION = "Authorization";
 
         /**
          * Bearer Token 前缀

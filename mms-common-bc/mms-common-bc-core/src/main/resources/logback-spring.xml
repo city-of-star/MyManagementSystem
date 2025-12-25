@@ -53,11 +53,22 @@
     </appender>
 
     <!-- 日志级别交由外部 logging.level 管控（Nacos 或本地配置） -->
-
-    <root level="INFO">
-        <appender-ref ref="ASYNC"/>
-        <appender-ref ref="CONSOLE"/>
-    </root>
+    <!-- 根据环境变量决定是否使用异步日志：开发环境使用同步，生产环境使用异步 -->
+    <springProfile name="!DEV">
+        <!-- 生产/测试环境：使用异步日志提高性能 -->
+        <root level="INFO">
+            <appender-ref ref="ASYNC"/>
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+    
+    <springProfile name="DEV">
+        <!-- 开发环境：使用同步日志，便于调试，控制台实时输出 -->
+        <root level="INFO">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
 
 </configuration>
 

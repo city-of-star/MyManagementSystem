@@ -1,5 +1,6 @@
 package com.mms.gateway.filter;
 
+import com.mms.common.core.enums.ErrorCode;
 import com.mms.common.core.exceptions.BusinessException;
 import com.mms.common.security.constants.JwtConstants;
 import com.mms.common.security.enums.TokenType;
@@ -61,42 +62,49 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
         // 读取 Authorization 头部
         String authHeader = request.getHeaders().getFirst(JwtConstants.Headers.AUTHORIZATION);
+        
         // 提取 JWT Token
-        String token = reactiveTokenValidatorUtils.extractTokenFromHeader(authHeader);
-        // 检查 Token 是否提取成功
-        if (!StringUtils.hasText(token)) {
-            return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "请求未携带认证信息，请检查Authorization请求头是否存在");
+        String token;
+        try {
+            token = reactiveTokenValidatorUtils.extractTokenFromHeader(authHeader);
+        } catch (BusinessException e) {
+            // 认证头格式错误，直接返回错误响应
+            return GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, e.getMessage());
         }
         
         // 解析并验证Token（验证类型必须是ACCESS，并检查黑名单）
         return reactiveTokenValidatorUtils.parseAndValidate(token, TokenType.ACCESS)
                 .flatMap(claims -> {
-                    String username = Optional.ofNullable(claims.get(JwtConstants.Claims.USERNAME))
-                            .map(Object::toString)
-                            .orElse(null);
+                    // 从 Token 中获取 userId
                     String userId = Optional.ofNullable(claims.get(JwtConstants.Claims.USER_ID))
                             .map(Object::toString)
                             .orElse(null);
+                    // 从 Token 中获取 username
+                    String username = Optional.ofNullable(claims.get(JwtConstants.Claims.USERNAME))
+                            .map(Object::toString)
+                            .orElse(null);
+                    // 从 Token 中获取 jti（Token 标识）
                     String jti = claims.getId();
+                    // 从 Token 中获取 expiration（Token 过期时间）
                     Date expiration = claims.getExpiration();
 
                     // 将用户信息透传到下游服务
                     ServerHttpRequest mutatedRequest = request.mutate()
                             .headers(httpHeaders -> {
-                                if (StringUtils.hasText(username)) {
-                                    // 将用户名添加到请求头，供下游服务使用
-                                    httpHeaders.set(GatewayConstants.Headers.USER_NAME, username);
-                                }
                                 if (StringUtils.hasText(userId)) {
-                                    // 将用户ID添加到请求头，供下游服务使用
+                                    // 将 userId 添加到请求头，供下游服务使用
                                     httpHeaders.set(GatewayConstants.Headers.USER_ID, userId);
                                 }
+                                if (StringUtils.hasText(username)) {
+                                    // 将 username 添加到请求头，供下游服务使用
+                                    httpHeaders.set(GatewayConstants.Headers.USER_NAME, username);
+                                }
                                 if (StringUtils.hasText(jti)) {
-                                    // 将 Token Jti 添加到请求头，供下游服务使用（用于黑名单）
+                                    // 将 jti 添加到请求头，供下游服务使用（用于黑名单）
                                     httpHeaders.set(GatewayConstants.Headers.TOKEN_JTI, jti);
                                 }
                                 if (expiration != null) {
-                                    // 将 Token 过期时间添加到请求头，供下游服务使用（用于黑名单TTL计算）
+                                    // 将 expiration 添加到请求头，供下游服务使用（用于黑名单TTL计算）
                                     httpHeaders.set(GatewayConstants.Headers.TOKEN_EXP, String.valueOf(expiration.getTime()));
                                 }
                             })
@@ -108,7 +116,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
                 .onErrorResume(BusinessException.class,
                         e -> GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, e.getMessage()))
                 .onErrorResume(e ->
-                        GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, "身份验证已失效，请重新登录"));
+                        GatewayResponseUtils.writeError(exchange, HttpStatus.UNAUTHORIZED, ErrorCode.LOGIN_EXPIRED.getMessage()));
     }
 
     @Override

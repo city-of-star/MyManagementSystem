@@ -32,7 +32,6 @@ public class TokenValidatorUtils {
      * @param token        Token字符串
      * @param expectedType 期望的Token类型（可为null，表示不验证类型）
      * @return Claims
-     * @throws BusinessException 验证失败时抛出
      */
     public Claims parseAndValidate(String token, TokenType expectedType) {
         if (!StringUtils.hasText(token)) {
@@ -73,23 +72,25 @@ public class TokenValidatorUtils {
 
     /**
      * 从Authorization请求头中提取Bearer Token
-     * <p>
-     * 支持格式：Authorization: Bearer &lt;token&gt;
-     * </p>
      *
      * @param authHeader Authorization请求头的值
-     * @return 提取的Token字符串，如果格式不正确或为空则返回null
+     * @return 提取的Token字符串
+     * @throws BusinessException 如果认证头为空、格式不正确或Token为空
      */
     public static String extractTokenFromHeader(String authHeader) {
         if (!StringUtils.hasText(authHeader)) {
-            return null;
+            throw new BusinessException(ErrorCode.INVALID_AUTH_HEADER);
         }
 
         if (!authHeader.startsWith(JwtConstants.Headers.BEARER_PREFIX)) {
-            return null;
+            throw new BusinessException(ErrorCode.INVALID_AUTH_HEADER);
         }
 
         String token = authHeader.substring(JwtConstants.Headers.BEARER_PREFIX.length()).trim();
-        return StringUtils.hasText(token) ? token : null;
+        if (!StringUtils.hasText(token)) {
+            throw new BusinessException(ErrorCode.INVALID_AUTH_HEADER);
+        }
+        
+        return token;
     }
 }

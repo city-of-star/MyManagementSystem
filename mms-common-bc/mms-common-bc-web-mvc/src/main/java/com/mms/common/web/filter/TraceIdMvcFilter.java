@@ -31,9 +31,9 @@ public class TraceIdMvcFilter implements Filter, Ordered {
 			throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request; // 只关心 HTTP 请求
 
-		// 优先从上游（如网关）读取追踪 ID
+		// 优先从网关读取追踪 ID
 		String traceId = httpRequest.getHeader(GatewayConstants.Headers.TRACE_ID);
-		// 若上游未提供，则本地生成
+		// 若网关未提供，则本地生成
 		if (!StringUtils.hasText(traceId)) {
 			traceId = generateTraceId();
 		}

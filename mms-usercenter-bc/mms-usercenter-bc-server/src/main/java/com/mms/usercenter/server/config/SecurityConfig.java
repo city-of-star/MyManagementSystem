@@ -63,7 +63,7 @@ public class SecurityConfig {
                                 "/auth/login",           // 登录
                                 "/auth/refresh",         // 刷新
                                 "/actuator/**",          // Spring Boot Actuator 端点
-                                "/internal/authority/**",// 内部权限查询
+                                "/authority/**",         // 内部权限查询
                                 "/doc.html",             // Knife4j 主页面
                                 "/v3/api-docs/**",       // OpenAPI 文档
                                 "/webjars/**",           // Knife4j 静态资源
